@@ -1,2 +1,3 @@
 *.js
 nodes_modules/
+tsconfig.json
