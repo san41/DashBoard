@@ -1,0 +1,91 @@
+<section class="content-header">
+  <h1>
+    Mailbox Settings
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+    <li>Settings</li>
+    <li><a href="/#settings/mailbox">Mailbox</a></li>
+    <li class="active">{{submitValue}}</li>
+  </ol>
+</section>
+
+
+
+<!-- Main content -->
+<section class="content">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="box">
+        <div class="box-header">
+          <h3 class="box-title">{{submitValue}} Mailbox</h3>
+        </div>
+        <div class="box-body">
+          <form role="form" ng-submit="create()">
+            
+            <div class="form-group">
+              <label for="">Mailbox name</label>
+              <input type="text" class='form-control' ng-model="data.name">
+            </div>
+            <div class="form-group">
+              <label for="">Imap host</label>
+              <input type="text" class='form-control' ng-model="data.imap">
+            </div>
+            <div class="form-group">
+              <label for="">Imap port</label>
+              <input type="number" min="1" max="65000" value="143" class='form-control' ng-model="data.imapPort">
+            </div>
+            <div class="form-group">
+              <label for="">Smtp host</label>
+              <input type="text" class='form-control' ng-model="data.smtp">
+            </div>
+            <div class="form-group">
+              <label for="">Smtp port</label>
+              <input type="number" min="1" max="65000" value="25" class='form-control' ng-model="data.smtpPort">
+            </div>
+            <div class="form-group">
+              <label for="">Username</label>
+              <input type="text" class='form-control' ng-model="data.username">
+            </div>
+            <div class="form-group">
+              <label for="">Password</label>
+              <div class="input-group">
+                <input type="password" class='form-control' ng-model="data.password" id="password">
+                <span style="cursor: pointer;" class="input-group-addon" ng-click="switchPassword()"><i class="fa fa-eye"></i></span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Color</label>
+                <input ng-model="data.color" type="text" class="form-control colorpicker"/>
+            </div><!-- /.form group -->
+            <div class="form-group">
+              <input type="checkbox" ng-model="data.secure" id="secure">
+              <label for="">
+                 Secure Connexion (tls?) {{data.secure}}
+              </label>
+            </div>
+            <input type="submit" class="btn btn-primary" value="{{submitValue}}">
+          </form>
+        </div>  
+      </div>
+    </div>
+  </div><!-- /.row -->
+</section><!-- /.content -->
+
+<script>
+  $(function () {
+    $(".colorpicker").colorpicker();
+    $('input[type=checkbox]').each(function(){
+      var self = $(this),
+        label = self.next(),
+        label_text = label.text();
+
+      label.remove();
+      self.iCheck({
+        checkboxClass: 'icheckbox_line-blue',
+        radioClass: 'iradio_line-blue',
+        insert: '<div class="icheck_line-icon"></div>' + label_text
+      });
+    });
+  });
+</script>
