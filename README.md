@@ -1,6 +1,6 @@
 # DashBoard
 By [Ralmn](http://ralmn.fr)
-[Twitter](http://twitter.com)
+[Twitter](https://twitter.com/ralmn45)
 ##Installation 
 
 Setup your `config/config.js`from `config/config.js.sample`
