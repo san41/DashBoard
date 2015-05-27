@@ -4,11 +4,13 @@ By [Ralmn](http://ralmn.fr)
 ##Installation 
 
 First thing first:
+
 Rename and setup the `config/config.js.sample` in `config/config.js`
 
 Run `npm install`
 
 To start the server: `node server`
+
 To build the client source: 
 ```
 cd client
