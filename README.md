@@ -3,14 +3,17 @@ By [Ralmn](http://ralmn.fr)
 [Twitter](https://twitter.com/ralmn45)
 ##Installation 
 
-Setup your `config/config.js`from `config/config.js.sample`
+First thing first:
 
-do a `npm install`
+Rename and setup the `config/config.js.sample` in `config/config.js`
 
-for start a server : `node server`
-for build a client source : 
+Run `npm install`
+
+To start the server: `node server`
+
+To build the client source: 
 ```
 cd client
 gulp
 ```
-for build without watch : `gulp no-watch`
+You can also build without watch: `gulp no-watch`
