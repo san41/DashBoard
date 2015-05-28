@@ -121,10 +121,8 @@ module.exports = function(passport) {
         clientSecret: GOOGLE_CLIENT_SECRET,
         callbackURL: "http://127.0.0.1:5555/mailbox/auth/google/callback"
       }, function(accessToken, refreshToken, profile, done) {
-        console.log(profile);
         var MailBox = require('../models/mailbox');
         MailBox.find({googleId: profile.id}, function(err, mailbox){
-            console.log(err, mailbox);
             if(err == null && mailbox.length == 0){
                 var email = profile.emails[0].value;
                 var mb = new MailBox({
