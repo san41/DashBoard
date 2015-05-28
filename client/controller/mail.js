@@ -1,5 +1,5 @@
-module.exports = function($scope, socket){
- 
+module.exports = function($scope, socket, sharedData, $location){
+
   $scope.mails = [];
   $scope.unReadMailCount = 0;
   $scope.mailCount = 0;
@@ -22,6 +22,11 @@ module.exports = function($scope, socket){
     $scope.unReadMailCount = unReadMailCount;
   }
 
+  $scope.readMail = function(mail){
+    sharedData.set('mail-read', mail);
+    $location.path('/mail/read')
+  }
+
   $scope.changeCurrentMailBox = function(mailbox){
     if(mailbox != null){
       $scope.currentMailbox = mailbox;
@@ -35,20 +40,19 @@ module.exports = function($scope, socket){
     for(var i in mailboxes){
       var _mailbox = mailboxes[i];
       (function(mailbox){
-              socket.emit('mails/request', mailbox, function(err, mails){
-                for(var i in mails){
-                  var mail = mails[i];
-                  mail.mailbox = {
-                    name: mailbox.name, 
-                    id: mailbox.id,
-                    color: mailbox.color,
-                  };
-                  $scope.mails.push(mail);
-                }
-                updateData();
-              })
-            })(_mailbox);
-      console.log(_mailbox);
+        socket.emit('mails/request', mailbox, function(err, mails){
+          for(var i in mails){
+            var mail = mails[i];
+            mail.mailbox = {
+              name: mailbox.name, 
+              id: mailbox._id,
+              color: mailbox.color,
+            };
+            $scope.mails.push(mail);
+          }
+          updateData();
+        })
+      })(_mailbox);
     }
   });
 

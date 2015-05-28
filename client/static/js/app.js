@@ -1,6 +1,6 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = function($scope, socket){
- 
+module.exports = function($scope, socket, sharedData, $location){
+
   $scope.mails = [];
   $scope.unReadMailCount = 0;
   $scope.mailCount = 0;
@@ -23,6 +23,11 @@ module.exports = function($scope, socket){
     $scope.unReadMailCount = unReadMailCount;
   }
 
+  $scope.readMail = function(mail){
+    sharedData.set('mail-read', mail);
+    $location.path('/mail/read')
+  }
+
   $scope.changeCurrentMailBox = function(mailbox){
     if(mailbox != null){
       $scope.currentMailbox = mailbox;
@@ -36,25 +41,35 @@ module.exports = function($scope, socket){
     for(var i in mailboxes){
       var _mailbox = mailboxes[i];
       (function(mailbox){
-              socket.emit('mails/request', mailbox, function(err, mails){
-                for(var i in mails){
-                  var mail = mails[i];
-                  mail.mailbox = {
-                    name: mailbox.name, 
-                    id: mailbox.id,
-                    color: mailbox.color,
-                  };
-                  $scope.mails.push(mail);
-                }
-                updateData();
-              })
-            })(_mailbox);
-      console.log(_mailbox);
+        socket.emit('mails/request', mailbox, function(err, mails){
+          for(var i in mails){
+            var mail = mails[i];
+            mail.mailbox = {
+              name: mailbox.name, 
+              id: mailbox._id,
+              color: mailbox.color,
+            };
+            $scope.mails.push(mail);
+          }
+          updateData();
+        })
+      })(_mailbox);
     }
   });
 
 };
 },{}],2:[function(require,module,exports){
+module.exports = function($scope, socket, sharedData, $location,$sce){
+
+  $scope.mail = sharedData.get('mail-read');  
+  $scope.content = "<center>Loading....</center>";
+  if($scope.mail == null){ $location.path('/mail'); return; }
+  socket.emit('mailbox/getMailContent', $scope.mail, function(err, data){
+    $scope.content = $sce.trustAsHtml(data);
+  });
+
+}
+},{}],3:[function(require,module,exports){
 module.exports = function($scope, socket, $location, $routeParams){
   $scope.submitValue = "Create";
   if($routeParams.id != null){
@@ -87,7 +102,7 @@ module.exports = function($scope, socket, $location, $routeParams){
   }
 
 }
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 module.exports = function($scope, socket, $location){
   $scope.mailboxes = []
 
@@ -105,7 +120,7 @@ module.exports = function($scope, socket, $location){
   }
 
 }
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 var gravatar = require("gravatar");
 
 module.exports = function() {
@@ -122,7 +137,7 @@ module.exports = function() {
     }
     }
 };
-},{"gravatar":12}],5:[function(require,module,exports){
+},{"gravatar":16}],6:[function(require,module,exports){
 module.exports = function(app){
   app.directive("topBar", function(){
     return {
@@ -153,13 +168,14 @@ module.exports = function(app){
 }
 
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 var io = require('socket.io-client');
 var angular = require('angular');
 var angularRoute = require('angular-route');
+var angularSanitize = require('angular-sanitize');
 var angularSocketIo = require('angular-socket-io');
 
-var app = angular.module("dbapp", ['ngRoute', 'btford.socket-io']);
+var app = angular.module("dbapp", ['ngRoute', 'btford.socket-io', 'ngSanitize']);
 
 app.config(function($routeProvider){
   $routeProvider.when('/home', {
@@ -168,6 +184,9 @@ app.config(function($routeProvider){
   }).when('/mail', {
     templateUrl: "views/mail/index.html",
     controller:"MailController" 
+  }).when('/mail/read', {
+    templateUrl: "views/mail/read.html",
+    controller:"MailReadController" 
   }).when('/settings/mailbox', {
     templateUrl: 'views/settings/mailbox/index.html',
     controller:'MailBoxSettingsController'
@@ -190,7 +209,9 @@ app.factory('socket', function(socketFactory){
   var myIoSocket = io.connect();
 
   return socketFactory({ioSocket:myIoSocket});
-})
+});
+
+app.service('sharedData', require('./service/sharedData.js'));
 
 app.run(function($rootScope){
   $rootScope.passport = passport;
@@ -198,6 +219,7 @@ app.run(function($rootScope){
 });
 
 app.controller('MailController', require('./controller/mail'));
+app.controller('MailReadController', require('./controller/readMail'));
 
 app.controller('MainController', function($scope){ $scope.init = true; });
 app.controller('HomeController', function(){});
@@ -215,7 +237,20 @@ angular.element(document).ready(function() {
       angular.bootstrap(document, ['dbapp']);
     });
 console.log("angular loaded"); 
-},{"./controller/mail":1,"./controller/settings/createMailbox.js":2,"./controller/settings/mailbox.js":3,"./directive/gravatar.js":4,"./directive/views.js":5,"angular":11,"angular-route":8,"angular-socket-io":9,"socket.io-client":26}],7:[function(require,module,exports){
+},{"./controller/mail":1,"./controller/readMail":2,"./controller/settings/createMailbox.js":3,"./controller/settings/mailbox.js":4,"./directive/gravatar.js":5,"./directive/views.js":6,"./service/sharedData.js":8,"angular":15,"angular-route":10,"angular-sanitize":12,"angular-socket-io":13,"socket.io-client":30}],8:[function(require,module,exports){
+module.exports = function(){
+  var data = {};
+
+  return {
+    get: function(key){
+      return data[key];
+    },
+    set: function(key, value){
+      data[key] = value;
+    }
+  }
+}
+},{}],9:[function(require,module,exports){
 /**
  * @license AngularJS v1.3.15
  * (c) 2010-2014 Google, Inc. http://angularjs.org
@@ -1206,11 +1241,700 @@ function ngViewFillContentFactory($compile, $controller, $route) {
 
 })(window, window.angular);
 
-},{}],8:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 require('./angular-route');
 module.exports = 'ngRoute';
 
-},{"./angular-route":7}],9:[function(require,module,exports){
+},{"./angular-route":9}],11:[function(require,module,exports){
+/**
+ * @license AngularJS v1.4.0
+ * (c) 2010-2015 Google, Inc. http://angularjs.org
+ * License: MIT
+ */
+(function(window, angular, undefined) {'use strict';
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *     Any commits to this file should be reviewed with security in mind.  *
+ *   Changes to this file can potentially create security vulnerabilities. *
+ *          An approval from 2 Core members with history of modifying      *
+ *                         this file is required.                          *
+ *                                                                         *
+ *  Does the change somehow allow for arbitrary javascript to be executed? *
+ *    Or allows for someone to change the prototype of built-in objects?   *
+ *     Or gives undesired access to variables likes document or window?    *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+var $sanitizeMinErr = angular.$$minErr('$sanitize');
+
+/**
+ * @ngdoc module
+ * @name ngSanitize
+ * @description
+ *
+ * # ngSanitize
+ *
+ * The `ngSanitize` module provides functionality to sanitize HTML.
+ *
+ *
+ * <div doc-module-components="ngSanitize"></div>
+ *
+ * See {@link ngSanitize.$sanitize `$sanitize`} for usage.
+ */
+
+/*
+ * HTML Parser By Misko Hevery (misko@hevery.com)
+ * based on:  HTML Parser By John Resig (ejohn.org)
+ * Original code by Erik Arvidsson, Mozilla Public License
+ * http://erik.eae.net/simplehtmlparser/simplehtmlparser.js
+ *
+ * // Use like so:
+ * htmlParser(htmlString, {
+ *     start: function(tag, attrs, unary) {},
+ *     end: function(tag) {},
+ *     chars: function(text) {},
+ *     comment: function(text) {}
+ * });
+ *
+ */
+
+
+/**
+ * @ngdoc service
+ * @name $sanitize
+ * @kind function
+ *
+ * @description
+ *   The input is sanitized by parsing the HTML into tokens. All safe tokens (from a whitelist) are
+ *   then serialized back to properly escaped html string. This means that no unsafe input can make
+ *   it into the returned string, however, since our parser is more strict than a typical browser
+ *   parser, it's possible that some obscure input, which would be recognized as valid HTML by a
+ *   browser, won't make it through the sanitizer. The input may also contain SVG markup.
+ *   The whitelist is configured using the functions `aHrefSanitizationWhitelist` and
+ *   `imgSrcSanitizationWhitelist` of {@link ng.$compileProvider `$compileProvider`}.
+ *
+ * @param {string} html HTML input.
+ * @returns {string} Sanitized HTML.
+ *
+ * @example
+   <example module="sanitizeExample" deps="angular-sanitize.js">
+   <file name="index.html">
+     <script>
+         angular.module('sanitizeExample', ['ngSanitize'])
+           .controller('ExampleController', ['$scope', '$sce', function($scope, $sce) {
+             $scope.snippet =
+               '<p style="color:blue">an html\n' +
+               '<em onmouseover="this.textContent=\'PWN3D!\'">click here</em>\n' +
+               'snippet</p>';
+             $scope.deliberatelyTrustDangerousSnippet = function() {
+               return $sce.trustAsHtml($scope.snippet);
+             };
+           }]);
+     </script>
+     <div ng-controller="ExampleController">
+        Snippet: <textarea ng-model="snippet" cols="60" rows="3"></textarea>
+       <table>
+         <tr>
+           <td>Directive</td>
+           <td>How</td>
+           <td>Source</td>
+           <td>Rendered</td>
+         </tr>
+         <tr id="bind-html-with-sanitize">
+           <td>ng-bind-html</td>
+           <td>Automatically uses $sanitize</td>
+           <td><pre>&lt;div ng-bind-html="snippet"&gt;<br/>&lt;/div&gt;</pre></td>
+           <td><div ng-bind-html="snippet"></div></td>
+         </tr>
+         <tr id="bind-html-with-trust">
+           <td>ng-bind-html</td>
+           <td>Bypass $sanitize by explicitly trusting the dangerous value</td>
+           <td>
+           <pre>&lt;div ng-bind-html="deliberatelyTrustDangerousSnippet()"&gt;
+&lt;/div&gt;</pre>
+           </td>
+           <td><div ng-bind-html="deliberatelyTrustDangerousSnippet()"></div></td>
+         </tr>
+         <tr id="bind-default">
+           <td>ng-bind</td>
+           <td>Automatically escapes</td>
+           <td><pre>&lt;div ng-bind="snippet"&gt;<br/>&lt;/div&gt;</pre></td>
+           <td><div ng-bind="snippet"></div></td>
+         </tr>
+       </table>
+       </div>
+   </file>
+   <file name="protractor.js" type="protractor">
+     it('should sanitize the html snippet by default', function() {
+       expect(element(by.css('#bind-html-with-sanitize div')).getInnerHtml()).
+         toBe('<p>an html\n<em>click here</em>\nsnippet</p>');
+     });
+
+     it('should inline raw snippet if bound to a trusted value', function() {
+       expect(element(by.css('#bind-html-with-trust div')).getInnerHtml()).
+         toBe("<p style=\"color:blue\">an html\n" +
+              "<em onmouseover=\"this.textContent='PWN3D!'\">click here</em>\n" +
+              "snippet</p>");
+     });
+
+     it('should escape snippet without any filter', function() {
+       expect(element(by.css('#bind-default div')).getInnerHtml()).
+         toBe("&lt;p style=\"color:blue\"&gt;an html\n" +
+              "&lt;em onmouseover=\"this.textContent='PWN3D!'\"&gt;click here&lt;/em&gt;\n" +
+              "snippet&lt;/p&gt;");
+     });
+
+     it('should update', function() {
+       element(by.model('snippet')).clear();
+       element(by.model('snippet')).sendKeys('new <b onclick="alert(1)">text</b>');
+       expect(element(by.css('#bind-html-with-sanitize div')).getInnerHtml()).
+         toBe('new <b>text</b>');
+       expect(element(by.css('#bind-html-with-trust div')).getInnerHtml()).toBe(
+         'new <b onclick="alert(1)">text</b>');
+       expect(element(by.css('#bind-default div')).getInnerHtml()).toBe(
+         "new &lt;b onclick=\"alert(1)\"&gt;text&lt;/b&gt;");
+     });
+   </file>
+   </example>
+ */
+function $SanitizeProvider() {
+  this.$get = ['$$sanitizeUri', function($$sanitizeUri) {
+    return function(html) {
+      var buf = [];
+      htmlParser(html, htmlSanitizeWriter(buf, function(uri, isImage) {
+        return !/^unsafe/.test($$sanitizeUri(uri, isImage));
+      }));
+      return buf.join('');
+    };
+  }];
+}
+
+function sanitizeText(chars) {
+  var buf = [];
+  var writer = htmlSanitizeWriter(buf, angular.noop);
+  writer.chars(chars);
+  return buf.join('');
+}
+
+
+// Regular Expressions for parsing tags and attributes
+var START_TAG_REGEXP =
+       /^<((?:[a-zA-Z])[\w:-]*)((?:\s+[\w:-]+(?:\s*=\s*(?:(?:"[^"]*")|(?:'[^']*')|[^>\s]+))?)*)\s*(\/?)\s*(>?)/,
+  END_TAG_REGEXP = /^<\/\s*([\w:-]+)[^>]*>/,
+  ATTR_REGEXP = /([\w:-]+)(?:\s*=\s*(?:(?:"((?:[^"])*)")|(?:'((?:[^'])*)')|([^>\s]+)))?/g,
+  BEGIN_TAG_REGEXP = /^</,
+  BEGING_END_TAGE_REGEXP = /^<\//,
+  COMMENT_REGEXP = /<!--(.*?)-->/g,
+  DOCTYPE_REGEXP = /<!DOCTYPE([^>]*?)>/i,
+  CDATA_REGEXP = /<!\[CDATA\[(.*?)]]>/g,
+  SURROGATE_PAIR_REGEXP = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g,
+  // Match everything outside of normal chars and " (quote character)
+  NON_ALPHANUMERIC_REGEXP = /([^\#-~| |!])/g;
+
+
+// Good source of info about elements and attributes
+// http://dev.w3.org/html5/spec/Overview.html#semantics
+// http://simon.html5.org/html-elements
+
+// Safe Void Elements - HTML5
+// http://dev.w3.org/html5/spec/Overview.html#void-elements
+var voidElements = makeMap("area,br,col,hr,img,wbr");
+
+// Elements that you can, intentionally, leave open (and which close themselves)
+// http://dev.w3.org/html5/spec/Overview.html#optional-tags
+var optionalEndTagBlockElements = makeMap("colgroup,dd,dt,li,p,tbody,td,tfoot,th,thead,tr"),
+    optionalEndTagInlineElements = makeMap("rp,rt"),
+    optionalEndTagElements = angular.extend({},
+                                            optionalEndTagInlineElements,
+                                            optionalEndTagBlockElements);
+
+// Safe Block Elements - HTML5
+var blockElements = angular.extend({}, optionalEndTagBlockElements, makeMap("address,article," +
+        "aside,blockquote,caption,center,del,dir,div,dl,figure,figcaption,footer,h1,h2,h3,h4,h5," +
+        "h6,header,hgroup,hr,ins,map,menu,nav,ol,pre,script,section,table,ul"));
+
+// Inline Elements - HTML5
+var inlineElements = angular.extend({}, optionalEndTagInlineElements, makeMap("a,abbr,acronym,b," +
+        "bdi,bdo,big,br,cite,code,del,dfn,em,font,i,img,ins,kbd,label,map,mark,q,ruby,rp,rt,s," +
+        "samp,small,span,strike,strong,sub,sup,time,tt,u,var"));
+
+// SVG Elements
+// https://wiki.whatwg.org/wiki/Sanitization_rules#svg_Elements
+// Note: the elements animate,animateColor,animateMotion,animateTransform,set are intentionally omitted.
+// They can potentially allow for arbitrary javascript to be executed. See #11290
+var svgElements = makeMap("circle,defs,desc,ellipse,font-face,font-face-name,font-face-src,g,glyph," +
+        "hkern,image,linearGradient,line,marker,metadata,missing-glyph,mpath,path,polygon,polyline," +
+        "radialGradient,rect,stop,svg,switch,text,title,tspan,use");
+
+// Special Elements (can contain anything)
+var specialElements = makeMap("script,style");
+
+var validElements = angular.extend({},
+                                   voidElements,
+                                   blockElements,
+                                   inlineElements,
+                                   optionalEndTagElements,
+                                   svgElements);
+
+//Attributes that have href and hence need to be sanitized
+var uriAttrs = makeMap("background,cite,href,longdesc,src,usemap,xlink:href");
+
+var htmlAttrs = makeMap('abbr,align,alt,axis,bgcolor,border,cellpadding,cellspacing,class,clear,' +
+    'color,cols,colspan,compact,coords,dir,face,headers,height,hreflang,hspace,' +
+    'ismap,lang,language,nohref,nowrap,rel,rev,rows,rowspan,rules,' +
+    'scope,scrolling,shape,size,span,start,summary,target,title,type,' +
+    'valign,value,vspace,width');
+
+// SVG attributes (without "id" and "name" attributes)
+// https://wiki.whatwg.org/wiki/Sanitization_rules#svg_Attributes
+var svgAttrs = makeMap('accent-height,accumulate,additive,alphabetic,arabic-form,ascent,' +
+    'baseProfile,bbox,begin,by,calcMode,cap-height,class,color,color-rendering,content,' +
+    'cx,cy,d,dx,dy,descent,display,dur,end,fill,fill-rule,font-family,font-size,font-stretch,' +
+    'font-style,font-variant,font-weight,from,fx,fy,g1,g2,glyph-name,gradientUnits,hanging,' +
+    'height,horiz-adv-x,horiz-origin-x,ideographic,k,keyPoints,keySplines,keyTimes,lang,' +
+    'marker-end,marker-mid,marker-start,markerHeight,markerUnits,markerWidth,mathematical,' +
+    'max,min,offset,opacity,orient,origin,overline-position,overline-thickness,panose-1,' +
+    'path,pathLength,points,preserveAspectRatio,r,refX,refY,repeatCount,repeatDur,' +
+    'requiredExtensions,requiredFeatures,restart,rotate,rx,ry,slope,stemh,stemv,stop-color,' +
+    'stop-opacity,strikethrough-position,strikethrough-thickness,stroke,stroke-dasharray,' +
+    'stroke-dashoffset,stroke-linecap,stroke-linejoin,stroke-miterlimit,stroke-opacity,' +
+    'stroke-width,systemLanguage,target,text-anchor,to,transform,type,u1,u2,underline-position,' +
+    'underline-thickness,unicode,unicode-range,units-per-em,values,version,viewBox,visibility,' +
+    'width,widths,x,x-height,x1,x2,xlink:actuate,xlink:arcrole,xlink:role,xlink:show,xlink:title,' +
+    'xlink:type,xml:base,xml:lang,xml:space,xmlns,xmlns:xlink,y,y1,y2,zoomAndPan', true);
+
+var validAttrs = angular.extend({},
+                                uriAttrs,
+                                svgAttrs,
+                                htmlAttrs);
+
+function makeMap(str, lowercaseKeys) {
+  var obj = {}, items = str.split(','), i;
+  for (i = 0; i < items.length; i++) {
+    obj[lowercaseKeys ? angular.lowercase(items[i]) : items[i]] = true;
+  }
+  return obj;
+}
+
+
+/**
+ * @example
+ * htmlParser(htmlString, {
+ *     start: function(tag, attrs, unary) {},
+ *     end: function(tag) {},
+ *     chars: function(text) {},
+ *     comment: function(text) {}
+ * });
+ *
+ * @param {string} html string
+ * @param {object} handler
+ */
+function htmlParser(html, handler) {
+  if (typeof html !== 'string') {
+    if (html === null || typeof html === 'undefined') {
+      html = '';
+    } else {
+      html = '' + html;
+    }
+  }
+  var index, chars, match, stack = [], last = html, text;
+  stack.last = function() { return stack[stack.length - 1]; };
+
+  while (html) {
+    text = '';
+    chars = true;
+
+    // Make sure we're not in a script or style element
+    if (!stack.last() || !specialElements[stack.last()]) {
+
+      // Comment
+      if (html.indexOf("<!--") === 0) {
+        // comments containing -- are not allowed unless they terminate the comment
+        index = html.indexOf("--", 4);
+
+        if (index >= 0 && html.lastIndexOf("-->", index) === index) {
+          if (handler.comment) handler.comment(html.substring(4, index));
+          html = html.substring(index + 3);
+          chars = false;
+        }
+      // DOCTYPE
+      } else if (DOCTYPE_REGEXP.test(html)) {
+        match = html.match(DOCTYPE_REGEXP);
+
+        if (match) {
+          html = html.replace(match[0], '');
+          chars = false;
+        }
+      // end tag
+      } else if (BEGING_END_TAGE_REGEXP.test(html)) {
+        match = html.match(END_TAG_REGEXP);
+
+        if (match) {
+          html = html.substring(match[0].length);
+          match[0].replace(END_TAG_REGEXP, parseEndTag);
+          chars = false;
+        }
+
+      // start tag
+      } else if (BEGIN_TAG_REGEXP.test(html)) {
+        match = html.match(START_TAG_REGEXP);
+
+        if (match) {
+          // We only have a valid start-tag if there is a '>'.
+          if (match[4]) {
+            html = html.substring(match[0].length);
+            match[0].replace(START_TAG_REGEXP, parseStartTag);
+          }
+          chars = false;
+        } else {
+          // no ending tag found --- this piece should be encoded as an entity.
+          text += '<';
+          html = html.substring(1);
+        }
+      }
+
+      if (chars) {
+        index = html.indexOf("<");
+
+        text += index < 0 ? html : html.substring(0, index);
+        html = index < 0 ? "" : html.substring(index);
+
+        if (handler.chars) handler.chars(decodeEntities(text));
+      }
+
+    } else {
+      // IE versions 9 and 10 do not understand the regex '[^]', so using a workaround with [\W\w].
+      html = html.replace(new RegExp("([\\W\\w]*)<\\s*\\/\\s*" + stack.last() + "[^>]*>", 'i'),
+        function(all, text) {
+          text = text.replace(COMMENT_REGEXP, "$1").replace(CDATA_REGEXP, "$1");
+
+          if (handler.chars) handler.chars(decodeEntities(text));
+
+          return "";
+      });
+
+      parseEndTag("", stack.last());
+    }
+
+    if (html == last) {
+      throw $sanitizeMinErr('badparse', "The sanitizer was unable to parse the following block " +
+                                        "of html: {0}", html);
+    }
+    last = html;
+  }
+
+  // Clean up any remaining tags
+  parseEndTag();
+
+  function parseStartTag(tag, tagName, rest, unary) {
+    tagName = angular.lowercase(tagName);
+    if (blockElements[tagName]) {
+      while (stack.last() && inlineElements[stack.last()]) {
+        parseEndTag("", stack.last());
+      }
+    }
+
+    if (optionalEndTagElements[tagName] && stack.last() == tagName) {
+      parseEndTag("", tagName);
+    }
+
+    unary = voidElements[tagName] || !!unary;
+
+    if (!unary) {
+      stack.push(tagName);
+    }
+
+    var attrs = {};
+
+    rest.replace(ATTR_REGEXP,
+      function(match, name, doubleQuotedValue, singleQuotedValue, unquotedValue) {
+        var value = doubleQuotedValue
+          || singleQuotedValue
+          || unquotedValue
+          || '';
+
+        attrs[name] = decodeEntities(value);
+    });
+    if (handler.start) handler.start(tagName, attrs, unary);
+  }
+
+  function parseEndTag(tag, tagName) {
+    var pos = 0, i;
+    tagName = angular.lowercase(tagName);
+    if (tagName) {
+      // Find the closest opened tag of the same type
+      for (pos = stack.length - 1; pos >= 0; pos--) {
+        if (stack[pos] == tagName) break;
+      }
+    }
+
+    if (pos >= 0) {
+      // Close all the open elements, up the stack
+      for (i = stack.length - 1; i >= pos; i--)
+        if (handler.end) handler.end(stack[i]);
+
+      // Remove the open elements from the stack
+      stack.length = pos;
+    }
+  }
+}
+
+var hiddenPre=document.createElement("pre");
+/**
+ * decodes all entities into regular string
+ * @param value
+ * @returns {string} A string with decoded entities.
+ */
+function decodeEntities(value) {
+  if (!value) { return ''; }
+
+  hiddenPre.innerHTML = value.replace(/</g,"&lt;");
+  // innerText depends on styling as it doesn't display hidden elements.
+  // Therefore, it's better to use textContent not to cause unnecessary reflows.
+  return hiddenPre.textContent;
+}
+
+/**
+ * Escapes all potentially dangerous characters, so that the
+ * resulting string can be safely inserted into attribute or
+ * element text.
+ * @param value
+ * @returns {string} escaped text
+ */
+function encodeEntities(value) {
+  return value.
+    replace(/&/g, '&amp;').
+    replace(SURROGATE_PAIR_REGEXP, function(value) {
+      var hi = value.charCodeAt(0);
+      var low = value.charCodeAt(1);
+      return '&#' + (((hi - 0xD800) * 0x400) + (low - 0xDC00) + 0x10000) + ';';
+    }).
+    replace(NON_ALPHANUMERIC_REGEXP, function(value) {
+      return '&#' + value.charCodeAt(0) + ';';
+    }).
+    replace(/</g, '&lt;').
+    replace(/>/g, '&gt;');
+}
+
+/**
+ * create an HTML/XML writer which writes to buffer
+ * @param {Array} buf use buf.jain('') to get out sanitized html string
+ * @returns {object} in the form of {
+ *     start: function(tag, attrs, unary) {},
+ *     end: function(tag) {},
+ *     chars: function(text) {},
+ *     comment: function(text) {}
+ * }
+ */
+function htmlSanitizeWriter(buf, uriValidator) {
+  var ignore = false;
+  var out = angular.bind(buf, buf.push);
+  return {
+    start: function(tag, attrs, unary) {
+      tag = angular.lowercase(tag);
+      if (!ignore && specialElements[tag]) {
+        ignore = tag;
+      }
+      if (!ignore && validElements[tag] === true) {
+        out('<');
+        out(tag);
+        angular.forEach(attrs, function(value, key) {
+          var lkey=angular.lowercase(key);
+          var isImage = (tag === 'img' && lkey === 'src') || (lkey === 'background');
+          if (validAttrs[lkey] === true &&
+            (uriAttrs[lkey] !== true || uriValidator(value, isImage))) {
+            out(' ');
+            out(key);
+            out('="');
+            out(encodeEntities(value));
+            out('"');
+          }
+        });
+        out(unary ? '/>' : '>');
+      }
+    },
+    end: function(tag) {
+        tag = angular.lowercase(tag);
+        if (!ignore && validElements[tag] === true) {
+          out('</');
+          out(tag);
+          out('>');
+        }
+        if (tag == ignore) {
+          ignore = false;
+        }
+      },
+    chars: function(chars) {
+        if (!ignore) {
+          out(encodeEntities(chars));
+        }
+      }
+  };
+}
+
+
+// define ngSanitize module and register $sanitize service
+angular.module('ngSanitize', []).provider('$sanitize', $SanitizeProvider);
+
+/* global sanitizeText: false */
+
+/**
+ * @ngdoc filter
+ * @name linky
+ * @kind function
+ *
+ * @description
+ * Finds links in text input and turns them into html links. Supports http/https/ftp/mailto and
+ * plain email address links.
+ *
+ * Requires the {@link ngSanitize `ngSanitize`} module to be installed.
+ *
+ * @param {string} text Input text.
+ * @param {string} target Window (_blank|_self|_parent|_top) or named frame to open links in.
+ * @returns {string} Html-linkified text.
+ *
+ * @usage
+   <span ng-bind-html="linky_expression | linky"></span>
+ *
+ * @example
+   <example module="linkyExample" deps="angular-sanitize.js">
+     <file name="index.html">
+       <script>
+         angular.module('linkyExample', ['ngSanitize'])
+           .controller('ExampleController', ['$scope', function($scope) {
+             $scope.snippet =
+               'Pretty text with some links:\n'+
+               'http://angularjs.org/,\n'+
+               'mailto:us@somewhere.org,\n'+
+               'another@somewhere.org,\n'+
+               'and one more: ftp://127.0.0.1/.';
+             $scope.snippetWithTarget = 'http://angularjs.org/';
+           }]);
+       </script>
+       <div ng-controller="ExampleController">
+       Snippet: <textarea ng-model="snippet" cols="60" rows="3"></textarea>
+       <table>
+         <tr>
+           <td>Filter</td>
+           <td>Source</td>
+           <td>Rendered</td>
+         </tr>
+         <tr id="linky-filter">
+           <td>linky filter</td>
+           <td>
+             <pre>&lt;div ng-bind-html="snippet | linky"&gt;<br>&lt;/div&gt;</pre>
+           </td>
+           <td>
+             <div ng-bind-html="snippet | linky"></div>
+           </td>
+         </tr>
+         <tr id="linky-target">
+          <td>linky target</td>
+          <td>
+            <pre>&lt;div ng-bind-html="snippetWithTarget | linky:'_blank'"&gt;<br>&lt;/div&gt;</pre>
+          </td>
+          <td>
+            <div ng-bind-html="snippetWithTarget | linky:'_blank'"></div>
+          </td>
+         </tr>
+         <tr id="escaped-html">
+           <td>no filter</td>
+           <td><pre>&lt;div ng-bind="snippet"&gt;<br>&lt;/div&gt;</pre></td>
+           <td><div ng-bind="snippet"></div></td>
+         </tr>
+       </table>
+     </file>
+     <file name="protractor.js" type="protractor">
+       it('should linkify the snippet with urls', function() {
+         expect(element(by.id('linky-filter')).element(by.binding('snippet | linky')).getText()).
+             toBe('Pretty text with some links: http://angularjs.org/, us@somewhere.org, ' +
+                  'another@somewhere.org, and one more: ftp://127.0.0.1/.');
+         expect(element.all(by.css('#linky-filter a')).count()).toEqual(4);
+       });
+
+       it('should not linkify snippet without the linky filter', function() {
+         expect(element(by.id('escaped-html')).element(by.binding('snippet')).getText()).
+             toBe('Pretty text with some links: http://angularjs.org/, mailto:us@somewhere.org, ' +
+                  'another@somewhere.org, and one more: ftp://127.0.0.1/.');
+         expect(element.all(by.css('#escaped-html a')).count()).toEqual(0);
+       });
+
+       it('should update', function() {
+         element(by.model('snippet')).clear();
+         element(by.model('snippet')).sendKeys('new http://link.');
+         expect(element(by.id('linky-filter')).element(by.binding('snippet | linky')).getText()).
+             toBe('new http://link.');
+         expect(element.all(by.css('#linky-filter a')).count()).toEqual(1);
+         expect(element(by.id('escaped-html')).element(by.binding('snippet')).getText())
+             .toBe('new http://link.');
+       });
+
+       it('should work with the target property', function() {
+        expect(element(by.id('linky-target')).
+            element(by.binding("snippetWithTarget | linky:'_blank'")).getText()).
+            toBe('http://angularjs.org/');
+        expect(element(by.css('#linky-target a')).getAttribute('target')).toEqual('_blank');
+       });
+     </file>
+   </example>
+ */
+angular.module('ngSanitize').filter('linky', ['$sanitize', function($sanitize) {
+  var LINKY_URL_REGEXP =
+        /((ftp|https?):\/\/|(www\.)|(mailto:)?[A-Za-z0-9._%+-]+@)\S*[^\s.;,(){}<>"”’]/,
+      MAILTO_REGEXP = /^mailto:/;
+
+  return function(text, target) {
+    if (!text) return text;
+    var match;
+    var raw = text;
+    var html = [];
+    var url;
+    var i;
+    while ((match = raw.match(LINKY_URL_REGEXP))) {
+      // We can not end in these as they are sometimes found at the end of the sentence
+      url = match[0];
+      // if we did not match ftp/http/www/mailto then assume mailto
+      if (!match[2] && !match[4]) {
+        url = (match[3] ? 'http://' : 'mailto:') + url;
+      }
+      i = match.index;
+      addText(raw.substr(0, i));
+      addLink(url, match[0].replace(MAILTO_REGEXP, ''));
+      raw = raw.substring(i + match[0].length);
+    }
+    addText(raw);
+    return $sanitize(html.join(''));
+
+    function addText(text) {
+      if (!text) {
+        return;
+      }
+      html.push(sanitizeText(text));
+    }
+
+    function addLink(url, text) {
+      html.push('<a ');
+      if (angular.isDefined(target)) {
+        html.push('target="',
+                  target,
+                  '" ');
+      }
+      html.push('href="',
+                url.replace(/"/g, '&quot;'),
+                '">');
+      addText(text);
+      html.push('</a>');
+    }
+  };
+}]);
+
+
+})(window, window.angular);
+
+},{}],12:[function(require,module,exports){
+require('./angular-sanitize');
+module.exports = 'ngSanitize';
+
+},{"./angular-sanitize":11}],13:[function(require,module,exports){
 /*
  * @license
  * angular-socket-io v0.7.0
@@ -1315,7 +2039,7 @@ angular.module('btford.socket-io', []).
     }];
   });
 
-},{}],10:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 /**
  * @license AngularJS v1.3.15
  * (c) 2010-2014 Google, Inc. http://angularjs.org
@@ -27625,14 +28349,14 @@ var minlengthDirective = function() {
 })(window, document);
 
 !window.angular.$$csp() && window.angular.element(document).find('head').prepend('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\\:form{display:block;}</style>');
-},{}],11:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 require('./angular');
 module.exports = angular;
 
-},{"./angular":10}],12:[function(require,module,exports){
+},{"./angular":14}],16:[function(require,module,exports){
 module.exports = require('./lib/gravatar');
 
-},{"./lib/gravatar":13}],13:[function(require,module,exports){
+},{"./lib/gravatar":17}],17:[function(require,module,exports){
 var crypto = require('crypto')
   , querystring = require('querystring');
 
@@ -27654,7 +28378,7 @@ var gravatar = module.exports = {
     }
 };
 
-},{"crypto":18,"querystring":25}],14:[function(require,module,exports){
+},{"crypto":22,"querystring":29}],18:[function(require,module,exports){
 /*!
  * The buffer module from node.js, for the browser.
  *
@@ -28765,7 +29489,7 @@ function assert (test, message) {
   if (!test) throw new Error(message || 'Failed assertion')
 }
 
-},{"base64-js":15,"ieee754":16}],15:[function(require,module,exports){
+},{"base64-js":19,"ieee754":20}],19:[function(require,module,exports){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
@@ -28891,7 +29615,7 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	exports.fromByteArray = uint8ToBase64
 }(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
 
-},{}],16:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m,
       eLen = nBytes * 8 - mLen - 1,
@@ -28977,7 +29701,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],17:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 var Buffer = require('buffer').Buffer;
 var intSize = 4;
 var zeroBuffer = new Buffer(intSize); zeroBuffer.fill(0);
@@ -29014,7 +29738,7 @@ function hash(buf, fn, hashSize, bigEndian) {
 
 module.exports = { hash: hash };
 
-},{"buffer":14}],18:[function(require,module,exports){
+},{"buffer":18}],22:[function(require,module,exports){
 var Buffer = require('buffer').Buffer
 var sha = require('./sha')
 var sha256 = require('./sha256')
@@ -29113,7 +29837,7 @@ each(['createCredentials'
   }
 })
 
-},{"./md5":19,"./rng":20,"./sha":21,"./sha256":22,"buffer":14}],19:[function(require,module,exports){
+},{"./md5":23,"./rng":24,"./sha":25,"./sha256":26,"buffer":18}],23:[function(require,module,exports){
 /*
  * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
  * Digest Algorithm, as defined in RFC 1321.
@@ -29278,7 +30002,7 @@ module.exports = function md5(buf) {
   return helpers.hash(buf, core_md5, 16);
 };
 
-},{"./helpers":17}],20:[function(require,module,exports){
+},{"./helpers":21}],24:[function(require,module,exports){
 // Original code adapted from Robert Kieffer.
 // details at https://github.com/broofa/node-uuid
 (function() {
@@ -29311,7 +30035,7 @@ module.exports = function md5(buf) {
 
 }())
 
-},{}],21:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-1, as defined
  * in FIPS PUB 180-1
@@ -29414,7 +30138,7 @@ module.exports = function sha1(buf) {
   return helpers.hash(buf, core_sha1, 20, true);
 };
 
-},{"./helpers":17}],22:[function(require,module,exports){
+},{"./helpers":21}],26:[function(require,module,exports){
 
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
@@ -29495,7 +30219,7 @@ module.exports = function sha256(buf) {
   return helpers.hash(buf, core_sha256, 32, true);
 };
 
-},{"./helpers":17}],23:[function(require,module,exports){
+},{"./helpers":21}],27:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -29581,7 +30305,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{}],24:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -29668,17 +30392,17 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],25:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 'use strict';
 
 exports.decode = exports.parse = require('./decode');
 exports.encode = exports.stringify = require('./encode');
 
-},{"./decode":23,"./encode":24}],26:[function(require,module,exports){
+},{"./decode":27,"./encode":28}],30:[function(require,module,exports){
 
 module.exports = require('./lib/');
 
-},{"./lib/":27}],27:[function(require,module,exports){
+},{"./lib/":31}],31:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -29767,7 +30491,7 @@ exports.connect = lookup;
 exports.Manager = require('./manager');
 exports.Socket = require('./socket');
 
-},{"./manager":28,"./socket":30,"./url":31,"debug":35,"socket.io-parser":71}],28:[function(require,module,exports){
+},{"./manager":32,"./socket":34,"./url":35,"debug":39,"socket.io-parser":75}],32:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -30272,7 +30996,7 @@ Manager.prototype.onreconnect = function(){
   this.emitAll('reconnect', attempt);
 };
 
-},{"./on":29,"./socket":30,"./url":31,"backo2":32,"component-bind":33,"component-emitter":34,"debug":35,"engine.io-client":36,"indexof":67,"object-component":68,"socket.io-parser":71}],29:[function(require,module,exports){
+},{"./on":33,"./socket":34,"./url":35,"backo2":36,"component-bind":37,"component-emitter":38,"debug":39,"engine.io-client":40,"indexof":71,"object-component":72,"socket.io-parser":75}],33:[function(require,module,exports){
 
 /**
  * Module exports.
@@ -30298,7 +31022,7 @@ function on(obj, ev, fn) {
   };
 }
 
-},{}],30:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -30685,7 +31409,7 @@ Socket.prototype.disconnect = function(){
   return this;
 };
 
-},{"./on":29,"component-bind":33,"component-emitter":34,"debug":35,"has-binary":65,"socket.io-parser":71,"to-array":75}],31:[function(require,module,exports){
+},{"./on":33,"component-bind":37,"component-emitter":38,"debug":39,"has-binary":69,"socket.io-parser":75,"to-array":79}],35:[function(require,module,exports){
 (function (global){
 
 /**
@@ -30762,7 +31486,7 @@ function url(uri, loc){
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"debug":35,"parseuri":69}],32:[function(require,module,exports){
+},{"debug":39,"parseuri":73}],36:[function(require,module,exports){
 
 /**
  * Expose `Backoff`.
@@ -30849,7 +31573,7 @@ Backoff.prototype.setJitter = function(jitter){
 };
 
 
-},{}],33:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 /**
  * Slice reference.
  */
@@ -30874,7 +31598,7 @@ module.exports = function(obj, fn){
   }
 };
 
-},{}],34:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 
 /**
  * Expose `Emitter`.
@@ -31040,7 +31764,7 @@ Emitter.prototype.hasListeners = function(event){
   return !! this.listeners(event).length;
 };
 
-},{}],35:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 
 /**
  * Expose `debug()` as the module.
@@ -31179,11 +31903,11 @@ try {
   if (window.localStorage) debug.enable(localStorage.debug);
 } catch(e){}
 
-},{}],36:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 
 module.exports =  require('./lib/');
 
-},{"./lib/":37}],37:[function(require,module,exports){
+},{"./lib/":41}],41:[function(require,module,exports){
 
 module.exports = require('./socket');
 
@@ -31195,7 +31919,7 @@ module.exports = require('./socket');
  */
 module.exports.parser = require('engine.io-parser');
 
-},{"./socket":38,"engine.io-parser":50}],38:[function(require,module,exports){
+},{"./socket":42,"engine.io-parser":54}],42:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies.
@@ -31904,7 +32628,7 @@ Socket.prototype.filterUpgrades = function (upgrades) {
 };
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./transport":39,"./transports":40,"component-emitter":34,"debug":47,"engine.io-parser":50,"indexof":67,"parsejson":61,"parseqs":62,"parseuri":63}],39:[function(require,module,exports){
+},{"./transport":43,"./transports":44,"component-emitter":38,"debug":51,"engine.io-parser":54,"indexof":71,"parsejson":65,"parseqs":66,"parseuri":67}],43:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -32065,7 +32789,7 @@ Transport.prototype.onClose = function () {
   this.emit('close');
 };
 
-},{"component-emitter":34,"engine.io-parser":50}],40:[function(require,module,exports){
+},{"component-emitter":38,"engine.io-parser":54}],44:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies
@@ -32122,7 +32846,7 @@ function polling(opts){
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling-jsonp":41,"./polling-xhr":42,"./websocket":44,"xmlhttprequest":45}],41:[function(require,module,exports){
+},{"./polling-jsonp":45,"./polling-xhr":46,"./websocket":48,"xmlhttprequest":49}],45:[function(require,module,exports){
 (function (global){
 
 /**
@@ -32359,7 +33083,7 @@ JSONPPolling.prototype.doWrite = function (data, fn) {
 };
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling":43,"component-inherit":46}],42:[function(require,module,exports){
+},{"./polling":47,"component-inherit":50}],46:[function(require,module,exports){
 (function (global){
 /**
  * Module requirements.
@@ -32747,7 +33471,7 @@ function unloadHandler() {
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling":43,"component-emitter":34,"component-inherit":46,"debug":47,"xmlhttprequest":45}],43:[function(require,module,exports){
+},{"./polling":47,"component-emitter":38,"component-inherit":50,"debug":51,"xmlhttprequest":49}],47:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -32994,7 +33718,7 @@ Polling.prototype.uri = function(){
   return schema + '://' + this.hostname + port + this.path + query;
 };
 
-},{"../transport":39,"component-inherit":46,"debug":47,"engine.io-parser":50,"parseqs":62,"xmlhttprequest":45}],44:[function(require,module,exports){
+},{"../transport":43,"component-inherit":50,"debug":51,"engine.io-parser":54,"parseqs":66,"xmlhttprequest":49}],48:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -33234,7 +33958,7 @@ WS.prototype.check = function(){
   return !!WebSocket && !('__initialize' in WebSocket && this.name === WS.prototype.name);
 };
 
-},{"../transport":39,"component-inherit":46,"debug":47,"engine.io-parser":50,"parseqs":62,"ws":64}],45:[function(require,module,exports){
+},{"../transport":43,"component-inherit":50,"debug":51,"engine.io-parser":54,"parseqs":66,"ws":68}],49:[function(require,module,exports){
 // browser shim for xmlhttprequest module
 var hasCORS = require('has-cors');
 
@@ -33272,7 +33996,7 @@ module.exports = function(opts) {
   }
 }
 
-},{"has-cors":59}],46:[function(require,module,exports){
+},{"has-cors":63}],50:[function(require,module,exports){
 
 module.exports = function(a, b){
   var fn = function(){};
@@ -33280,7 +34004,7 @@ module.exports = function(a, b){
   a.prototype = new fn;
   a.prototype.constructor = a;
 };
-},{}],47:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 
 /**
  * This is the web browser implementation of `debug()`.
@@ -33429,7 +34153,7 @@ function load() {
 
 exports.enable(load());
 
-},{"./debug":48}],48:[function(require,module,exports){
+},{"./debug":52}],52:[function(require,module,exports){
 
 /**
  * This is the common logic for both the Node.js and web browser
@@ -33628,7 +34352,7 @@ function coerce(val) {
   return val;
 }
 
-},{"ms":49}],49:[function(require,module,exports){
+},{"ms":53}],53:[function(require,module,exports){
 /**
  * Helpers.
  */
@@ -33741,7 +34465,7 @@ function plural(ms, n, name) {
   return Math.ceil(ms / n) + ' ' + name + 's';
 }
 
-},{}],50:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies.
@@ -34339,7 +35063,7 @@ exports.decodePayloadAsBinary = function (data, binaryType, callback) {
 };
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./keys":51,"after":52,"arraybuffer.slice":53,"base64-arraybuffer":54,"blob":55,"has-binary":56,"utf8":58}],51:[function(require,module,exports){
+},{"./keys":55,"after":56,"arraybuffer.slice":57,"base64-arraybuffer":58,"blob":59,"has-binary":60,"utf8":62}],55:[function(require,module,exports){
 
 /**
  * Gets the keys for an object.
@@ -34360,7 +35084,7 @@ module.exports = Object.keys || function keys (obj){
   return arr;
 };
 
-},{}],52:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 module.exports = after
 
 function after(count, callback, err_cb) {
@@ -34390,7 +35114,7 @@ function after(count, callback, err_cb) {
 
 function noop() {}
 
-},{}],53:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 /**
  * An abstraction for slicing an arraybuffer even when
  * ArrayBuffer.prototype.slice is not supported
@@ -34421,7 +35145,7 @@ module.exports = function(arraybuffer, start, end) {
   return result.buffer;
 };
 
-},{}],54:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 /*
  * base64-arraybuffer
  * https://github.com/niklasvh/base64-arraybuffer
@@ -34482,7 +35206,7 @@ module.exports = function(arraybuffer, start, end) {
   };
 })("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/");
 
-},{}],55:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 (function (global){
 /**
  * Create a blob builder even when vendor prefixes exist
@@ -34535,7 +35259,7 @@ module.exports = (function() {
 })();
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],56:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 (function (global){
 
 /*
@@ -34597,12 +35321,12 @@ function hasBinary(data) {
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"isarray":57}],57:[function(require,module,exports){
+},{"isarray":61}],61:[function(require,module,exports){
 module.exports = Array.isArray || function (arr) {
   return Object.prototype.toString.call(arr) == '[object Array]';
 };
 
-},{}],58:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 (function (global){
 /*! http://mths.be/utf8js v2.0.0 by @mathias */
 ;(function(root) {
@@ -34845,7 +35569,7 @@ module.exports = Array.isArray || function (arr) {
 }(this));
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],59:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -34870,7 +35594,7 @@ try {
   module.exports = false;
 }
 
-},{"global":60}],60:[function(require,module,exports){
+},{"global":64}],64:[function(require,module,exports){
 
 /**
  * Returns `this`. Execute this without a "context" (i.e. without it being
@@ -34880,7 +35604,7 @@ try {
 
 module.exports = (function () { return this; })();
 
-},{}],61:[function(require,module,exports){
+},{}],65:[function(require,module,exports){
 (function (global){
 /**
  * JSON parse.
@@ -34915,7 +35639,7 @@ module.exports = function parsejson(data) {
   }
 };
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],62:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 /**
  * Compiles a querystring
  * Returns string representation of the object
@@ -34954,7 +35678,7 @@ exports.decode = function(qs){
   return qry;
 };
 
-},{}],63:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 /**
  * Parses an URI
  *
@@ -34995,7 +35719,7 @@ module.exports = function parseuri(str) {
     return uri;
 };
 
-},{}],64:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -35040,7 +35764,7 @@ function ws(uri, protocols, opts) {
 
 if (WebSocket) ws.prototype = WebSocket.prototype;
 
-},{}],65:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 (function (global){
 
 /*
@@ -35102,9 +35826,9 @@ function hasBinary(data) {
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"isarray":66}],66:[function(require,module,exports){
-module.exports=require(57)
-},{}],67:[function(require,module,exports){
+},{"isarray":70}],70:[function(require,module,exports){
+module.exports=require(61)
+},{}],71:[function(require,module,exports){
 
 var indexOf = [].indexOf;
 
@@ -35115,7 +35839,7 @@ module.exports = function(arr, obj){
   }
   return -1;
 };
-},{}],68:[function(require,module,exports){
+},{}],72:[function(require,module,exports){
 
 /**
  * HOP ref.
@@ -35200,7 +35924,7 @@ exports.length = function(obj){
 exports.isEmpty = function(obj){
   return 0 == exports.length(obj);
 };
-},{}],69:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 /**
  * Parses an URI
  *
@@ -35227,7 +35951,7 @@ module.exports = function parseuri(str) {
   return uri;
 };
 
-},{}],70:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
 (function (global){
 /*global Blob,File*/
 
@@ -35372,7 +36096,7 @@ exports.removeBlobs = function(data, callback) {
 };
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./is-buffer":72,"isarray":73}],71:[function(require,module,exports){
+},{"./is-buffer":76,"isarray":77}],75:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -35774,7 +36498,7 @@ function error(data){
   };
 }
 
-},{"./binary":70,"./is-buffer":72,"component-emitter":34,"debug":35,"isarray":73,"json3":74}],72:[function(require,module,exports){
+},{"./binary":74,"./is-buffer":76,"component-emitter":38,"debug":39,"isarray":77,"json3":78}],76:[function(require,module,exports){
 (function (global){
 
 module.exports = isBuf;
@@ -35791,9 +36515,9 @@ function isBuf(obj) {
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],73:[function(require,module,exports){
-module.exports=require(57)
-},{}],74:[function(require,module,exports){
+},{}],77:[function(require,module,exports){
+module.exports=require(61)
+},{}],78:[function(require,module,exports){
 /*! JSON v3.2.6 | http://bestiejs.github.io/json3 | Copyright 2012-2013, Kit Cambridge | http://kit.mit-license.org */
 ;(function (window) {
   // Convenience aliases.
@@ -36656,7 +37380,7 @@ module.exports=require(57)
   }
 }(this));
 
-},{}],75:[function(require,module,exports){
+},{}],79:[function(require,module,exports){
 module.exports = toArray
 
 function toArray(list, index) {
@@ -36671,4 +37395,4 @@ function toArray(list, index) {
     return array
 }
 
-},{}]},{},[6])
+},{}]},{},[7])

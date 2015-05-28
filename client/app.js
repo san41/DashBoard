@@ -1,9 +1,10 @@
 var io = require('socket.io-client');
 var angular = require('angular');
 var angularRoute = require('angular-route');
+var angularSanitize = require('angular-sanitize');
 var angularSocketIo = require('angular-socket-io');
 
-var app = angular.module("dbapp", ['ngRoute', 'btford.socket-io']);
+var app = angular.module("dbapp", ['ngRoute', 'btford.socket-io', 'ngSanitize']);
 
 app.config(function($routeProvider){
   $routeProvider.when('/home', {
@@ -12,6 +13,9 @@ app.config(function($routeProvider){
   }).when('/mail', {
     templateUrl: "views/mail/index.html",
     controller:"MailController" 
+  }).when('/mail/read', {
+    templateUrl: "views/mail/read.html",
+    controller:"MailReadController" 
   }).when('/settings/mailbox', {
     templateUrl: 'views/settings/mailbox/index.html',
     controller:'MailBoxSettingsController'
@@ -34,7 +38,9 @@ app.factory('socket', function(socketFactory){
   var myIoSocket = io.connect();
 
   return socketFactory({ioSocket:myIoSocket});
-})
+});
+
+app.service('sharedData', require('./service/sharedData.js'));
 
 app.run(function($rootScope){
   $rootScope.passport = passport;
@@ -42,6 +48,7 @@ app.run(function($rootScope){
 });
 
 app.controller('MailController', require('./controller/mail'));
+app.controller('MailReadController', require('./controller/readMail'));
 
 app.controller('MainController', function($scope){ $scope.init = true; });
 app.controller('HomeController', function(){});
