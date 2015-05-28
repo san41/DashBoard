@@ -35,9 +35,11 @@ app.config(function($routeProvider){
       });
 });
 
-app.factory('socket', function(socketFactory){
+app.factory('socket', function(socketFactory, $rootScope){
   var myIoSocket = io.connect();
-
+  myIoSocket.on('globalSettings', function(globalSettings){
+    $rootScope.globalSettings = globalSettings;
+  })
   return socketFactory({ioSocket:myIoSocket});
 });
 

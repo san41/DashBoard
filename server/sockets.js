@@ -7,6 +7,12 @@ module.exports = function(io){
 
   io.on('connect', function(socket){
 
+    socket.emit("globalSettings", {
+      MailBox: {
+        googleLoginEnable : MailBox.googleLoginEnable
+      }
+    });
+
     socket.on('mailbox/list', function(callback){
       MailBox.find({},callback);
     });

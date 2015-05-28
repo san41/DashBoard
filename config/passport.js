@@ -5,6 +5,7 @@ var LocalStrategy   = require('passport-local').Strategy;
 
 // load up the user model
 var User = require('../models/user');
+var MailBox = require('../models/mailbox');
 
 var config = require('./config.js');
 
@@ -77,10 +78,10 @@ module.exports = function(passport) {
 
         });    
 
-        });
+    });
 
-    }));
-    var localStrategy = new LocalStrategy({
+}));
+var localStrategy = new LocalStrategy({
         // by default, local strategy uses username and password, we will override with email
         usernameField : 'email',
         passwordField : 'password',
@@ -108,33 +109,34 @@ module.exports = function(passport) {
         });
 
     });
-    
-    passport.use('local-login', localStrategy);
-    passport.use(localStrategy);
+
+passport.use('local-login', localStrategy);
+passport.use(localStrategy);
 
 
-    var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
-    var GOOGLE_CLIENT_ID = config.google.auth.clientID;
-    var GOOGLE_CLIENT_SECRET = config.google.auth.clientSecret;
+var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+var GOOGLE_CLIENT_ID = config.google.auth.clientID;
+var GOOGLE_CLIENT_SECRET = config.google.auth.clientSecret;
+if(GOOGLE_CLIENT_ID != null && GOOGLE_CLIENT_SECRET != null){
+    MailBox.googleLoginEnable = true;
     passport.use('gmail-login', new GoogleStrategy({
         clientID: GOOGLE_CLIENT_ID,
         clientSecret: GOOGLE_CLIENT_SECRET,
         callbackURL: "http://127.0.0.1:5555/mailbox/auth/google/callback"
-      }, function(accessToken, refreshToken, profile, done) {
-        var MailBox = require('../models/mailbox');
+    }, function(accessToken, refreshToken, profile, done) {
         MailBox.find({googleId: profile.id}, function(err, mailbox){
             if(err == null && mailbox.length == 0){
                 var email = profile.emails[0].value;
                 var mb = new MailBox({
-                type: 'google',
-                name: email,
-                email: email,
-                googleId: profile.id,
-                clientId: GOOGLE_CLIENT_ID,
-                clientSecret: GOOGLE_CLIENT_SECRET,
-                accessToken: accessToken,
-                refreshToken: refreshToken,
-                color: "#f22626"
+                    type: 'google',
+                    name: email,
+                    email: email,
+                    googleId: profile.id,
+                    clientId: GOOGLE_CLIENT_ID,
+                    clientSecret: GOOGLE_CLIENT_SECRET,
+                    accessToken: accessToken,
+                    refreshToken: refreshToken,
+                    color: "#f22626"
                 });
                 mb.save(function(err, mbSaved){
                     console.log(err, mbSaved);
@@ -144,7 +146,8 @@ module.exports = function(passport) {
                 done(err, mailbox);
             }
         })
-      }
+    }
     ));
+}
 
 };
