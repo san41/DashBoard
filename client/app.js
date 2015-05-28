@@ -1,10 +1,11 @@
 var io = require('socket.io-client');
 var angular = require('angular');
-var angularRoute = require('angular-route');
-var angularSanitize = require('angular-sanitize');
-var angularSocketIo = require('angular-socket-io');
+require('angular-route');
+require('angular-sanitize');
+require('angular-socket-io');
+require('checklist-model');
 
-var app = angular.module("dbapp", ['ngRoute', 'btford.socket-io', 'ngSanitize']);
+var app = angular.module("dbapp", ['ngRoute', 'btford.socket-io', 'ngSanitize', 'checklist-model']);
 
 app.config(function($routeProvider){
   $routeProvider.when('/home', {

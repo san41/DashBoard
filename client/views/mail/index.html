@@ -19,14 +19,16 @@
       <!-- Folder box -->
       <div class="box box-solid">
         <div class="box-header with-border">
-          <h3 class="box-title">Folders</h3>
+          <h3 class="box-title">Messages</h3>
           <div class='box-tools'>
             <button class='btn btn-box-tool' data-widget='collapse'><i class='fa fa-minus'></i></button>
           </div>
         </div>
         <div class="box-body no-padding">
           <ul class="nav nav-pills nav-stacked">
-            <li class="active"><a href=""><i class="fa fa-inbox"></i> Inbox <span class="label label-primary pull-right" ng-bind="unReadMailCount"></span></a></li>
+            <li ng-click="messageFilter({});" ng-class="{active:messageFilterData.read == null}"><a href=""><i class="fa fa-inbox"></i> All<span class="label label-primary pull-right" ng-bind="mails.length"></span></a></li>
+            <li ng-click="messageFilter({read:false});" ng-class="{active:(messageFilterData.read == false)}"><a href=""><i class="fa fa-inbox"></i> UnRead <span class="label label-primary pull-right" ng-bind="unReadMailCount"></span></a></li>
+            <li ng-click="messageFilter({read:true});" ng-class="{active:messageFilterData.read == true}"><a href=""><i class="fa fa-inbox"></i> Read <span class="label label-primary pull-right" ng-bind="mails.length - unReadMailCount"></span></a></li>
           </ul>
         </div><!-- /.box-body -->
       </div><!-- /. box -->
@@ -48,7 +50,7 @@
     <div class="col-md-9">
       <div class="box box-primary">
         <div class="box-header with-border">
-          <h3 class="box-title">Inbox</h3>
+          <h3 class="box-title">Inbox {{ messageFilterData }}</h3>
           <div class="box-tools pull-right">
             <div class="has-feedback">
               <input type="text" class="form-control input-sm" placeholder="Search Mail"/>
@@ -64,6 +66,8 @@
               <button class="btn btn-default btn-sm"><i class="fa fa-trash-o"></i></button>
               <button class="btn btn-default btn-sm"><i class="fa fa-reply"></i></button>
               <button class="btn btn-default btn-sm"><i class="fa fa-share"></i></button>
+              <button ng-click="markRead()" class="btn btn-default btn-sm"><i class="fa fa-check-square-o"></i></button>
+
             </div><!-- /.btn-group -->
             <button class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button>
             <div class="pull-right">
@@ -77,12 +81,12 @@
           <div class="table-responsive mailbox-messages">
             <table class="table table-hover table-striped">
               <tbody>
-                <tr  ng-style="mail.style"  ng-repeat="mail in mails | filter : currentMailbox | orderBy:'-date'" ng-click="readMail(mail)">
-                  <td><input type="checkbox" /></td>
+                <tr  ng-style="mail.style"  ng-repeat="mail in mails | filter: messageFilterData:strict | orderBy:'-date'">
+                  <td><input type="checkbox" ng-model="mailsMarked" checklist-model="mailsMarked" checklist-value="mail" /></td>
                   <!-- <td class="mailbox-star"><a href="#"><i class="fa fa-star text-yellow"></i></a></td> -->
-                  <tdclass="mailbox-name"><a href="read-mail.html">{{mail.from.name}}</a></td>
-                  <td class="mailbox-subject">{{mail.title}}</td>
-                  <td class="mailbox-date">{{mail.date.toString()}}</td>
+                  <tdclass="mailbox-name"  ng-click="readMail(mail)">{{mail.from.name}}</td>
+                  <td class="mailbox-subject"  ng-click="readMail(mail)">{{mail.title}}</td>
+                  <td class="mailbox-date"  ng-click="readMail(mail)">{{mail.date.toString()}}</td>
                   <td class="mailbox-box"><span class="label" style="background-color: {{mail.mailbox.color}};">{{ mail.mailbox.name }}</span></td>
                   <td></td>
                 </tr>
@@ -99,6 +103,8 @@
               <button class="btn btn-default btn-sm"><i class="fa fa-trash-o"></i></button>
               <button class="btn btn-default btn-sm"><i class="fa fa-reply"></i></button>
               <button class="btn btn-default btn-sm"><i class="fa fa-share"></i></button>
+              <button ng-click="markRead()" class="btn btn-default btn-sm"><i class="fa fa-check-square-o"></i></button>
+
             </div><!-- /.btn-group -->
             <button class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button>
             <div class="pull-right">

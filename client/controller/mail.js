@@ -1,17 +1,22 @@
 module.exports = function($scope, socket, sharedData, $location){
 
+  var mailsByUID = {};
   $scope.mails = [];
+  $scope.mailsMarked = [];
   $scope.unReadMailCount = 0;
   $scope.mailCount = 0;
   $scope.mailboxes = [];
   $scope.currentMailbox = undefined;
   $scope.mailboxUnReadMailCount = {};
+  $scope.messageFilterData = {read:false};
   var updateData = function(){
     var unReadMailCount = 0;
     for(var i in $scope.mails){
       var mail = $scope.mails[i];
       var style = {};
+      mail.read = true;
       if(mail.flags.indexOf('\\Seen') == -1){
+        mail.read = false;
         style['font-weight'] ="bold";
         unReadMailCount++;
         if($scope.mailboxUnReadMailCount[mail.mailbox.id] == null){
@@ -21,7 +26,7 @@ module.exports = function($scope, socket, sharedData, $location){
         }
       }
       mail.style = style;
-
+      $scope.mails[i] = mail;
     }
     $scope.mailCount = $scope.mails.length;
     $scope.unReadMailCount = unReadMailCount;
@@ -34,9 +39,9 @@ module.exports = function($scope, socket, sharedData, $location){
 
   $scope.changeCurrentMailBox = function(mailbox){
     if(mailbox != null){
-      $scope.currentMailbox = mailbox;
+      $scope.messageFilterData.mailbox = mailbox;
     }else{
-      $scope.currentMailbox = undefined;
+      $scope.messageFilterData.mailbox = undefined;
     }
   };
 
@@ -53,6 +58,7 @@ module.exports = function($scope, socket, sharedData, $location){
               id: mailbox._id,
               color: mailbox.color,
             };
+            mailsByUID[mail.UID] = mail;
             $scope.mails.push(mail);
           }
           updateData();
@@ -60,5 +66,22 @@ module.exports = function($scope, socket, sharedData, $location){
       })(_mailbox);
     }
   });
+
+  $scope.messageFilter =function(type){
+    $scope.messageFilterData = type;
+  }
+
+
+  $scope.markRead = function(){
+    socket.emit('mailbox/markRead', $scope.mailsMarked, function(errors, mailsFlags){
+      
+      if(errors.length > 0){ console.log(errors); }
+      for(var uid in mailsFlags){
+        mailsByUID[uid].flags = mailsFlags[uid];
+      }
+      $scope.mails = Object.keys(mailsByUID).map(function(k){return mailsByUID[k]});
+      updateData();
+    });
+  }
 
 };
