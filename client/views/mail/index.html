@@ -27,7 +27,7 @@
         <div class="box-body no-padding">
           <ul class="nav nav-pills nav-stacked">
             <li ng-click="messageFilter({});" ng-class="{active:messageFilterData.read == null}"><a href=""><i class="fa fa-inbox"></i> All<span class="label label-primary pull-right" ng-bind="mails.length"></span></a></li>
-            <li ng-click="messageFilter({read:false});" ng-class="{active:(messageFilterData.read == false)}"><a href=""><i class="fa fa-inbox"></i> UnRead <span class="label label-primary pull-right" ng-bind="unReadMailCount"></span></a></li>
+            <li ng-click="messageFilter({read:false});" ng-class="{active:(messageFilterData.read == false)}"><a href=""><i class="fa fa-inbox"></i> Unread <span class="label label-primary pull-right" ng-bind="unReadMailCount"></span></a></li>
             <li ng-click="messageFilter({read:true});" ng-class="{active:messageFilterData.read == true}"><a href=""><i class="fa fa-inbox"></i> Read <span class="label label-primary pull-right" ng-bind="mails.length - unReadMailCount"></span></a></li>
           </ul>
         </div><!-- /.box-body -->
