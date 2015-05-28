@@ -114,8 +114,8 @@ module.exports = function(passport) {
 
 
     var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
-    var GOOGLE_CLIENT_ID = config.google.auth.clientId;
-    var GOOGLE_CLIENT_SECRET = "0kXR2Os9Cy59-JnUMoYsi22D"
+    var GOOGLE_CLIENT_ID = config.google.auth.clientID;
+    var GOOGLE_CLIENT_SECRET = config.google.auth.clientSecret;
     passport.use('gmail-login', new GoogleStrategy({
         clientID: GOOGLE_CLIENT_ID,
         clientSecret: GOOGLE_CLIENT_SECRET,
