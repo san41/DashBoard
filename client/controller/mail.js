@@ -5,7 +5,7 @@ module.exports = function($scope, socket, sharedData, $location){
   $scope.mailCount = 0;
   $scope.mailboxes = [];
   $scope.currentMailbox = undefined;
-
+  $scope.mailboxUnReadMailCount = {};
   var updateData = function(){
     var unReadMailCount = 0;
     for(var i in $scope.mails){
@@ -14,6 +14,11 @@ module.exports = function($scope, socket, sharedData, $location){
       if(mail.flags.indexOf('\\Seen') == -1){
         style['font-weight'] ="bold";
         unReadMailCount++;
+        if($scope.mailboxUnReadMailCount[mail.mailbox.id] == null){
+          $scope.mailboxUnReadMailCount[mail.mailbox.id] = 1;
+        }else{
+          $scope.mailboxUnReadMailCount[mail.mailbox.id] += 1
+        }
       }
       mail.style = style;
 

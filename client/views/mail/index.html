@@ -26,11 +26,7 @@
         </div>
         <div class="box-body no-padding">
           <ul class="nav nav-pills nav-stacked">
-            <li class="active"><a href=""><i class="fa fa-inbox"></i> Inbox <span class="label label-primary pull-right">12</span></a></li>
-            <li><a href=""><i class="fa fa-envelope-o"></i> Sent</a></li>
-            <li><a href=""><i class="fa fa-file-text-o"></i> Drafts</a></li>
-            <li><a href=""><i class="fa fa-filter"></i> Junk <span class="label label-waring pull-right">65</span></a></li>
-            <li><a href=""><i class="fa fa-trash-o"></i> Trash</a></li>
+            <li class="active"><a href=""><i class="fa fa-inbox"></i> Inbox <span class="label label-primary pull-right" ng-bind="unReadMailCount"></span></a></li>
           </ul>
         </div><!-- /.box-body -->
       </div><!-- /. box -->
@@ -42,7 +38,9 @@
         </div>
         <div class="box-body no-padding">
           <ul class="nav nav-pills nav-stacked">
-            <li ng-repeat="mailbox in mailboxes"><a ng-click="changeCurrentMailBox(mailbox.name)"><i class="fa fa-circle-o" style="color:{{mailbox.color}}"></i>{{mailbox.name}}</a></li>
+            <li ng-repeat="mailbox in mailboxes"><a ng-click="changeCurrentMailBox(mailbox.name)"><i class="fa fa-circle-o" style="color:{{mailbox.color}}"></i>{{mailbox.name}}
+            <span class="label label-primary pull-right" ng-bind="mailboxUnReadMailCount[mailbox._id]"></span>
+            </a></li>
           </ul>
         </div><!-- /.box-body -->
       </div><!-- /.box -->
