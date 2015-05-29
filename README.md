@@ -1,6 +1,10 @@
 # DashBoard
 By [Ralmn](http://ralmn.fr)
+
 [Twitter](https://twitter.com/ralmn45)
+
+[Trello](https://trello.com/b/ipTaldH0/dashboard)
+
 ##Installation 
 
 First thing first:
