@@ -17,12 +17,12 @@ var MongoStore = require('connect-mongo')(session);
 
 var io = require('socket.io')(server);
 
-var configDB = require('../config/database.js');
+var databaseURL = require('../config/config.js').database.url;
 
 server.listen(port);
 
 // configuration ===============================================================
-mongoose.connect(configDB.url); // connect to our database
+mongoose.connect(databaseURL); // connect to our database
 
 var mongoStore = new MongoStore({mongooseConnection: mongoose.connection});
 
