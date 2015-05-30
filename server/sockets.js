@@ -59,7 +59,7 @@ module.exports = function(io){
             var mailparser = new MailParser();
             var messageStream = client.createMessageStream(uid).pipe(mailparser);
             mailparser.on('end', function(mail_object){
-              callback(err, mail_object.html);
+              callback(err, mail_object.html ?  mail_object.html : ('<p>' + mail_object.text +'</p>'));
             })
           })
         });
