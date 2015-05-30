@@ -4,6 +4,7 @@ module.exports = function($scope, socket, $location){
   socket.emit('mailbox/list', function(err, mailboxes){
     if(!err){
       $scope.$apply(function(){
+        console.log(mailboxes);
         $scope.mailboxes = mailboxes;      
       });
     }

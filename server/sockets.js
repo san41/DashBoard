@@ -1,6 +1,8 @@
 var MailBox = require('../models/mailbox.js')
 var inbox = require('inbox');
+var simplesmtp = require('simplesmtp');
 var MailParser = require("mailparser").MailParser;
+var MailComposer = require("mailcomposer").MailComposer;
 
 
 module.exports = function(io){
@@ -97,7 +99,7 @@ module.exports = function(io){
       var next = function(client){
         if(i >= mails.length){ console.log(mailsFlags);callback(errors, mailsFlags); return }
         if(client != null && mails[i].mailbox.id == mails[i-1].mailbox.id){
-            doAction(client, mails[i], next);
+          doAction(client, mails[i], next);
         }else{
           walk(mails[i], next);
         }
@@ -105,7 +107,39 @@ module.exports = function(io){
       }
       next();
     });
-  });
+
+socket.on('mailbox/send', function(mailbox, mail, callback){
+  var smtpOptions = {};
+  var host = null;
+  var port = 25;
+  if(mailbox.type == 'google'){
+    smtpOptions.auth = {
+      XOAuth2:{
+        user: mailbox.email,
+        clientId: mailbox.clientId,
+        clientSecret: mailbox.clientSecret,
+        refreshToken: mailbox.refreshToken,
+        accessToken: mailbox.accessToken,
+        timeout: 3600
+      }
+    }
+    host = 'smtp.gmail.com';
+  }else{
+    smtpOptions.secureConnection = mailbox.secure;
+    smtpOptions.auth = {
+      user : mailbox.username,
+      pass: mailbox.password
+    };
+    port = mailbox.smtpPort;
+    host = mailbox.smtp;
+  }
+  var smtpPool = simplesmtp.createClientPool(port, host, smtpOptions);
+  var poolMail = new MailComposer();
+  poolMail.setMessageOption(mail);
+  smtpPool.sendMail(poolMail, callback);
+})
+
+});
 
 function connectToMailBox(mailbox, callback){
   var client = createClientFromMailbox(mailbox);

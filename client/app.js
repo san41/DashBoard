@@ -17,6 +17,9 @@ app.config(function($routeProvider){
   }).when('/mail/read', {
     templateUrl: "views/mail/read.html",
     controller:"MailReadController" 
+  }).when('/mail/send', {
+    templateUrl: "views/mail/send.html",
+    controller:"MailSendController" 
   }).when('/settings/mailbox', {
     templateUrl: 'views/settings/mailbox/index.html',
     controller:'MailBoxSettingsController'
@@ -52,6 +55,7 @@ app.run(function($rootScope){
 
 app.controller('MailController', require('./controller/mail'));
 app.controller('MailReadController', require('./controller/readMail'));
+app.controller('MailSendController', require('./controller/sendMail'));
 
 app.controller('MainController', function($scope){ $scope.init = true; });
 app.controller('HomeController', function(){});
