@@ -5,6 +5,9 @@ module.exports = function($scope, socket, sharedData, $location,$sce){
     mailData = sharedData.get('mail-reply');
     $scope.subject = mailData.subject;
     $scope.to = mailData.to;
+    if(mailData.content != null){
+      $scope.content = mailData.content;
+    }
     sharedData.set('mail-reply',null);
   }
 

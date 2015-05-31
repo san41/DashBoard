@@ -25,4 +25,20 @@ module.exports = function($scope, socket, sharedData, $location,$sce){
     $location.path('/mail/send');
   }
 
+  $scope.forward = function(){
+    var newSubject = "Fwd: " + $scope.mail.title;
+    var to = $scope.mail.from.address;
+    var mailbox = $scope.mailbox != null ? $scope.mailbox :  $scope.mail.mailbox;
+    var fowardHeader = '---------- Forwarded message --------- \n From: '+ $scope.mail.from.name +' <'+ $scope.mail.from.address +'> \n Date: '+ $scope.mail.date +' \nSubject: '+ $scope.mail.title +' \n';
+
+    var replyMail = {
+      subject: newSubject,
+      from: mailbox,
+      to: '',
+      content: fowardHeader + "\n" + $scope.content
+    };
+    sharedData.set('mail-reply', replyMail);
+    $location.path('/mail/send');
+  }
+
 }

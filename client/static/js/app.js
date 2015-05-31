@@ -132,6 +132,22 @@ module.exports = function($scope, socket, sharedData, $location,$sce){
     $location.path('/mail/send');
   }
 
+  $scope.forward = function(){
+    var newSubject = "Fwd: " + $scope.mail.title;
+    var to = $scope.mail.from.address;
+    var mailbox = $scope.mailbox != null ? $scope.mailbox :  $scope.mail.mailbox;
+    var fowardHeader = '---------- Forwarded message --------- \n From: '+ $scope.mail.from.name +' <'+ $scope.mail.from.address +'> \n Date: '+ $scope.mail.date +' \nSubject: '+ $scope.mail.title +' \n';
+
+    var replyMail = {
+      subject: newSubject,
+      from: mailbox,
+      to: '',
+      content: fowardHeader + "\n" + $scope.content
+    };
+    sharedData.set('mail-reply', replyMail);
+    $location.path('/mail/send');
+  }
+
 }
 },{}],3:[function(require,module,exports){
 module.exports = function($scope, socket, sharedData, $location,$sce){
@@ -141,6 +157,9 @@ module.exports = function($scope, socket, sharedData, $location,$sce){
     mailData = sharedData.get('mail-reply');
     $scope.subject = mailData.subject;
     $scope.to = mailData.to;
+    if(mailData.content != null){
+      $scope.content = mailData.content;
+    }
     sharedData.set('mail-reply',null);
   }
 
