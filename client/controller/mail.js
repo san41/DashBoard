@@ -127,7 +127,7 @@ module.exports = function($scope, socket, sharedData, $location, $filter, $timeo
         mailsMarked.push(mailsByUID[uid]);
       }
     }
-    toaster.pop('info', "Request to delete", 'Request to delete '+ Object.keys(mailsMarked).length + " mails");
+    toaster.pop('info', "Request deletion", 'Request deletion of '+ Object.keys(mailsMarked).length + " mails");
     socket.emit('mailbox/deleteMail', mailsMarked, function(errors, UIDDeleted){
       console.log(errors, UIDDeleted);
       if(errors.length > 0){
