@@ -26,21 +26,21 @@
         </div>
         <div class="box-body no-padding">
           <ul class="nav nav-pills nav-stacked">
-            <li ng-click="messageFilter({});" ng-class="{active:messageFilterData.read == null}"><a href=""><i class="fa fa-inbox"></i> All<span class="label label-primary pull-right" ng-bind="mails.length"></span></a></li>
-            <li ng-click="messageFilter({read:false});" ng-class="{active:(messageFilterData.read == false)}"><a href=""><i class="fa fa-inbox"></i> Unread <span class="label label-primary pull-right" ng-bind="unReadMailCount"></span></a></li>
-            <li ng-click="messageFilter({read:true});" ng-class="{active:messageFilterData.read == true}"><a href=""><i class="fa fa-inbox"></i> Read <span class="label label-primary pull-right" ng-bind="mails.length - unReadMailCount"></span></a></li>
+            <li ng-click="messageFilterData.read = undefined" ng-class="{active:messageFilterData.read == null}"><a href=""><i class="fa fa-inbox"></i> All<span class="label label-primary pull-right" ng-bind="mails.length"></span></a></li>
+            <li ng-click="messageFilterData.read = false" ng-class="{active:(messageFilterData.read == false)}"><a href=""><i class="fa fa-inbox"></i> Unread <span class="label label-primary pull-right" ng-bind="unReadMailCount"></span></a></li>
+            <li ng-click="messageFilterData.read = true" ng-class="{active:messageFilterData.read == true}"><a href=""><i class="fa fa-inbox"></i> Read <span class="label label-primary pull-right" ng-bind="mails.length - unReadMailCount"></span></a></li>
           </ul>
         </div><!-- /.box-body -->
       </div><!-- /. box -->
 
     <!-- MailBox box -->
       <div class="box box-solid">
-        <div class="box-header with-border"  ng-click="changeCurrentMailBox(null)">
+        <div class="box-header with-border"  ng-click="messageFilterData.mailbox = undefined">
           <h3 class="box-title">MailBox</h3>
         </div>
         <div class="box-body no-padding">
           <ul class="nav nav-pills nav-stacked">
-            <li ng-repeat="mailbox in mailboxes"><a ng-click="changeCurrentMailBox(mailbox.name)"><i class="fa fa-circle-o" style="color:{{mailbox.color}}"></i>{{mailbox.name}}
+            <li ng-repeat="mailbox in mailboxes"><a ng-click="messageFilterData.mailbox.id = mailbox._id"><i class="fa fa-circle-o" style="color:{{mailbox.color}}"></i>{{mailbox.name}}
             <span class="label label-primary pull-right" ng-bind="mailboxUnReadMailCount[mailbox._id]"></span>
             </a></li>
           </ul>
@@ -79,7 +79,7 @@
           <div class="table-responsive mailbox-messages">
             <table class="table table-hover table-striped">
               <tbody>
-                <tr  ng-style="mail.style"  ng-repeat="mail in mails | filter: messageFilterData:strict | orderBy:'-date'">
+                <tr  ng-style="mail.style"  ng-repeat="mail in mails | filter: messageFilterData | orderBy:'-date'">
                   <td><input type="checkbox" ng-checked="mailsMarked[mail.UID]" ng-model="mailsMarked[mail.UID]"/></td>
                   <!-- <td class="mailbox-star"><a href="#"><i class="fa fa-star text-yellow"></i></a></td> -->
                   <tdclass="mailbox-name"  ng-click="readMail(mail)">{{mail.from.name}}</td>
