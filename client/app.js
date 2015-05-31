@@ -72,9 +72,7 @@ app.controller('MailReadController', require('./controller/readMail'));
 app.controller('MailSendController', require('./controller/sendMail'));
 
 app.controller('MainController', function($scope){ $scope.init = true; });
-app.controller('HomeController', function(toaster){
-
-});
+app.controller('HomeController', require('./controller/home'));
 app.controller('MailBoxSettingsController', require('./controller/settings/mailbox.js'));
 app.controller('CreateMailBoxSettingsController', require('./controller/settings/createMailbox.js'));
 
