@@ -82,7 +82,7 @@
                 <tr  ng-style="mail.style"  ng-repeat="mail in mails | filter: messageFilterData | orderBy:'-date'">
                   <td><input type="checkbox" ng-checked="mailsMarked[mail.UID]" ng-model="mailsMarked[mail.UID]"/></td>
                   <!-- <td class="mailbox-star"><a href="#"><i class="fa fa-star text-yellow"></i></a></td> -->
-                  <tdclass="mailbox-name"  ng-click="readMail(mail)">{{mail.from.name}}</td>
+                  <td class="mailbox-name"  ng-click="readMail(mail)">{{mail.from.name}} <{{  mail.from.address }}></td>
                   <td class="mailbox-subject"  ng-click="readMail(mail)">{{mail.title}}</td>
                   <td class="mailbox-date"  ng-click="readMail(mail)">{{mail.date.toString()}}</td>
                   <td class="mailbox-box"><span class="label" style="background-color: {{mail.mailbox.color}};">{{ mail.mailbox.name }}</span></td>
