@@ -1,14 +1,25 @@
-module.exports = function($scope, socket, sharedData, $location,$sce){
+module.exports = function($scope, socket, sharedData, $location,$sce, toaster, $rootScope){
 
   $scope.mail = sharedData.get('mail-read');  
   $scope.content = "<center>Loading....</center>";
   if($scope.mail == null){ $location.path('/mail'); return; }
   socket.emit('mailbox/getMailContent', $scope.mail, function(err, data){
+    if(err){
+      toaster.pop('error', 'Erreur', err);
+      $rootScope.$apply();
+      return; 
+    }
     $scope.content = $sce.trustAsHtml(data);
   });
 
   $scope.mailbox = null;
   socket.emit('mailbox/get', {_id: $scope.mail.mailbox.id}, function(err, data){
+    if(err){
+      toaster.pop('error', 'Erreur', err);
+      $rootScope.$apply();
+
+      return; 
+    }
     $scope.mailbox = data;
   });
 

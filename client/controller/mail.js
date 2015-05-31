@@ -1,4 +1,4 @@
-module.exports = function($scope, socket, sharedData, $location, $filter, $timeout){
+module.exports = function($scope, socket, sharedData, $location, $filter, $timeout, toaster, $rootScope){
 
   var mailsByUID = {};
   $scope.mails = [];
@@ -9,6 +9,8 @@ module.exports = function($scope, socket, sharedData, $location, $filter, $timeo
   $scope.currentMailbox = undefined;
   $scope.mailboxUnReadMailCount = {};
   $scope.messageFilterData = {read:false};
+
+
   var updateData = function(){
     var unReadMailCount = 0;
     for(var i in $scope.mails){
@@ -49,20 +51,28 @@ module.exports = function($scope, socket, sharedData, $location, $filter, $timeo
     var mails = $filter('filter')($scope.mails, $scope.messageFilterData)
     var tmpMailsMarked = {};
     if(Object.keys($scope.mailsMarked).length != mails.length){
-    for(var i in mails){
+      for(var i in mails){
         tmpMailsMarked[mails[i].UID] = true;
       }
     }
     $scope.mailsMarked = tmpMailsMarked;
-    console.log($scope.mailsMarked);
   }
 
   socket.emit('mailbox/list', function(err, mailboxes){
+    if(err){
+      toaster.put('error', 'Erreur', err);
+      return; 
+    }
     $scope.mailboxes = mailboxes;
     for(var i in mailboxes){
       var _mailbox = mailboxes[i];
       (function(mailbox){
         socket.emit('mails/request', mailbox, function(err, mails){
+          if(err){
+            toaster.pop('error', 'Erreur', err);
+            $rootScope.$apply();
+            return;
+          }
           for(var i in mails){
             var mail = mails[i];
             mail.mailbox = {
@@ -92,8 +102,15 @@ module.exports = function($scope, socket, sharedData, $location, $filter, $timeo
       }
     }
     socket.emit('mailbox/markRead', mailsMarked, function(errors, mailsFlags){
+      if(errors.length > 0){
+        for(var i in errors){
+          var err = errors[i];
+          toaster.pop('error', 'Erreur', err);
+          $rootScope.$apply();
 
-      if(errors.length > 0){ console.log(errors); }
+        }
+        return; 
+      }
       for(var uid in mailsFlags){
         mailsByUID[uid].flags = mailsFlags[uid];
       }

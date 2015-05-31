@@ -3,8 +3,10 @@ var angular = require('angular');
 require('angular-route');
 require('angular-sanitize');
 require('angular-socket-io');
+require('angular-animate');
+require('angularjs-toaster');
 
-var app = angular.module("dbapp", ['ngRoute', 'btford.socket-io', 'ngSanitize']);
+var app = angular.module("dbapp", ['ngRoute', 'btford.socket-io', 'ngSanitize', 'toaster', 'ngAnimate']);
 
 app.config(function($routeProvider){
   $routeProvider.when('/home', {
@@ -37,11 +39,23 @@ app.config(function($routeProvider){
       });
 });
 
-app.factory('socket', function(socketFactory, $rootScope){
+app.factory('socket', function(socketFactory, $rootScope, toaster){
+
   var myIoSocket = io.connect();
   myIoSocket.on('globalSettings', function(globalSettings){
     $rootScope.globalSettings = globalSettings;
-  })
+  });
+  myIoSocket.on('error', function(error){
+    toaster.pop('error', 'Erreur', error.toString());
+  });
+  myIoSocket.on('disconnect', function(){
+    toaster.pop("warning", "Perte de connexion", "Le serveur socket.io n'est plus joignable");
+    $rootScope.$apply();
+  });
+  myIoSocket.on('reconnect', function(){
+    toaster.pop("info", "Reconnexion", "Le serveur socket.io est de nouveau joignable");
+    $rootScope.$apply();
+  });
   return socketFactory({ioSocket:myIoSocket});
 });
 
@@ -57,7 +71,9 @@ app.controller('MailReadController', require('./controller/readMail'));
 app.controller('MailSendController', require('./controller/sendMail'));
 
 app.controller('MainController', function($scope){ $scope.init = true; });
-app.controller('HomeController', function(){});
+app.controller('HomeController', function(toaster){
+
+});
 app.controller('MailBoxSettingsController', require('./controller/settings/mailbox.js'));
 app.controller('CreateMailBoxSettingsController', require('./controller/settings/createMailbox.js'));
 

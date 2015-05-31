@@ -1,4 +1,4 @@
-module.exports = function($scope, socket, sharedData, $location,$sce){
+module.exports = function($scope, socket, sharedData, $location,$sce, toaster, $rootScope){
   $scope.mailboxes = [];
   var mailData = null;
   if(sharedData.get('mail-reply')){
@@ -12,16 +12,20 @@ module.exports = function($scope, socket, sharedData, $location,$sce){
   }
 
   socket.emit('mailbox/list', function(err, mailboxes){
-    if(!err){
-      $scope.$apply(function(){
-        $scope.mailboxes = mailboxes;      
-        $scope.mailbox = mailboxes[0];
-         if(mailData){
-          $scope.mailbox = mailData.from;
-          $scope.$digest();
-         }
-      });
+    if(err){
+      toaster.pop('error', 'Erreur', err);
+      $rootScope.$apply();
+
+      return; 
     }
+    $scope.$apply(function(){
+      $scope.mailboxes = mailboxes;      
+      $scope.mailbox = mailboxes[0];
+      if(mailData){
+        $scope.mailbox = mailData.from;
+        $scope.$digest();
+      }
+    });
   });
 
   
@@ -38,9 +42,16 @@ module.exports = function($scope, socket, sharedData, $location,$sce){
       from: mailbox.name
     };
     socket.emit('mailbox/send', mailbox, mail, function(err, data){
-      console.log(err, data);
+      if(err){
+        console.log(err, data);
+        toaster.pop('error', 'Erreur', err, 5000);
+        $rootScope.$apply();
+        return; 
+      };
+      toaster.pop('info', null, 'Email envoyer');
+      $rootScope.$apply();
+      $location.path('/mail');
     });
-    $location.path('/mail');
   }
 
 }

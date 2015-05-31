@@ -8,7 +8,7 @@ var MailComposer = require("mailcomposer").MailComposer;
 module.exports = function(io){
 
   io.on('connect', function(socket){
-
+    try{
     socket.emit("globalSettings", {
       MailBox: {
         googleLoginEnable : MailBox.googleLoginEnable
@@ -87,31 +87,31 @@ module.exports = function(io){
       var walk = function(mail,next){
         if(mail.mailbox == null){
           errors.push(new Error("Mailbox is null :("));
-          next();
-          return;
-        }
-        MailBox.findById(mail.mailbox.id, function(err, mailbox){
-          connectToMailBox(mailbox, function(err, client){
-            if(err) { errors.push(err); next(); return; }
-            client.openMailbox("INBOX", function(err, info){
+            next();
+            return;
+          }
+          MailBox.findById(mail.mailbox.id, function(err, mailbox){
+            connectToMailBox(mailbox, function(err, client){
               if(err) { errors.push(err); next(); return; }
-              doAction(client, mail, next);
+              client.openMailbox("INBOX", function(err, info){
+                if(err) { errors.push(err); next(); return; }
+                doAction(client, mail, next);
+              });
             });
           });
-        });
-      }
-
-      var next = function(client){
-        if(i >= mails.length){ callback(errors, mailsFlags); return }
-        if(client != null && mails[i].mailbox.id == mails[i-1].mailbox.id){
-          doAction(client, mails[i], next);
-        }else{
-          walk(mails[i], next);
         }
-        i++;
-      }
-      next();
-    });
+
+        var next = function(client){
+          if(i >= mails.length){ callback(errors, mailsFlags); return }
+          if(client != null && mails[i].mailbox.id == mails[i-1].mailbox.id){
+            doAction(client, mails[i], next);
+          }else{
+            walk(mails[i], next);
+          }
+          i++;
+        }
+        next();
+      });
 
 socket.on('mailbox/send', function(mailbox, mail, callback){
   var smtpOptions = {};
@@ -144,8 +144,6 @@ socket.on('mailbox/send', function(mailbox, mail, callback){
   smtpPool.sendMail(poolMail, callback);
 })
 
-});
-
 function connectToMailBox(mailbox, callback){
   var client = createClientFromMailbox(mailbox);
   if(client == null){
@@ -169,7 +167,7 @@ function createClientFromMailbox(mailbox){
         pass: mailbox.password
       }
     });
-    
+
   }else if(mailbox.type == "google"){
     client = inbox.createConnection(false, "imap.gmail.com", {
       secureConnection: true,
@@ -185,7 +183,14 @@ function createClientFromMailbox(mailbox){
       }
     });
   }
+  
   return client;
 }
+}catch(error){
+  console.log(error);
+  socket.on('error', error);
+}
+});
+
 
 }

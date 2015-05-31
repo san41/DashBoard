@@ -1,13 +1,15 @@
-module.exports = function($scope, socket, $location){
+module.exports = function($scope, socket, $location, toaster){
   $scope.mailboxes = []
 
   socket.emit('mailbox/list', function(err, mailboxes){
-    if(!err){
-      $scope.$apply(function(){
-        console.log(mailboxes);
-        $scope.mailboxes = mailboxes;      
-      });
+    if(err){
+      toaster.put('error', 'Erreur', err);
+      return; 
     }
+    $scope.$apply(function(){
+      console.log(mailboxes);
+      $scope.mailboxes = mailboxes;      
+    });
   });
 
   $scope.edit = function(id){

@@ -8,7 +8,7 @@ gulp.task("browserify", function(){
 })
 
 
-gulp.task('default', [], function(){
+gulp.task('default', ['browserify'], function(){
   gulp.watch(['app.js', '**/*.js', '!static/js/app.js'], ['browserify']);
 })
 

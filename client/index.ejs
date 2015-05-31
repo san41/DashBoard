@@ -19,6 +19,7 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/2.5.0/less.min.js"></script>
 
     <script src="/static/theme/plugins/jQuery/jQuery-2.1.4.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/0.4.9/toaster.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -36,6 +37,7 @@
       <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <ng-view></ng-view>
+        <toaster-container></toaster-container>
       </div><!-- /.content-wrapper -->
 
       <!-- Main Footer -->
@@ -49,7 +51,8 @@
       </footer>
 
       <!-- Control Sidebar -->
-      <control-side-bar></control-side-bar>
+      <control-side-bar></control-side-bar> 
+      
 
     </div>
   <script>
