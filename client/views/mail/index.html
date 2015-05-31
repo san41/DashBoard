@@ -40,7 +40,7 @@
         </div>
         <div class="box-body no-padding">
           <ul class="nav nav-pills nav-stacked">
-            <li ng-repeat="mailbox in mailboxes"><a ng-click="messageFilterData.mailbox.id = mailbox._id"><i class="fa fa-circle-o" style="color:{{mailbox.color}}"></i>{{mailbox.name}}
+            <li ng-repeat="mailbox in mailboxes" ng-class="{active: messageFilterData.mailbox.id == mailbox._id}"><a ng-click="messageFilterData.mailbox.id = mailbox._id"><i class="fa fa-circle-o" style="color:{{mailbox.color}}"></i>{{mailbox.name}}
             <span class="label label-primary pull-right" ng-bind="mailboxUnReadMailCount[mailbox._id]"></span>
             </a></li>
           </ul>
