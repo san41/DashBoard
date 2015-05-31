@@ -1,14 +1,27 @@
 module.exports = function($scope, socket, sharedData, $location,$sce){
   $scope.mailboxes = [];
+  var mailData = null;
+  if(sharedData.get('mail-reply')){
+    mailData = sharedData.get('mail-reply');
+    $scope.subject = mailData.subject;
+    $scope.to = mailData.to;
+    sharedData.set('mail-reply',null);
+  }
 
   socket.emit('mailbox/list', function(err, mailboxes){
     if(!err){
       $scope.$apply(function(){
         $scope.mailboxes = mailboxes;      
+        $scope.mailbox = mailboxes[0];
+         if(mailData){
+          $scope.mailbox = mailData.from;
+          $scope.$digest();
+         }
       });
     }
   });
 
+  
 
   $scope.send = function(){
     var mailbox = $scope.mailbox;
