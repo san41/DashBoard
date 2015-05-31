@@ -1,8 +1,8 @@
-module.exports = function($scope, socket, sharedData, $location){
+module.exports = function($scope, socket, sharedData, $location, $filter, $timeout){
 
   var mailsByUID = {};
   $scope.mails = [];
-  $scope.mailsMarked = [];
+  $scope.mailsMarked = {};
   $scope.unReadMailCount = 0;
   $scope.mailCount = 0;
   $scope.mailboxes = [];
@@ -45,6 +45,18 @@ module.exports = function($scope, socket, sharedData, $location){
     }
   };
 
+  $scope.selectAll = function(){
+    var mails = $filter('filter')($scope.mails, $scope.messageFilterData)
+    var tmpMailsMarked = {};
+    if(Object.keys($scope.mailsMarked).length != mails.length){
+    for(var i in mails){
+        tmpMailsMarked[mails[i].UID] = true;
+      }
+    }
+    $scope.mailsMarked = tmpMailsMarked;
+    console.log($scope.mailsMarked);
+  }
+
   socket.emit('mailbox/list', function(err, mailboxes){
     $scope.mailboxes = mailboxes;
     for(var i in mailboxes){
@@ -73,8 +85,14 @@ module.exports = function($scope, socket, sharedData, $location){
 
 
   $scope.markRead = function(){
-    socket.emit('mailbox/markRead', $scope.mailsMarked, function(errors, mailsFlags){
-      
+    var mailsMarked = [];
+    for(var uid in $scope.mailsMarked){
+      if($scope.mailsMarked[uid]){
+        mailsMarked.push(mailsByUID[uid]);
+      }
+    }
+    socket.emit('mailbox/markRead', mailsMarked, function(errors, mailsFlags){
+
       if(errors.length > 0){ console.log(errors); }
       for(var uid in mailsFlags){
         mailsByUID[uid].flags = mailsFlags[uid];

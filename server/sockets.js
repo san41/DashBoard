@@ -85,6 +85,11 @@ module.exports = function(io){
 
 
       var walk = function(mail,next){
+        if(mail.mailbox == null){
+          errors.push(new Error("Mailbox is null :("));
+          next();
+          return;
+        }
         MailBox.findById(mail.mailbox.id, function(err, mailbox){
           connectToMailBox(mailbox, function(err, client){
             if(err) { errors.push(err); next(); return; }
@@ -97,7 +102,7 @@ module.exports = function(io){
       }
 
       var next = function(client){
-        if(i >= mails.length){ console.log(mailsFlags);callback(errors, mailsFlags); return }
+        if(i >= mails.length){ callback(errors, mailsFlags); return }
         if(client != null && mails[i].mailbox.id == mails[i-1].mailbox.id){
           doAction(client, mails[i], next);
         }else{

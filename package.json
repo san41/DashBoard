@@ -12,7 +12,6 @@
     "angular-socket-io": "^0.7.0",
     "bcrypt-nodejs": "latest",
     "body-parser": "~1.0.0",
-    "checklist-model": "^0.2.4",
     "connect-flash": "~0.1.1",
     "connect-mongo": "^0.8.1",
     "cookie-parser": "~1.0.0",

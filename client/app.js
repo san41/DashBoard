@@ -3,9 +3,8 @@ var angular = require('angular');
 require('angular-route');
 require('angular-sanitize');
 require('angular-socket-io');
-require('checklist-model');
 
-var app = angular.module("dbapp", ['ngRoute', 'btford.socket-io', 'ngSanitize', 'checklist-model']);
+var app = angular.module("dbapp", ['ngRoute', 'btford.socket-io', 'ngSanitize']);
 
 app.config(function($routeProvider){
   $routeProvider.when('/home', {
