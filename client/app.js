@@ -45,8 +45,9 @@ app.factory('socket', function(socketFactory, $rootScope, toaster){
   myIoSocket.on('globalSettings', function(globalSettings){
     $rootScope.globalSettings = globalSettings;
   });
-  myIoSocket.on('error', function(error){
-    toaster.pop('error', 'Erreur', error.toString());
+  myIoSocket.on('server-error', function(msg, error){
+    console.log(error, typeof(error), msg);
+    toaster.pop('error', 'Erreur', msg);
   });
   myIoSocket.on('disconnect', function(){
     toaster.pop("warning", "Perte de connexion", "Le serveur socket.io n'est plus joignable");

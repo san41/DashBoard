@@ -4,6 +4,7 @@ var port     = process.env.PORT || 5555;
 var mongoose = require('mongoose');
 var passport = require('passport');
 var flash    = require('connect-flash');
+var domain = require('domain');
 
 var server = require('http').Server(app);
 
@@ -78,8 +79,10 @@ io.use(passportSocketIo.authorize({
   }
 }));
 
-
-require('./sockets.js')(io);
+var d = domain.create();
+d.run(function(){
+  require('./sockets.js')(io, d); 
+});
 
 
 // launch ======================================================================

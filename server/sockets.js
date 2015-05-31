@@ -5,10 +5,9 @@ var MailParser = require("mailparser").MailParser;
 var MailComposer = require("mailcomposer").MailComposer;
 
 
-module.exports = function(io){
+module.exports = function(io, domain){
 
   io.on('connect', function(socket){
-    try{
     socket.emit("globalSettings", {
       MailBox: {
         googleLoginEnable : MailBox.googleLoginEnable
@@ -186,10 +185,15 @@ function createClientFromMailbox(mailbox){
   
   return client;
 }
-}catch(error){
-  console.log(error);
-  socket.on('error', error);
-}
+
+domain.on('error', function(err){
+  socket.emit('server-error', err.message, err); 
+  console.log(err, 'd');
+});
+process.on('uncaughtException', function(err){
+  socket.emit('server-error', err.message, err); 
+  console.log(err, err.message, 'p');
+});
 });
 
 
