@@ -6,7 +6,6 @@ module.exports = function($scope, socket, sharedData, $location, $filter, $timeo
   $scope.unReadMailCount = 0;
   $scope.mailCount = 0;
   $scope.mailboxes = [];
-  $scope.currentMailbox = undefined;
   $scope.mailboxUnReadMailCount = {};
   $scope.messageFilterData = {read:false};
 
@@ -41,9 +40,9 @@ module.exports = function($scope, socket, sharedData, $location, $filter, $timeo
 
   $scope.changeCurrentMailBox = function(mailbox){
     if(mailbox != null){
-      $scope.messageFilterData.mailbox = mailbox;
+      $scope.messageFilterData.mailbox.name = mailbox.name;
     }else{
-      $scope.messageFilterData.mailbox = undefined;
+      $scope.messageFilterData.mailbox.name = null;
     }
   };
 
@@ -101,6 +100,7 @@ module.exports = function($scope, socket, sharedData, $location, $filter, $timeo
         mailsMarked.push(mailsByUID[uid]);
       }
     }
+    toaster.pop('info', "Request to mark as read", 'Request to mark as read '+ Object.keys(mailsMarked).length + " mails");
     socket.emit('mailbox/markRead', mailsMarked, function(errors, mailsFlags){
       if(errors.length > 0){
         for(var i in errors){
@@ -114,6 +114,36 @@ module.exports = function($scope, socket, sharedData, $location, $filter, $timeo
       for(var uid in mailsFlags){
         mailsByUID[uid].flags = mailsFlags[uid];
       }
+      toaster.pop('info', "Marked as read", Object.keys(mailsFlags).length + " mails marked as read");
+
+      $scope.mails = Object.keys(mailsByUID).map(function(k){return mailsByUID[k]});
+      updateData();
+    });
+  }
+  $scope.delete = function(){
+    var mailsMarked = [];
+    for(var uid in $scope.mailsMarked){
+      if($scope.mailsMarked[uid]){
+        mailsMarked.push(mailsByUID[uid]);
+      }
+    }
+    toaster.pop('info', "Request to delete", 'Request to delete '+ Object.keys(mailsMarked).length + " mails");
+    socket.emit('mailbox/deleteMail', mailsMarked, function(errors, UIDDeleted){
+      console.log(errors, UIDDeleted);
+      if(errors.length > 0){
+        for(var i in errors){
+          var err = errors[i];
+          toaster.pop('error', 'Erreur', err);
+          $rootScope.$apply();
+
+        }
+        return; 
+      }
+      for(var i in UIDDeleted){
+        delete mailsByUID[UIDDeleted[i]];
+      }
+      toaster.pop('info', "Deleted", UIDDeleted.length + " mails deleted");
+
       $scope.mails = Object.keys(mailsByUID).map(function(k){return mailsByUID[k]});
       updateData();
     });

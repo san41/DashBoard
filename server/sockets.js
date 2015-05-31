@@ -141,7 +141,50 @@ socket.on('mailbox/send', function(mailbox, mail, callback){
   var poolMail = new MailComposer();
   poolMail.setMessageOption(mail);
   smtpPool.sendMail(poolMail, callback);
-})
+});
+
+socket.on('mailbox/deleteMail', function(mails, callback){
+      var errors = [];
+      UIDDelete = [];
+      var i = 0;
+
+      var doAction = function(client, mail, next){
+        client.deleteMessage(mail.UID, function(err){
+          if(err) { errors.push(err); next(client); return; }
+          UIDDelete.push(mail.UID);
+          next(client);
+        });
+      }
+
+
+      var walk = function(mail,next){
+        if(mail.mailbox == null){
+          errors.push(new Error("Mailbox is null :("));
+            next();
+            return;
+          }
+          MailBox.findById(mail.mailbox.id, function(err, mailbox){
+            connectToMailBox(mailbox, function(err, client){
+              if(err) { errors.push(err); next(); return; }
+              client.openMailbox("INBOX", function(err, info){
+                if(err) { errors.push(err); next(); return; }
+                doAction(client, mail, next);
+              });
+            });
+          });
+        }
+
+        var next = function(client){
+          if(i >= mails.length){ callback(errors, UIDDelete); return }
+          if(client != null && mails[i].mailbox.id == mails[i-1].mailbox.id){
+            doAction(client, mails[i], next);
+          }else{
+            walk(mails[i], next);
+          }
+          i++;
+        }
+        next();
+      });
 
 function connectToMailBox(mailbox, callback){
   var client = createClientFromMailbox(mailbox);
@@ -188,11 +231,11 @@ function createClientFromMailbox(mailbox){
 
 domain.on('error', function(err){
   socket.emit('server-error', err.message, err); 
-  console.log(err, 'd');
+  // console.log(err, 'd');
 });
 process.on('uncaughtException', function(err){
   socket.emit('server-error', err.message, err); 
-  console.log(err, err.message, 'p');
+  // console.log(err, err.message, 'p');
 });
 });
 

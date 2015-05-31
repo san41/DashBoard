@@ -52,4 +52,23 @@ module.exports = function($scope, socket, sharedData, $location,$sce, toaster, $
     $location.path('/mail/send');
   }
 
+  $scope.delete = function(){
+    toaster.pop('info', "Request to delete", 'request to mail delete');
+    socket.emit('mailbox/deleteMail', [$scope.mail], function(errors, UIDDeleted){
+      console.log(errors, UIDDeleted);
+      if(errors.length > 0){
+        for(var i in errors){
+          var err = errors[i];
+          toaster.pop('error', 'Erreur', err);
+          $rootScope.$apply();
+
+        }
+        return; 
+      }
+      if(UIDDeleted.length == 1)
+        toaster.pop('info', "Mail deleted");
+      $location.path('/mail');
+    });
+  }
+
 }
