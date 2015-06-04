@@ -1,0 +1,118 @@
+<section class="content-header">
+  <h1>
+    Mailbox
+    <small ng-show="unReadMailCount > 0"> {{unReadMailCount}} new messages</small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="#/"><i class="fa fa-dashboard"></i> Home</a></li>
+    <li class="active">Mailbox</li>
+  </ol>
+</section>
+
+
+
+<!-- Main content -->
+<section class="content">
+  <div class="row">
+    <div class="col-md-3">
+      <a href="/#/mail/send" class="btn btn-primary btn-block margin-bottom">Compose</a>
+      <!-- Folder box -->
+      <div class="box box-solid">
+        <div class="box-header with-border">
+          <h3 class="box-title">Messages</h3>
+          <div class='box-tools'>
+            <button class='btn btn-box-tool' data-widget='collapse'><i class='fa fa-minus'></i></button>
+          </div>
+        </div>
+        <div class="box-body no-padding">
+          <ul class="nav nav-pills nav-stacked">
+            <li ng-click="messageFilterData.read = undefined" ng-class="{active:messageFilterData.read == null}"><a href=""><i class="fa fa-inbox"></i> All<span class="label label-primary pull-right" ng-bind="mails.length"></span></a></li>
+            <li ng-click="messageFilterData.read = false" ng-class="{active:(messageFilterData.read == false)}"><a href=""><i class="fa fa-inbox"></i> Unread <span class="label label-primary pull-right" ng-bind="unReadMailCount"></span></a></li>
+            <li ng-click="messageFilterData.read = true" ng-class="{active:messageFilterData.read == true}"><a href=""><i class="fa fa-inbox"></i> Read <span class="label label-primary pull-right" ng-bind="mails.length - unReadMailCount"></span></a></li>
+          </ul>
+        </div><!-- /.box-body -->
+      </div><!-- /. box -->
+
+    <!-- MailBox box -->
+      <div class="box box-solid">
+        <div class="box-header with-border"  ng-click="messageFilterData.mailbox = undefined">
+          <h3 class="box-title">MailBox</h3>
+        </div>
+        <div class="box-body no-padding">
+          <ul class="nav nav-pills nav-stacked">
+            <li ng-repeat="mailbox in mailboxes" ng-class="{active: messageFilterData.mailbox.id == mailbox._id}"><a ng-click="messageFilterData.mailbox.id = mailbox._id"><i class="fa fa-circle-o" style="color:{{mailbox.color}}"></i>{{mailbox.name}}
+            <span class="label label-primary pull-right" ng-bind="mailboxUnReadMailCount[mailbox._id]"></span>
+            </a></li>
+          </ul>
+        </div><!-- /.box-body -->
+      </div><!-- /.box -->
+    </div><!-- /.col -->
+    <div class="col-md-9">
+      <div class="box box-primary">
+        <div class="box-header with-border">
+          <h3 class="box-title">Inbox</h3>
+          <div class="box-tools pull-right">
+            <div class="has-feedback">
+              <input type="text" class="form-control input-sm" placeholder="Search Mail"/>
+              <span class="glyphicon glyphicon-search form-control-feedback"></span>
+            </div>
+          </div><!-- /.box-tools -->
+        </div><!-- /.box-header -->
+        <div class="box-body no-padding">
+          <div class="mailbox-controls">
+            <!-- Check all button -->
+            <button ng-click="selectAll()" class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-square-o"></i></button>
+            <div class="btn-group">
+              <button class="btn btn-default btn-sm" ng-click="delete()"><i class="fa fa-trash-o"></i></button>
+              <button ng-click="markRead()" class="btn btn-default btn-sm" title="mark read"><i class="fa fa-envelope-o"></i></button>
+
+            </div><!-- /.btn-group -->
+            <button class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button>
+            <div class="pull-right">
+              1-50/200
+              <div class="btn-group">
+                <button class="btn btn-default btn-sm"><i class="fa fa-chevron-left"></i></button>
+                <button class="btn btn-default btn-sm"><i class="fa fa-chevron-right"></i></button>
+              </div><!-- /.btn-group -->
+            </div><!-- /.pull-right -->
+          </div>
+          <div class="table-responsive mailbox-messages">
+            <table class="table table-hover table-striped">
+              <tbody>
+                <tr  ng-style="mail.style"  ng-repeat="mail in mails | filter: messageFilterData | orderBy:'-date'">
+                  <td><input type="checkbox" ng-checked="mailsMarked[mail.UID]" ng-model="mailsMarked[mail.UID]"/></td>
+                  <!-- <td class="mailbox-star"><a href="#"><i class="fa fa-star text-yellow"></i></a></td> -->
+                  <td class="mailbox-name"  ng-click="readMail(mail)">{{mail.from.name}} <{{  mail.from.address }}></td>
+                  <td class="mailbox-subject"  ng-click="readMail(mail)">{{mail.title}}</td>
+                  <td class="mailbox-date"  ng-click="readMail(mail)">{{mail.date.toString()}}</td>
+                  <td class="mailbox-box"><span class="label" style="background-color: {{mail.mailbox.color}};">{{ mail.mailbox.name }}</span></td>
+                  <td></td>
+                </tr>
+
+              </tbody>
+            </table><!-- /.table -->
+          </div><!-- /.mail-box-messages -->
+        </div><!-- /.box-body -->
+        <div class="box-footer no-padding">
+          <div class="mailbox-controls">
+            <!-- Check all button -->
+            <button class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-square-o"></i></button>
+            <div class="btn-group">
+              <button class="btn btn-default btn-sm" ng-click="delete()"><i class="fa fa-trash-o"></i></button>
+              <button ng-click="markRead()" class="btn btn-default btn-sm" title="mark read"><i class="fa fa-envelope-o"></i></button>
+
+            </div><!-- /.btn-group -->
+            <button class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button>
+            <div class="pull-right">
+              1-50/200
+              <div class="btn-group">
+                <button class="btn btn-default btn-sm"><i class="fa fa-chevron-left"></i></button>
+                <button class="btn btn-default btn-sm"><i class="fa fa-chevron-right"></i></button>
+              </div><!-- /.btn-group -->
+            </div><!-- /.pull-right -->
+          </div>
+        </div>
+      </div><!-- /. box -->
+    </div><!-- /.col -->
+  </div><!-- /.row -->
+</section><!-- /.content -->
