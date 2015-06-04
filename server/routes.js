@@ -11,6 +11,14 @@ module.exports = function(app, passport) {
         });
     });
 
+
+    app.get('/plugins.json', function(req, res) { 
+        var pluginsRaw = fs.readFileSync('plugins/plugins.json');
+        res.write(pluginsRaw);
+        res.send();
+    });
+
+
     app.get('/api/users/me',
       passport.authorize('local-login', { session: false,  failureRedirect: '/login' }),
       function(req, res) { 

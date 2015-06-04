@@ -1,3 +1,4 @@
+var fs  = require('fs');
 var express  = require('express');
 var app      = express();
 var port     = process.env.PORT || 5555;
@@ -31,6 +32,14 @@ require('../config/passport')(passport); // pass passport for configuration
 
 var passportSocketIo = require("passport.socketio");
 
+var pluginsList = fs.readdirSync('./plugins');
+var plugins = [];
+for(var i in pluginsList){
+  if(fs.lstatSync('./plugins/' + pluginsList[i]).isDirectory())
+    plugins.push(pluginsList[i]);
+}
+
+fs.writeFileSync('./plugins/plugins.js', JSON.stringify(plugins));
 
 app.set('views', __dirname + '/../client');
 
@@ -55,6 +64,14 @@ app.use(flash()); // use connect-flash for flash messages stored in session
 
 app.use('/static', express.static('./client/static/'));
 app.use('/views', express.static('./client/views/'));
+
+
+for(var i in plugins){
+    var pluginName = plugins[i];
+    app.use('/plugins/'+pluginName + '/client', express.static('./plugins/' + pluginName + '/client/public'));
+    app.use('/plugins/'+pluginName + '/client/views', express.static('./plugins/' + pluginName + '/client/views'));
+    console.log('/plugin/'+pluginName + '/client/views');
+}
 
 
 // routes ======================================================================

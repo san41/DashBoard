@@ -35,346 +35,6 @@ module.exports = function($scope, socket, toaster){
 
 }
 },{}],2:[function(require,module,exports){
-module.exports = function($scope, socket, sharedData, $location, $filter, $timeout, toaster, $rootScope){
-
-  var mailsByUID = {};
-  $scope.mails = [];
-  $scope.mailsMarked = {};
-  $scope.unReadMailCount = 0;
-  $scope.mailCount = 0;
-  $scope.mailboxes = [];
-  $scope.mailboxUnReadMailCount = {};
-  $scope.messageFilterData = {read:false};
-
-
-  var updateData = function(){
-    var unReadMailCount = 0;
-    for(var i in $scope.mails){
-      var mail = $scope.mails[i];
-      var style = {};
-      mail.read = true;
-      if(mail.flags.indexOf('\\Seen') == -1){
-        mail.read = false;
-        style['font-weight'] ="bold";
-        unReadMailCount++;
-        if($scope.mailboxUnReadMailCount[mail.mailbox.id] == null){
-          $scope.mailboxUnReadMailCount[mail.mailbox.id] = 1;
-        }else{
-          $scope.mailboxUnReadMailCount[mail.mailbox.id] += 1
-        }
-      }
-      mail.style = style;
-      $scope.mails[i] = mail;
-    }
-    $scope.mailCount = $scope.mails.length;
-    $scope.unReadMailCount = unReadMailCount;
-  }
-
-  $scope.readMail = function(mail){
-    sharedData.set('mail-read', mail);
-    $location.path('/mail/read')
-  }
-
-  $scope.changeCurrentMailBox = function(mailbox){
-    if(mailbox != null){
-      $scope.messageFilterData.mailbox.name = mailbox.name;
-    }else{
-      $scope.messageFilterData.mailbox.name = null;
-    }
-  };
-
-  $scope.selectAll = function(){
-    var mails = $filter('filter')($scope.mails, $scope.messageFilterData)
-    var tmpMailsMarked = {};
-    if(Object.keys($scope.mailsMarked).length != mails.length){
-      for(var i in mails){
-        tmpMailsMarked[mails[i].UID] = true;
-      }
-    }
-    $scope.mailsMarked = tmpMailsMarked;
-  }
-
-  socket.emit('mailbox/list', function(err, mailboxes){
-    if(err){
-      toaster.put('error', 'Erreur', err);
-      return; 
-    }
-    $scope.mailboxes = mailboxes;
-    for(var i in mailboxes){
-      var _mailbox = mailboxes[i];
-      (function(mailbox){
-        socket.emit('mails/request', mailbox, function(err, mails){
-          if(err){
-            toaster.pop('error', 'Erreur', err);
-            $rootScope.$apply();
-            return;
-          }
-          for(var i in mails){
-            var mail = mails[i];
-            mail.mailbox = {
-              name: mailbox.name, 
-              id: mailbox._id,
-              color: mailbox.color,
-            };
-            mailsByUID[mail.UID] = mail;
-            $scope.mails.push(mail);
-          }
-          updateData();
-        })
-      })(_mailbox);
-    }
-  });
-
-  $scope.messageFilter =function(type){
-    $scope.messageFilterData = type;
-  }
-
-
-  $scope.markRead = function(){
-    var mailsMarked = [];
-    for(var uid in $scope.mailsMarked){
-      if($scope.mailsMarked[uid]){
-        mailsMarked.push(mailsByUID[uid]);
-      }
-    }
-    toaster.pop('info', "Request to mark as read", 'Request to mark as read '+ Object.keys(mailsMarked).length + " mails");
-    socket.emit('mailbox/markRead', mailsMarked, function(errors, mailsFlags){
-      if(errors.length > 0){
-        for(var i in errors){
-          var err = errors[i];
-          toaster.pop('error', 'Erreur', err);
-          $rootScope.$apply();
-
-        }
-        return; 
-      }
-      for(var uid in mailsFlags){
-        mailsByUID[uid].flags = mailsFlags[uid];
-      }
-      toaster.pop('info', "Marked as read", Object.keys(mailsFlags).length + " mails marked as read");
-
-      $scope.mails = Object.keys(mailsByUID).map(function(k){return mailsByUID[k]});
-      updateData();
-    });
-  }
-  $scope.delete = function(){
-    var mailsMarked = [];
-    for(var uid in $scope.mailsMarked){
-      if($scope.mailsMarked[uid]){
-        mailsMarked.push(mailsByUID[uid]);
-      }
-    }
-    toaster.pop('info', "Request deletion", 'Request deletion of '+ Object.keys(mailsMarked).length + " mails");
-    socket.emit('mailbox/deleteMail', mailsMarked, function(errors, UIDDeleted){
-      console.log(errors, UIDDeleted);
-      if(errors.length > 0){
-        for(var i in errors){
-          var err = errors[i];
-          toaster.pop('error', 'Erreur', err);
-          $rootScope.$apply();
-
-        }
-        return; 
-      }
-      for(var i in UIDDeleted){
-        delete mailsByUID[UIDDeleted[i]];
-      }
-      toaster.pop('info', "Deleted", UIDDeleted.length + " mails deleted");
-
-      $scope.mails = Object.keys(mailsByUID).map(function(k){return mailsByUID[k]});
-      updateData();
-    });
-  }
-
-};
-},{}],3:[function(require,module,exports){
-module.exports = function($scope, socket, sharedData, $location,$sce, toaster, $rootScope){
-
-  $scope.mail = sharedData.get('mail-read');  
-  $scope.content = "<center>Loading....</center>";
-  if($scope.mail == null){ $location.path('/mail'); return; }
-  socket.emit('mailbox/getMailContent', $scope.mail, function(err, data){
-    if(err){
-      toaster.pop('error', 'Erreur', err);
-      $rootScope.$apply();
-      return; 
-    }
-    $scope.content = $sce.trustAsHtml(data);
-  });
-
-  $scope.mailbox = null;
-  socket.emit('mailbox/get', {_id: $scope.mail.mailbox.id}, function(err, data){
-    if(err){
-      toaster.pop('error', 'Erreur', err);
-      $rootScope.$apply();
-
-      return; 
-    }
-    $scope.mailbox = data;
-  });
-
-  $scope.reply = function(){
-    var newSubject = "RE: " + $scope.mail.title;
-    var to = $scope.mail.from.address;
-    var mailbox = $scope.mailbox != null ? $scope.mailbox :  $scope.mail.mailbox;
-    var replyMail = {
-      subject: newSubject,
-      from: mailbox,
-      to: to
-    };
-    sharedData.set('mail-reply', replyMail);
-    $location.path('/mail/send');
-  }
-
-  $scope.forward = function(){
-    var newSubject = "Fwd: " + $scope.mail.title;
-    var to = $scope.mail.from.address;
-    var mailbox = $scope.mailbox != null ? $scope.mailbox :  $scope.mail.mailbox;
-    var fowardHeader = '---------- Forwarded message --------- \n From: '+ $scope.mail.from.name +' <'+ $scope.mail.from.address +'> \n Date: '+ $scope.mail.date +' \nSubject: '+ $scope.mail.title +' \n';
-
-    var replyMail = {
-      subject: newSubject,
-      from: mailbox,
-      to: '',
-      content: fowardHeader + "\n" + $scope.content
-    };
-    sharedData.set('mail-reply', replyMail);
-    $location.path('/mail/send');
-  }
-
-  $scope.delete = function(){
-    toaster.pop('info', "Request to delete", 'request to mail delete');
-    socket.emit('mailbox/deleteMail', [$scope.mail], function(errors, UIDDeleted){
-      console.log(errors, UIDDeleted);
-      if(errors.length > 0){
-        for(var i in errors){
-          var err = errors[i];
-          toaster.pop('error', 'Erreur', err);
-          $rootScope.$apply();
-
-        }
-        return; 
-      }
-      if(UIDDeleted.length == 1)
-        toaster.pop('info', "Mail deleted");
-      $location.path('/mail');
-    });
-  }
-
-}
-},{}],4:[function(require,module,exports){
-module.exports = function($scope, socket, sharedData, $location,$sce, toaster, $rootScope){
-  $scope.mailboxes = [];
-  var mailData = null;
-  if(sharedData.get('mail-reply')){
-    mailData = sharedData.get('mail-reply');
-    $scope.subject = mailData.subject;
-    $scope.to = mailData.to;
-    if(mailData.content != null){
-      $scope.content = mailData.content;
-    }
-    sharedData.set('mail-reply',null);
-  }
-
-  socket.emit('mailbox/list', function(err, mailboxes){
-    if(err){
-      toaster.pop('error', 'Erreur', err);
-      $rootScope.$apply();
-
-      return; 
-    }
-    $scope.$apply(function(){
-      $scope.mailboxes = mailboxes;      
-      $scope.mailbox = mailboxes[0];
-      if(mailData){
-        $scope.mailbox = mailData.from;
-        $scope.$digest();
-      }
-    });
-  });
-
-  
-
-  $scope.send = function(){
-    var mailbox = $scope.mailbox;
-    var subject = $scope.subject;
-    var body = $scope.content;
-    var to = $scope.to;
-    var mail = {
-      subject: subject,
-      body: body,
-      to: to,
-      from: mailbox.name
-    };
-    socket.emit('mailbox/send', mailbox, mail, function(err, data){
-      if(err){
-        console.log(err, data);
-        toaster.pop('error', 'Erreur', err, 5000);
-        $rootScope.$apply();
-        return; 
-      };
-      toaster.pop('info', null, 'Email envoyer');
-      $rootScope.$apply();
-      $location.path('/mail');
-    });
-  }
-
-}
-},{}],5:[function(require,module,exports){
-module.exports = function($scope, socket, $location, $routeParams){
-  $scope.submitValue = "Create";
-  if($routeParams.id != null){
-    $scope.submitValue = "Edit";
-    socket.emit('mailbox/get', {'_id': $routeParams.id}, function(err, mailbox){
-      if(err) return;
-      $scope.data = mailbox;
-    })
-  }
-
-  $scope.create = function(){
-    console.log($scope.data);
-    $scope.data.color = document.querySelector('.colorpicker').value;
-    $scope.data.secure = document.querySelector('#secure').checked;
-    socket.emit('mailbox/save', $scope.data, function(err, data){
-      if(!err)
-        $location.path('/settings/mailbox')
-      else
-        console.log(err);
-    });
-  }
-
-  $scope.switchPassword = function(){
-    var passwdInput = document.querySelector('#password');
-    if(passwdInput.type =='password'){
-      passwdInput.type = 'text';
-    }else{
-      passwdInput.type = 'password';
-    }
-  }
-
-}
-},{}],6:[function(require,module,exports){
-module.exports = function($scope, socket, $location, toaster){
-  $scope.mailboxes = []
-
-  socket.emit('mailbox/list', function(err, mailboxes){
-    if(err){
-      toaster.put('error', 'Erreur', err);
-      return; 
-    }
-    $scope.$apply(function(){
-      console.log(mailboxes);
-      $scope.mailboxes = mailboxes;      
-    });
-  });
-
-  $scope.edit = function(id){
-    $location.path('/settings/mailbox/edit/'  + id);
-
-  }
-
-}
-},{}],7:[function(require,module,exports){
 var gravatar = require("gravatar");
 
 module.exports = function() {
@@ -391,7 +51,7 @@ module.exports = function() {
     }
     }
 };
-},{"gravatar":22}],8:[function(require,module,exports){
+},{"gravatar":17}],3:[function(require,module,exports){
 module.exports = function(app){
   app.directive("topBar", function(){
     return {
@@ -422,7 +82,7 @@ module.exports = function(app){
 }
 
 
-},{}],9:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 var io = require('socket.io-client');
 var angular = require('angular');
 require('angular-route');
@@ -431,38 +91,66 @@ require('angular-socket-io');
 require('angular-animate');
 require('angularjs-toaster');
 
+var xhrPlugins = new XMLHttpRequest();
+xhrPlugins.open('GET', '/plugins.json', false);
+xhrPlugins.send(null);
+if(xhrPlugins.status != 200 && xhrPlugins.status != 304){
+  throw new Error('plugins.json not found');
+}
+
 var app = angular.module("dbapp", ['ngRoute', 'btford.socket-io', 'ngSanitize', 'toaster', 'ngAnimate']);
 
+var countNeedLoad = 0;
+var loaded = 0;
+
+var menuItems = [];
+
+var pluginsList = JSON.parse(xhrPlugins.responseText);
+for(var i in pluginsList){
+  var pluginName = pluginsList[i];
+  var script = document.createElement('script');
+  script.src = '/plugins/'+ pluginName +'/client/index.js'
+  document.body.appendChild(script);
+  countNeedLoad++;
+  script.addEventListener('load', function(){
+
+    var plugin = pluginsByName[pluginName];
+    
+    for(var controllerName in plugin.controllers){
+      angular.module('dbapp').controller(controllerName, plugin.controllers[controllerName]);
+    }
+    for(var i in plugin.menuItems){
+        menuItems.push(plugin.menuItems[i]);
+    }
+    app.config(function($routeProvider){
+      for(var routeName in plugin.routes){
+        var routeData = plugin.routes[routeName];
+
+        $routeProvider.when(routeName, {
+          controller: routeData.controller,
+          templateUrl: "/plugins/" + pluginName + "/client/views/" + routeData.templateUrl,
+
+        })
+
+      }
+    });
+    loaded++;
+  });
+}
+
+
 app.config(function($routeProvider){
+  app.routeProvider = $routeProvider;
   $routeProvider.when('/home', {
     templateUrl: "views/home/index.html",
     controller:"HomeController"
-  }).when('/mail', {
-    templateUrl: "views/mail/index.html",
-    controller:"MailController" 
-  }).when('/mail/read', {
-    templateUrl: "views/mail/read.html",
-    controller:"MailReadController" 
-  }).when('/mail/send', {
-    templateUrl: "views/mail/send.html",
-    controller:"MailSendController" 
-  }).when('/settings/mailbox', {
-    templateUrl: 'views/settings/mailbox/index.html',
-    controller:'MailBoxSettingsController'
-  }).when('/settings/mailbox/create', {
-    templateUrl: 'views/settings/mailbox/create.html',
-    controller:'CreateMailBoxSettingsController'
-  }).when('/settings/mailbox/edit/:id', {
-    templateUrl: 'views/settings/mailbox/create.html',
-    controller:'CreateMailBoxSettingsController'
-  }).when('/profile', {
-    templateUrl: 'views/profile/index.html'
-  })
-  .otherwise({
+  });
+  $routeProvider.otherwise({
     redirectTo: '/home'
   });
-   console.log("angular is loaded"); 
+
 });
+
 
 app.factory('socket', function(socketFactory, $rootScope, toaster){
 
@@ -492,32 +180,39 @@ app.run(function($rootScope){
 
 });
 
-app.controller('MailController', require('./controller/mail'));
-app.controller('MailReadController', require('./controller/readMail'));
-app.controller('MailSendController', require('./controller/sendMail'));
 
 app.controller('MainController', function($scope){ $scope.init = true; });
 app.controller('HomeController', require('./controller/home'));
-app.controller('MailBoxSettingsController', require('./controller/settings/mailbox.js'));
-app.controller('CreateMailBoxSettingsController', require('./controller/settings/createMailbox.js'));
-
 
 app.directive('gravatar', require('./directive/gravatar.js'));
 
 
+
+
+
+
 require('./directive/views.js')(app);
 
-angular.element(document).ready(function() {
-  setTimeout(function(){
-    while(angular.element(document.body).scope() == null){
-      angular.bootstrap(document.body, ['dbapp']);
-      console.log('retry start angular module')
-    }
+var tId = setTimeout(function(){
+  if(countNeedLoad < loaded) return;
+  clearTimeout(tId);
 
-  },0);
-});
+  app.run(function($rootScope){
+    $rootScope.menuItems = menuItems;
+  })
 
-},{"./controller/home":1,"./controller/mail":2,"./controller/readMail":3,"./controller/sendMail":4,"./controller/settings/createMailbox.js":5,"./controller/settings/mailbox.js":6,"./directive/gravatar.js":7,"./directive/views.js":8,"./service/sharedData.js":10,"angular":19,"angular-animate":12,"angular-route":14,"angular-sanitize":16,"angular-socket-io":17,"angularjs-toaster":20,"socket.io-client":36}],10:[function(require,module,exports){
+  angular.element(document).ready(function() {
+    setTimeout(function(){
+      while(angular.element(document.body).scope() == null){
+        angular.bootstrap(document.body, ['dbapp']);
+        console.log('retry start angular module')
+      }
+    },0);
+  });
+}, 5);
+
+
+},{"./controller/home":1,"./directive/gravatar.js":2,"./directive/views.js":3,"./service/sharedData.js":5,"angular":14,"angular-animate":7,"angular-route":9,"angular-sanitize":11,"angular-socket-io":12,"angularjs-toaster":15,"socket.io-client":31}],5:[function(require,module,exports){
 module.exports = function(){
   var data = {};
 
@@ -530,7 +225,7 @@ module.exports = function(){
     }
   }
 }
-},{}],11:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 /**
  * @license AngularJS v1.4.0
  * (c) 2010-2015 Google, Inc. http://angularjs.org
@@ -4240,11 +3935,11 @@ angular.module('ngAnimate', [])
 
 })(window, window.angular);
 
-},{}],12:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 require('./angular-animate');
 module.exports = 'ngAnimate';
 
-},{"./angular-animate":11}],13:[function(require,module,exports){
+},{"./angular-animate":6}],8:[function(require,module,exports){
 /**
  * @license AngularJS v1.3.15
  * (c) 2010-2014 Google, Inc. http://angularjs.org
@@ -5235,11 +4930,11 @@ function ngViewFillContentFactory($compile, $controller, $route) {
 
 })(window, window.angular);
 
-},{}],14:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 require('./angular-route');
 module.exports = 'ngRoute';
 
-},{"./angular-route":13}],15:[function(require,module,exports){
+},{"./angular-route":8}],10:[function(require,module,exports){
 /**
  * @license AngularJS v1.4.0
  * (c) 2010-2015 Google, Inc. http://angularjs.org
@@ -5924,11 +5619,11 @@ angular.module('ngSanitize').filter('linky', ['$sanitize', function($sanitize) {
 
 })(window, window.angular);
 
-},{}],16:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 require('./angular-sanitize');
 module.exports = 'ngSanitize';
 
-},{"./angular-sanitize":15}],17:[function(require,module,exports){
+},{"./angular-sanitize":10}],12:[function(require,module,exports){
 /*
  * @license
  * angular-socket-io v0.7.0
@@ -6033,7 +5728,7 @@ angular.module('btford.socket-io', []).
     }];
   });
 
-},{}],18:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 /**
  * @license AngularJS v1.3.15
  * (c) 2010-2014 Google, Inc. http://angularjs.org
@@ -32343,14 +32038,14 @@ var minlengthDirective = function() {
 })(window, document);
 
 !window.angular.$$csp() && window.angular.element(document).find('head').prepend('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\\:form{display:block;}</style>');
-},{}],19:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 require('./angular');
 module.exports = angular;
 
-},{"./angular":18}],20:[function(require,module,exports){
+},{"./angular":13}],15:[function(require,module,exports){
 require("./toaster.js");
 module.export = "angular-toaster";
-},{"./toaster.js":21}],21:[function(require,module,exports){
+},{"./toaster.js":16}],16:[function(require,module,exports){
 (function () {
     'use strict';
 
@@ -32771,10 +32466,10 @@ module.export = "angular-toaster";
     );
 })(window, document);
 
-},{}],22:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 module.exports = require('./lib/gravatar');
 
-},{"./lib/gravatar":23}],23:[function(require,module,exports){
+},{"./lib/gravatar":18}],18:[function(require,module,exports){
 var crypto = require('crypto')
   , querystring = require('querystring');
 
@@ -32796,7 +32491,7 @@ var gravatar = module.exports = {
     }
 };
 
-},{"crypto":28,"querystring":35}],24:[function(require,module,exports){
+},{"crypto":23,"querystring":30}],19:[function(require,module,exports){
 /*!
  * The buffer module from node.js, for the browser.
  *
@@ -33907,7 +33602,7 @@ function assert (test, message) {
   if (!test) throw new Error(message || 'Failed assertion')
 }
 
-},{"base64-js":25,"ieee754":26}],25:[function(require,module,exports){
+},{"base64-js":20,"ieee754":21}],20:[function(require,module,exports){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
@@ -34033,7 +33728,7 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	exports.fromByteArray = uint8ToBase64
 }(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
 
-},{}],26:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m,
       eLen = nBytes * 8 - mLen - 1,
@@ -34119,7 +33814,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],27:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 var Buffer = require('buffer').Buffer;
 var intSize = 4;
 var zeroBuffer = new Buffer(intSize); zeroBuffer.fill(0);
@@ -34156,7 +33851,7 @@ function hash(buf, fn, hashSize, bigEndian) {
 
 module.exports = { hash: hash };
 
-},{"buffer":24}],28:[function(require,module,exports){
+},{"buffer":19}],23:[function(require,module,exports){
 var Buffer = require('buffer').Buffer
 var sha = require('./sha')
 var sha256 = require('./sha256')
@@ -34255,7 +33950,7 @@ each(['createCredentials'
   }
 })
 
-},{"./md5":29,"./rng":30,"./sha":31,"./sha256":32,"buffer":24}],29:[function(require,module,exports){
+},{"./md5":24,"./rng":25,"./sha":26,"./sha256":27,"buffer":19}],24:[function(require,module,exports){
 /*
  * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
  * Digest Algorithm, as defined in RFC 1321.
@@ -34420,7 +34115,7 @@ module.exports = function md5(buf) {
   return helpers.hash(buf, core_md5, 16);
 };
 
-},{"./helpers":27}],30:[function(require,module,exports){
+},{"./helpers":22}],25:[function(require,module,exports){
 // Original code adapted from Robert Kieffer.
 // details at https://github.com/broofa/node-uuid
 (function() {
@@ -34453,7 +34148,7 @@ module.exports = function md5(buf) {
 
 }())
 
-},{}],31:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-1, as defined
  * in FIPS PUB 180-1
@@ -34556,7 +34251,7 @@ module.exports = function sha1(buf) {
   return helpers.hash(buf, core_sha1, 20, true);
 };
 
-},{"./helpers":27}],32:[function(require,module,exports){
+},{"./helpers":22}],27:[function(require,module,exports){
 
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
@@ -34637,7 +34332,7 @@ module.exports = function sha256(buf) {
   return helpers.hash(buf, core_sha256, 32, true);
 };
 
-},{"./helpers":27}],33:[function(require,module,exports){
+},{"./helpers":22}],28:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -34723,7 +34418,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{}],34:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -34810,17 +34505,17 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],35:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 'use strict';
 
 exports.decode = exports.parse = require('./decode');
 exports.encode = exports.stringify = require('./encode');
 
-},{"./decode":33,"./encode":34}],36:[function(require,module,exports){
+},{"./decode":28,"./encode":29}],31:[function(require,module,exports){
 
 module.exports = require('./lib/');
 
-},{"./lib/":37}],37:[function(require,module,exports){
+},{"./lib/":32}],32:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -34909,7 +34604,7 @@ exports.connect = lookup;
 exports.Manager = require('./manager');
 exports.Socket = require('./socket');
 
-},{"./manager":38,"./socket":40,"./url":41,"debug":45,"socket.io-parser":81}],38:[function(require,module,exports){
+},{"./manager":33,"./socket":35,"./url":36,"debug":40,"socket.io-parser":76}],33:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -35414,7 +35109,7 @@ Manager.prototype.onreconnect = function(){
   this.emitAll('reconnect', attempt);
 };
 
-},{"./on":39,"./socket":40,"./url":41,"backo2":42,"component-bind":43,"component-emitter":44,"debug":45,"engine.io-client":46,"indexof":77,"object-component":78,"socket.io-parser":81}],39:[function(require,module,exports){
+},{"./on":34,"./socket":35,"./url":36,"backo2":37,"component-bind":38,"component-emitter":39,"debug":40,"engine.io-client":41,"indexof":72,"object-component":73,"socket.io-parser":76}],34:[function(require,module,exports){
 
 /**
  * Module exports.
@@ -35440,7 +35135,7 @@ function on(obj, ev, fn) {
   };
 }
 
-},{}],40:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -35827,7 +35522,7 @@ Socket.prototype.disconnect = function(){
   return this;
 };
 
-},{"./on":39,"component-bind":43,"component-emitter":44,"debug":45,"has-binary":75,"socket.io-parser":81,"to-array":85}],41:[function(require,module,exports){
+},{"./on":34,"component-bind":38,"component-emitter":39,"debug":40,"has-binary":70,"socket.io-parser":76,"to-array":80}],36:[function(require,module,exports){
 (function (global){
 
 /**
@@ -35904,7 +35599,7 @@ function url(uri, loc){
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"debug":45,"parseuri":79}],42:[function(require,module,exports){
+},{"debug":40,"parseuri":74}],37:[function(require,module,exports){
 
 /**
  * Expose `Backoff`.
@@ -35991,7 +35686,7 @@ Backoff.prototype.setJitter = function(jitter){
 };
 
 
-},{}],43:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 /**
  * Slice reference.
  */
@@ -36016,7 +35711,7 @@ module.exports = function(obj, fn){
   }
 };
 
-},{}],44:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 
 /**
  * Expose `Emitter`.
@@ -36182,7 +35877,7 @@ Emitter.prototype.hasListeners = function(event){
   return !! this.listeners(event).length;
 };
 
-},{}],45:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 
 /**
  * Expose `debug()` as the module.
@@ -36321,11 +36016,11 @@ try {
   if (window.localStorage) debug.enable(localStorage.debug);
 } catch(e){}
 
-},{}],46:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 
 module.exports =  require('./lib/');
 
-},{"./lib/":47}],47:[function(require,module,exports){
+},{"./lib/":42}],42:[function(require,module,exports){
 
 module.exports = require('./socket');
 
@@ -36337,7 +36032,7 @@ module.exports = require('./socket');
  */
 module.exports.parser = require('engine.io-parser');
 
-},{"./socket":48,"engine.io-parser":60}],48:[function(require,module,exports){
+},{"./socket":43,"engine.io-parser":55}],43:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies.
@@ -37046,7 +36741,7 @@ Socket.prototype.filterUpgrades = function (upgrades) {
 };
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./transport":49,"./transports":50,"component-emitter":44,"debug":57,"engine.io-parser":60,"indexof":77,"parsejson":71,"parseqs":72,"parseuri":73}],49:[function(require,module,exports){
+},{"./transport":44,"./transports":45,"component-emitter":39,"debug":52,"engine.io-parser":55,"indexof":72,"parsejson":66,"parseqs":67,"parseuri":68}],44:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -37207,7 +36902,7 @@ Transport.prototype.onClose = function () {
   this.emit('close');
 };
 
-},{"component-emitter":44,"engine.io-parser":60}],50:[function(require,module,exports){
+},{"component-emitter":39,"engine.io-parser":55}],45:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies
@@ -37264,7 +36959,7 @@ function polling(opts){
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling-jsonp":51,"./polling-xhr":52,"./websocket":54,"xmlhttprequest":55}],51:[function(require,module,exports){
+},{"./polling-jsonp":46,"./polling-xhr":47,"./websocket":49,"xmlhttprequest":50}],46:[function(require,module,exports){
 (function (global){
 
 /**
@@ -37501,7 +37196,7 @@ JSONPPolling.prototype.doWrite = function (data, fn) {
 };
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling":53,"component-inherit":56}],52:[function(require,module,exports){
+},{"./polling":48,"component-inherit":51}],47:[function(require,module,exports){
 (function (global){
 /**
  * Module requirements.
@@ -37889,7 +37584,7 @@ function unloadHandler() {
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling":53,"component-emitter":44,"component-inherit":56,"debug":57,"xmlhttprequest":55}],53:[function(require,module,exports){
+},{"./polling":48,"component-emitter":39,"component-inherit":51,"debug":52,"xmlhttprequest":50}],48:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -38136,7 +37831,7 @@ Polling.prototype.uri = function(){
   return schema + '://' + this.hostname + port + this.path + query;
 };
 
-},{"../transport":49,"component-inherit":56,"debug":57,"engine.io-parser":60,"parseqs":72,"xmlhttprequest":55}],54:[function(require,module,exports){
+},{"../transport":44,"component-inherit":51,"debug":52,"engine.io-parser":55,"parseqs":67,"xmlhttprequest":50}],49:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -38376,7 +38071,7 @@ WS.prototype.check = function(){
   return !!WebSocket && !('__initialize' in WebSocket && this.name === WS.prototype.name);
 };
 
-},{"../transport":49,"component-inherit":56,"debug":57,"engine.io-parser":60,"parseqs":72,"ws":74}],55:[function(require,module,exports){
+},{"../transport":44,"component-inherit":51,"debug":52,"engine.io-parser":55,"parseqs":67,"ws":69}],50:[function(require,module,exports){
 // browser shim for xmlhttprequest module
 var hasCORS = require('has-cors');
 
@@ -38414,7 +38109,7 @@ module.exports = function(opts) {
   }
 }
 
-},{"has-cors":69}],56:[function(require,module,exports){
+},{"has-cors":64}],51:[function(require,module,exports){
 
 module.exports = function(a, b){
   var fn = function(){};
@@ -38422,7 +38117,7 @@ module.exports = function(a, b){
   a.prototype = new fn;
   a.prototype.constructor = a;
 };
-},{}],57:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 
 /**
  * This is the web browser implementation of `debug()`.
@@ -38571,7 +38266,7 @@ function load() {
 
 exports.enable(load());
 
-},{"./debug":58}],58:[function(require,module,exports){
+},{"./debug":53}],53:[function(require,module,exports){
 
 /**
  * This is the common logic for both the Node.js and web browser
@@ -38770,7 +38465,7 @@ function coerce(val) {
   return val;
 }
 
-},{"ms":59}],59:[function(require,module,exports){
+},{"ms":54}],54:[function(require,module,exports){
 /**
  * Helpers.
  */
@@ -38883,7 +38578,7 @@ function plural(ms, n, name) {
   return Math.ceil(ms / n) + ' ' + name + 's';
 }
 
-},{}],60:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies.
@@ -39481,7 +39176,7 @@ exports.decodePayloadAsBinary = function (data, binaryType, callback) {
 };
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./keys":61,"after":62,"arraybuffer.slice":63,"base64-arraybuffer":64,"blob":65,"has-binary":66,"utf8":68}],61:[function(require,module,exports){
+},{"./keys":56,"after":57,"arraybuffer.slice":58,"base64-arraybuffer":59,"blob":60,"has-binary":61,"utf8":63}],56:[function(require,module,exports){
 
 /**
  * Gets the keys for an object.
@@ -39502,7 +39197,7 @@ module.exports = Object.keys || function keys (obj){
   return arr;
 };
 
-},{}],62:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 module.exports = after
 
 function after(count, callback, err_cb) {
@@ -39532,7 +39227,7 @@ function after(count, callback, err_cb) {
 
 function noop() {}
 
-},{}],63:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 /**
  * An abstraction for slicing an arraybuffer even when
  * ArrayBuffer.prototype.slice is not supported
@@ -39563,7 +39258,7 @@ module.exports = function(arraybuffer, start, end) {
   return result.buffer;
 };
 
-},{}],64:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 /*
  * base64-arraybuffer
  * https://github.com/niklasvh/base64-arraybuffer
@@ -39624,7 +39319,7 @@ module.exports = function(arraybuffer, start, end) {
   };
 })("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/");
 
-},{}],65:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 (function (global){
 /**
  * Create a blob builder even when vendor prefixes exist
@@ -39677,7 +39372,7 @@ module.exports = (function() {
 })();
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],66:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 (function (global){
 
 /*
@@ -39739,12 +39434,12 @@ function hasBinary(data) {
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"isarray":67}],67:[function(require,module,exports){
+},{"isarray":62}],62:[function(require,module,exports){
 module.exports = Array.isArray || function (arr) {
   return Object.prototype.toString.call(arr) == '[object Array]';
 };
 
-},{}],68:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 (function (global){
 /*! http://mths.be/utf8js v2.0.0 by @mathias */
 ;(function(root) {
@@ -39987,7 +39682,7 @@ module.exports = Array.isArray || function (arr) {
 }(this));
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],69:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -40012,7 +39707,7 @@ try {
   module.exports = false;
 }
 
-},{"global":70}],70:[function(require,module,exports){
+},{"global":65}],65:[function(require,module,exports){
 
 /**
  * Returns `this`. Execute this without a "context" (i.e. without it being
@@ -40022,7 +39717,7 @@ try {
 
 module.exports = (function () { return this; })();
 
-},{}],71:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 (function (global){
 /**
  * JSON parse.
@@ -40057,7 +39752,7 @@ module.exports = function parsejson(data) {
   }
 };
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],72:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 /**
  * Compiles a querystring
  * Returns string representation of the object
@@ -40096,7 +39791,7 @@ exports.decode = function(qs){
   return qry;
 };
 
-},{}],73:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 /**
  * Parses an URI
  *
@@ -40137,7 +39832,7 @@ module.exports = function parseuri(str) {
     return uri;
 };
 
-},{}],74:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -40182,7 +39877,7 @@ function ws(uri, protocols, opts) {
 
 if (WebSocket) ws.prototype = WebSocket.prototype;
 
-},{}],75:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 (function (global){
 
 /*
@@ -40244,9 +39939,9 @@ function hasBinary(data) {
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"isarray":76}],76:[function(require,module,exports){
-module.exports=require(67)
-},{}],77:[function(require,module,exports){
+},{"isarray":71}],71:[function(require,module,exports){
+module.exports=require(62)
+},{}],72:[function(require,module,exports){
 
 var indexOf = [].indexOf;
 
@@ -40257,7 +39952,7 @@ module.exports = function(arr, obj){
   }
   return -1;
 };
-},{}],78:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 
 /**
  * HOP ref.
@@ -40342,7 +40037,7 @@ exports.length = function(obj){
 exports.isEmpty = function(obj){
   return 0 == exports.length(obj);
 };
-},{}],79:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
 /**
  * Parses an URI
  *
@@ -40369,7 +40064,7 @@ module.exports = function parseuri(str) {
   return uri;
 };
 
-},{}],80:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 (function (global){
 /*global Blob,File*/
 
@@ -40514,7 +40209,7 @@ exports.removeBlobs = function(data, callback) {
 };
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./is-buffer":82,"isarray":83}],81:[function(require,module,exports){
+},{"./is-buffer":77,"isarray":78}],76:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -40916,7 +40611,7 @@ function error(data){
   };
 }
 
-},{"./binary":80,"./is-buffer":82,"component-emitter":44,"debug":45,"isarray":83,"json3":84}],82:[function(require,module,exports){
+},{"./binary":75,"./is-buffer":77,"component-emitter":39,"debug":40,"isarray":78,"json3":79}],77:[function(require,module,exports){
 (function (global){
 
 module.exports = isBuf;
@@ -40933,9 +40628,9 @@ function isBuf(obj) {
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],83:[function(require,module,exports){
-module.exports=require(67)
-},{}],84:[function(require,module,exports){
+},{}],78:[function(require,module,exports){
+module.exports=require(62)
+},{}],79:[function(require,module,exports){
 /*! JSON v3.2.6 | http://bestiejs.github.io/json3 | Copyright 2012-2013, Kit Cambridge | http://kit.mit-license.org */
 ;(function (window) {
   // Convenience aliases.
@@ -41798,7 +41493,7 @@ module.exports=require(67)
   }
 }(this));
 
-},{}],85:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
 module.exports = toArray
 
 function toArray(list, index) {
@@ -41813,4 +41508,4 @@ function toArray(list, index) {
     return array
 }
 
-},{}]},{},[9])
+},{}]},{},[4])
