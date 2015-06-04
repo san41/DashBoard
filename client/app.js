@@ -33,10 +33,10 @@ app.config(function($routeProvider){
   }).when('/profile', {
     templateUrl: 'views/profile/index.html'
   })
-
   .otherwise({
-        redirectTo: '/home'
-      });
+    redirectTo: '/home'
+  });
+   console.log("angular is loaded"); 
 });
 
 app.factory('socket', function(socketFactory, $rootScope, toaster){
@@ -80,10 +80,14 @@ app.controller('CreateMailBoxSettingsController', require('./controller/settings
 app.directive('gravatar', require('./directive/gravatar.js'));
 
 
-
 require('./directive/views.js')(app);
 
 angular.element(document).ready(function() {
-      angular.bootstrap(document, ['dbapp']);
-    });
-console.log("angular loaded"); 
+  setTimeout(function(){
+    while(angular.element(document.body).scope() == null){
+      angular.bootstrap(document.body, ['dbapp']);
+      console.log('retry start angular module')
+    }
+
+  },0);
+});

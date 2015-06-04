@@ -458,10 +458,10 @@ app.config(function($routeProvider){
   }).when('/profile', {
     templateUrl: 'views/profile/index.html'
   })
-
   .otherwise({
-        redirectTo: '/home'
-      });
+    redirectTo: '/home'
+  });
+   console.log("angular is loaded"); 
 });
 
 app.factory('socket', function(socketFactory, $rootScope, toaster){
@@ -505,13 +505,18 @@ app.controller('CreateMailBoxSettingsController', require('./controller/settings
 app.directive('gravatar', require('./directive/gravatar.js'));
 
 
-
 require('./directive/views.js')(app);
 
 angular.element(document).ready(function() {
-      angular.bootstrap(document, ['dbapp']);
-    });
-console.log("angular loaded"); 
+  setTimeout(function(){
+    while(angular.element(document.body).scope() == null){
+      angular.bootstrap(document.body, ['dbapp']);
+      console.log('retry start angular module')
+    }
+
+  },0);
+});
+
 },{"./controller/home":1,"./controller/mail":2,"./controller/readMail":3,"./controller/sendMail":4,"./controller/settings/createMailbox.js":5,"./controller/settings/mailbox.js":6,"./directive/gravatar.js":7,"./directive/views.js":8,"./service/sharedData.js":10,"angular":19,"angular-animate":12,"angular-route":14,"angular-sanitize":16,"angular-socket-io":17,"angularjs-toaster":20,"socket.io-client":36}],10:[function(require,module,exports){
 module.exports = function(){
   var data = {};

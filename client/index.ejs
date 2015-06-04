@@ -1,60 +1,65 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
+<head>
+  <meta charset="UTF-8">
 
-    <title>DashBoard</title>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
+  <title>DashBoard</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
 
-    <link href="/static/theme/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
-    <link href="/static/theme/plugins/colorpicker/bootstrap-colorpicker.min.css" rel="stylesheet"/>
-    <link href="/static/theme/plugins/iCheck/all.css" rel="stylesheet"/>
+  <link href="/static/theme/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+  <link href="/static/theme/plugins/colorpicker/bootstrap-colorpicker.min.css" rel="stylesheet"/>
+  <link href="/static/theme/plugins/iCheck/all.css" rel="stylesheet"/>
 
-    <link rel="stylesheet" href="/static/theme/dist/css/AdminLTE.min.css">
-    <link href="/static/theme/dist/css/skins/_all-skins.min.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="/static/theme/dist/css/AdminLTE.min.css">
+  <link href="/static/theme/dist/css/skins/_all-skins.min.css" rel="stylesheet" type="text/css" />
 
-    <link rel="stylesheet/less" type="text/css" href="/static/less/main.less">
+  <link rel="stylesheet/less" type="text/css" href="/static/less/main.less">
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/2.5.0/less.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/2.5.0/less.min.js"></script>
 
-    <script src="/static/theme/plugins/jQuery/jQuery-2.1.4.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/0.4.9/toaster.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  <script src="/static/theme/plugins/jQuery/jQuery-2.1.4.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/0.4.9/toaster.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
+  <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+  <![endif]-->
+</head>
+<body class="skin-blue sidebar-mini" ng-app="dbapp">
+  <div class="wrapper">
+    <top-bar></top-bar>
+    <side-bar></side-bar>
+    <div class="content-wrapper">
+      <!-- Content Header (Page header) -->
+      <ng-view></ng-view>
+      <toaster-container></toaster-container>
+    </div><!-- /.content-wrapper -->
 
-  </head>
-  <body class="skin-blue sidebar-mini">
-    <div class="wrapper">
-      <top-bar></top-bar>
-      <side-bar></side-bar>
-      <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
-        <ng-view></ng-view>
-        <toaster-container></toaster-container>
-      </div><!-- /.content-wrapper -->
+    <!-- Main Footer -->
+    <footer class="main-footer">
+      <!-- To the right -->
+      <div class="pull-right hidden-xs">
+        DashBoard
+      </div>
+      <!-- Default to the left -->
+      <strong>Copyright &copy; 2015 <a href="">Ralmn</a>.</strong> All rights reserved.
+    </footer>
 
-      <!-- Main Footer -->
-      <footer class="main-footer">
-        <!-- To the right -->
-        <div class="pull-right hidden-xs">
-          DashBoard
-        </div>
-        <!-- Default to the left -->
-        <strong>Copyright &copy; 2015 <a href="">Ralmn</a>.</strong> All rights reserved.
-      </footer>
+    <!-- Control Sidebar -->
+    <control-side-bar></control-side-bar> 
+    
 
-      <!-- Control Sidebar -->
-      <control-side-bar></control-side-bar> 
-      
+  </div>
+  
+  
+  <app-script></app-script>
 
-    </div>
+  
+
   <script>
     var passport = {
       user: {
@@ -67,7 +72,5 @@
   </script>
   <script src="/static/js/app.js"></script>
 
-  <app-script></app-script>
-
-  </body>
+</body>
 </html>
