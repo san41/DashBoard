@@ -23,7 +23,7 @@ module.exports = function($scope, socket, sharedData, $location, $filter, $timeo
         if($scope.mailboxUnReadMailCount[mail.mailbox.id] == null){
           $scope.mailboxUnReadMailCount[mail.mailbox.id] = 1;
         }else{
-          $scope.mailboxUnReadMailCount[mail.mailbox.id] += 1
+          $scope.mailboxUnReadMailCount[mail.mailbox.id] += 1;
         }
       }
       mail.style = style;

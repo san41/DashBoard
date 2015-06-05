@@ -68,9 +68,13 @@ app.use('/views', express.static('./client/views/'));
 
 for(var i in plugins){
     var pluginName = plugins[i];
+
+    //Client & settings js scripts
     app.use('/plugins/'+pluginName + '/client', express.static('./plugins/' + pluginName + '/client/public'));
+    //Client views
     app.use('/plugins/'+pluginName + '/client/views', express.static('./plugins/' + pluginName + '/client/views'));
-    console.log('/plugin/'+pluginName + '/client/views');
+    //Settings views
+    app.use('/plugins/'+pluginName + '/client/settings/views', express.static('./plugins/' + pluginName + '/client/settings/views'));
 }
 
 
@@ -98,7 +102,7 @@ io.use(passportSocketIo.authorize({
 
 var d = domain.create();
 d.run(function(){
-  require('./sockets.js')(io, d); 
+  require('./sockets.js')(io, plugins, d); 
 });
 
 

@@ -8,7 +8,10 @@
   <div class="tab-content">
     <!-- Settings tab content -->
     <div class="tab-pane active" id="control-sidebar-settings-tab">
-      <a href="/#/settings/mailbox">MailBox settings</a>
+      <ul class="sidebar-menu">
+        <!-- Optionally, you can add icons to the links -->
+        <li ng-repeat="item in settingsItems"><a href="/#{{item.url}}"><i class='fa {{item.iconClass}}'></i> <span>{{item.title}}</span></a></li>
+    </ul><!-- /.sidebar-menu -->
     </div><!-- /.tab-pane -->
   </div>
 </aside><!-- /.control-sidebar -->

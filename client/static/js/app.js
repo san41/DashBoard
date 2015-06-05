@@ -104,14 +104,18 @@ var countNeedLoad = 0;
 var loaded = 0;
 
 var menuItems = [];
+var settingsItems = [];
 
 var pluginsList = JSON.parse(xhrPlugins.responseText);
 for(var i in pluginsList){
   var pluginName = pluginsList[i];
+  countNeedLoad+=2; //Client + settings
+  
+  //Load client script
   var script = document.createElement('script');
-  script.src = '/plugins/'+ pluginName +'/client/index.js'
+  script.src = '/plugins/'+ pluginName +'/client/index.js';
   document.body.appendChild(script);
-  countNeedLoad++;
+  
   script.addEventListener('load', function(){
 
     var plugin = pluginsByName[pluginName];
@@ -119,6 +123,7 @@ for(var i in pluginsList){
     for(var controllerName in plugin.controllers){
       angular.module('dbapp').controller(controllerName, plugin.controllers[controllerName]);
     }
+    
     for(var i in plugin.menuItems){
         menuItems.push(plugin.menuItems[i]);
     }
@@ -129,13 +134,41 @@ for(var i in pluginsList){
         $routeProvider.when(routeName, {
           controller: routeData.controller,
           templateUrl: "/plugins/" + pluginName + "/client/views/" + routeData.templateUrl,
+        });
+      }
+    });
+    loaded++;
+  });
+  
+  //Load client settings script
+  var settingsScript =  document.createElement('script');
+  settingsScript.src = '/plugins/'+ pluginName +'/client/settings.js';
+  document.body.appendChild(settingsScript);
 
-        })
+  settingsScript.addEventListener('load', function(){
+
+    var plugin = pluginsByName[pluginName];
+    
+    for(var controllerName in plugin.settings.controllers){
+      angular.module('dbapp').controller(controllerName, plugin.settings.controllers[controllerName]);
+    }
+    for(var i in plugin.settings.settingsItems){
+        settingsItems.push(plugin.settings.settingsItems[i]);
+    }
+    app.config(function($routeProvider){
+      for(var routeName in plugin.settings.routes){
+        var routeData = plugin.settings.routes[routeName];
+        $routeProvider.when(routeName, {
+          controller: routeData.controller,
+          templateUrl: "/plugins/" + pluginName + "/client/settings/views/" + routeData.templateUrl,
+
+        });
 
       }
     });
     loaded++;
   });
+
 }
 
 
@@ -199,6 +232,7 @@ var tId = setTimeout(function(){
 
   app.run(function($rootScope){
     $rootScope.menuItems = menuItems;
+    $rootScope.settingsItems = settingsItems;
   })
 
   angular.element(document).ready(function() {

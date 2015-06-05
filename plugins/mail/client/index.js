@@ -1,4 +1,4 @@
-var plugin = createPlugin('mail');
+var plugin = getPlugin('mail');
 
 plugin.registerController('MailController', require('./controller/mail'));
 plugin.registerController('MailReadController', require('./controller/readMail'));
