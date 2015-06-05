@@ -39,7 +39,7 @@ for(var i in pluginsList){
     plugins.push(pluginsList[i]);
 }
 
-fs.writeFileSync('./plugins/plugins.js', JSON.stringify(plugins));
+fs.writeFileSync('./plugins/plugins.json', JSON.stringify(plugins));
 
 app.set('views', __dirname + '/../client');
 
