@@ -1,3 +1,4 @@
 node_modules/
 config/config.js
 nodemon.json
+plugins/plugins.json
