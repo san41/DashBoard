@@ -82,20 +82,7 @@ module.exports = function(app, passport) {
         res.redirect('/login');
     });
 
-    // =====================================
-    // MAILBOX ==============================
-    // =====================================
-
-    app.get('/mailbox/auth/google',
-            passport.authorize('gmail-login', { scope: ['https://www.googleapis.com/auth/plus.login', 'email', 'http://mail.google.com'], accessType: 'offline', approvalPrompt: 'force' }));
-
-    app.get('/mailbox/auth/google/callback', 
-      passport.authorize('gmail-login', { failureRedirect: '/#/settings/mailbox' }),
-      function(req, res) {
-        // Successful authentication, redirect home.
-        res.redirect('/#/settings/mailbox');
-    });
-
+    
 };
 
 // route middleware to make sure a user is logged in

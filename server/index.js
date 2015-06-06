@@ -92,7 +92,15 @@ for(var i in plugins){
 
 // routes ======================================================================
 require('./routes.js')(app, passport); // load our routes and pass in our app and fully configured passport
+//Load plugin routes
+for(var i in plugins){
+  var plugin = plugins[i];
 
+  try{
+    require('../plugins/' + plugin + '/server/routes')(passport);
+  }catch(e){}
+
+}
 
 
 // Socket.io ==================
