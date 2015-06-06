@@ -5,9 +5,12 @@ module.exports = function(io, plugins, domain){
     var globalSettings = {};
     for(var i in plugins){
       var plugin = plugins[i];
-      var serverPlugin = require('../plugins/' + plugin + '/server')(socket);
-      var pluginSettings = require('../plugins/' + plugin + '/server').getSettings();
-      globalSettings[plugin] = pluginSettings;
+      var module = require('../plugins/' + plugin + '/server')
+      var serverPlugin = module(socket);
+      if(module.getSettings != null){
+        var pluginSettings = module.getSettings();
+        globalSettings[plugin] = pluginSettings;
+      }
     }
     
     socket.emit("globalSettings", globalSettings);
