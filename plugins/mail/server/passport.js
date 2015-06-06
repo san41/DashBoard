@@ -1,7 +1,6 @@
 var MailBox = require('./models/mailbox.js');
-
+var config = require('../../../config/config.js');
 module.exports = function(passport){
-
   var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
   var GOOGLE_CLIENT_ID = config.google.auth.clientID;
   var GOOGLE_CLIENT_SECRET = config.google.auth.clientSecret;
