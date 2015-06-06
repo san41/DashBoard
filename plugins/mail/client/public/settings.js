@@ -67,6 +67,10 @@ settings.registerRoute('/mailbox/create', {
   controller : 'CreateMailBoxController',
   templateUrl : 'create.html'
 });
+settings.registerRoute('/mailbox/edit/:id', {
+  controller : 'CreateMailBoxController',
+  templateUrl : 'create.html'
+});
 
 settings.registerSettingsItem('MailBox', '/mailbox', 'fa-envelope');
 },{"./controller/createMailbox.js":1,"./controller/mailbox.js":2}]},{},[3])
