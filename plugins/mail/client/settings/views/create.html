@@ -59,9 +59,9 @@
                 <input ng-model="data.color" type="text" class="form-control colorpicker"/>
             </div><!-- /.form group -->
             <div class="form-group">
-              <input type="checkbox" ng-model="data.secure" id="secure">
+              <input type="checkbox" ng-checked="data.secure" ng-model="data.secure" id="secure">
               <label for="">
-                 Secure Connexion (tls?) {{data.secure}}
+                 Secure Connexion (tls?)
               </label>
             </div>
             <input type="submit" class="btn btn-primary" value="{{submitValue}}">
@@ -75,17 +75,5 @@
 <script>
   $(function () {
     $(".colorpicker").colorpicker();
-    $('input[type=checkbox]').each(function(){
-      var self = $(this),
-        label = self.next(),
-        label_text = label.text();
-
-      label.remove();
-      self.iCheck({
-        checkboxClass: 'icheckbox_line-blue',
-        radioClass: 'iradio_line-blue',
-        insert: '<div class="icheck_line-icon"></div>' + label_text
-      });
-    });
   });
 </script>
