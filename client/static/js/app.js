@@ -109,6 +109,7 @@ var settingsItems = [];
 var pluginsList = JSON.parse(xhrPlugins.responseText);
 for(var i in pluginsList){
   var pluginName = pluginsList[i];
+  (function(pluginName){
   countNeedLoad+=2; //Client + settings
   
   //Load client script
@@ -168,7 +169,7 @@ for(var i in pluginsList){
     });
     loaded++;
   });
-
+})(pluginName);
 }
 
 
@@ -184,6 +185,19 @@ app.config(function($routeProvider){
 
 });
 
+app.directive('ngEnter', function () {
+    return function (scope, element, attrs) {
+        element.bind("keydown keypress", function (event) {
+            if(event.which === 13) {
+                scope.$apply(function (){
+                    scope.$eval(attrs.ngEnter);
+                });
+ 
+                event.preventDefault();
+            }
+        });
+    };
+});
 
 app.factory('socket', function(socketFactory, $rootScope, toaster){
 
@@ -209,6 +223,13 @@ app.factory('socket', function(socketFactory, $rootScope, toaster){
 app.service('sharedData', require('./service/sharedData.js'));
 
 app.run(function($rootScope){
+  $rootScope.range = function(n) {
+    var l = [];
+    for(var i = 0; i < n; i++){
+      l.push(i);
+    }
+    return l;
+  };
   $rootScope.passport = passport;
 
 });
