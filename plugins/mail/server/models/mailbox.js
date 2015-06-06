@@ -1,6 +1,6 @@
 // load thImape things we need
 var mongoose = require('mongoose');
-var User = require('../models/user');
+//var User = require('../models/user');
 
 // define the schema for our user model
 var mailboxSchema = mongoose.Schema({

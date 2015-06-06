@@ -30,6 +30,8 @@ var mongoStore = new MongoStore({mongooseConnection: mongoose.connection});
 
 require('../config/passport')(passport); // pass passport for configuration
 
+
+
 var passportSocketIo = require("passport.socketio");
 
 var pluginsList = fs.readdirSync('./plugins');
@@ -37,6 +39,16 @@ var plugins = [];
 for(var i in pluginsList){
   if(fs.lstatSync('./plugins/' + pluginsList[i]).isDirectory())
     plugins.push(pluginsList[i]);
+}
+
+//Load plugin passport config
+for(var i in plugins){
+  var plugin = plugins[i];
+
+  try{
+    require('../plugins/' + plugin + '/server/passport')(passport);
+  }catch(e){}
+
 }
 
 fs.writeFileSync('./plugins/plugins.json', JSON.stringify(plugins));

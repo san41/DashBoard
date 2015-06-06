@@ -1,4 +1,4 @@
-var MailBox = require('../../../models/mailbox.js')
+var MailBox = require('./models/mailbox.js')
 var inbox = require('inbox');
 var simplesmtp = require('simplesmtp');
 var MailParser = require("mailparser").MailParser;
