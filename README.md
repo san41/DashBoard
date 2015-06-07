@@ -16,6 +16,7 @@ In `config/config.js` set your MongoDB database url
 Run `npm install`
 
 Before starting the server, you need to start MongoDB with the command `mongod`
+
 To start the server: `node server`
 
 To build the client source: 
