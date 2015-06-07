@@ -97,8 +97,10 @@ for(var i in plugins){
   var plugin = plugins[i];
 
   try{
-    require('../plugins/' + plugin + '/server/routes')(passport);
-  }catch(e){}
+    require('../plugins/' + plugin + '/server/routes')(app, passport);
+  }catch(e){
+    console.error(e);
+  }
 
 }
 
