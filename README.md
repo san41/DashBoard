@@ -7,13 +7,15 @@ By [Ralmn](http://ralmn.fr)
 
 ##Installation 
 
-First thing first:
+First thing to do:
 
-Rename and setup the `config/config.js.sample` in `config/config.js`
+Rename and setup the `config/config.js.sample` to `config/config.js`
 
-In `config/database.js` set your MongoDB database url
+In `config/config.js` set your MongoDB database url
 
 Run `npm install`
+
+Before starting the server, you need to start MongoDB with the command `mongod`
 
 To start the server: `node server`
 
