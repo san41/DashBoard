@@ -55,7 +55,9 @@ for(var i in pluginsList){
     });
     loaded++;
   });
-  
+  script.addEventListener('error', function(){
+    loaded++;
+  });
   //Load client settings script
   var settingsScript =  document.createElement('script');
   settingsScript.src = '/plugins/'+ pluginName +'/client/settings.js';
@@ -82,6 +84,9 @@ for(var i in pluginsList){
 
       }
     });
+    loaded++;
+  });
+  settingsScript.addEventListener('error', function(){
     loaded++;
   });
 })(pluginName);
@@ -162,9 +167,9 @@ app.directive('gravatar', require('./directive/gravatar.js'));
 
 require('./directive/views.js')(app);
 
-var tId = setTimeout(function(){
-  if(countNeedLoad < loaded) return;
-  clearTimeout(tId);
+var tId = setInterval(function(){
+  if(countNeedLoad > loaded){ return; }
+  clearInterval(tId);
 
   app.run(function($rootScope){
     $rootScope.menuItems = menuItems;
