@@ -13,6 +13,7 @@ var mailboxSchema = mongoose.Schema({
         username: String,
         color: String,
         secure: Boolean,
+        smtpAuth: Boolean,
         type: {type: String, default: 'imap'},
         clientId: String,
         clientSecret: String,
