@@ -20,3 +20,4 @@ gulp.task('default', ['client-browserify', "settings-browserify"], function(){
   gulp.watch(['app.js', '**/*.js', '!public/**/*.js'], ['client-browserify', "settings-browserify"]);
 })
 
+gulp.task('no-watch', ['client-browserify', "settings-browserify"]);
