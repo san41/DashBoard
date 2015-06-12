@@ -245,10 +245,10 @@ module.exports = function($scope, socket, sharedData, $location,$sce, toaster, $
       toaster.pop('error', 'Erreur', err);
       $rootScope.$apply();
 
-      return; 
+      return;
     }
     $scope.$apply(function(){
-      $scope.mailboxes = mailboxes;      
+      $scope.mailboxes = mailboxes;
       $scope.mailbox = mailboxes[0];
       if(mailData){
         $scope.mailbox = mailData.from;
@@ -257,25 +257,27 @@ module.exports = function($scope, socket, sharedData, $location,$sce, toaster, $
     });
   });
 
-  
+
 
   $scope.send = function(){
+
     var mailbox = $scope.mailbox;
     var subject = $scope.subject;
     var body = $scope.content;
     var to = $scope.to;
+    console.log(mailbox.email);
     var mail = {
       subject: subject,
       body: body,
       to: to,
-      from: mailbox.name
+      from: mailbox.email
     };
     socket.emit('mailbox/send', mailbox, mail, function(err, data){
       if(err){
         console.log(err, data);
         toaster.pop('error', 'Erreur', err, 5000);
         $rootScope.$apply();
-        return; 
+        return;
       };
       toaster.pop('info', null, 'Email envoyer');
       $rootScope.$apply();
@@ -284,6 +286,7 @@ module.exports = function($scope, socket, sharedData, $location,$sce, toaster, $
   }
 
 }
+
 },{}],4:[function(require,module,exports){
 var plugin = getPlugin('mail');
 

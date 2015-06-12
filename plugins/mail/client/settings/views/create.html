@@ -22,10 +22,14 @@
         </div>
         <div class="box-body">
           <form role="form" ng-submit="create()">
-            
+
             <div class="form-group">
               <label for="">Mailbox name</label>
               <input type="text" class='form-control' ng-model="data.name">
+            </div>
+            <div class="form-group">
+              <label for="">Email</label>
+              <input type="email" class='form-control' ng-model="data.email">
             </div>
             <div class="form-group">
               <label for="">Imap host</label>
@@ -58,15 +62,26 @@
               <label>Color</label>
                 <input ng-model="data.color" type="text" class="form-control colorpicker"/>
             </div><!-- /.form group -->
-            <div class="form-group">
-              <input type="checkbox" ng-checked="data.secure" ng-model="data.secure" id="secure">
-              <label for="">
-                 Secure Connexion (tls?)
-              </label>
+            <div class="col-md-6">
+                <div class="form-group">
+                  <input type="checkbox" ng-checked="data.secure" ng-model="data.secure" id="secure">
+                  <label for="">
+                     Secure Connexion (tls?)
+                  </label>
+                </div>
             </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                  <input type="checkbox" ng-checked="data.smtpAuth" ng-model="data.smtpAuth" id="auth">
+                  <label for="">
+                     SMTP Authentification ?
+                  </label>
+                </div>
+            </div>
+
             <input type="submit" class="btn btn-primary" value="{{submitValue}}">
           </form>
-        </div>  
+        </div>
       </div>
     </div>
   </div><!-- /.row -->

@@ -13,6 +13,7 @@ module.exports = function($scope, socket, $location, $routeParams){
     console.log($scope.data);
     $scope.data.color = document.querySelector('.colorpicker').value;
     $scope.data.secure = document.querySelector('#secure').checked;
+    $scope.data.smtpAuth = document.querySelector('#auth').checked;
     socket.emit('mailbox/save', $scope.data, function(err, data){
       if(!err)
         $location.path('/settings/mailbox')
@@ -31,6 +32,7 @@ module.exports = function($scope, socket, $location, $routeParams){
   }
 
 }
+
 },{}],2:[function(require,module,exports){
 module.exports = function($scope, socket, $location, toaster){
   $scope.mailboxes = []

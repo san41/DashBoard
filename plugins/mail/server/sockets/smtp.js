@@ -22,10 +22,12 @@ module.exports = function(socket) {
       host = 'smtp.gmail.com';
     }else{
       smtpOptions.secureConnection = mailbox.secure;
-      smtpOptions.auth = {
-        user : mailbox.username,
-        pass: mailbox.password
-      };
+      if(mailbox.smtpAuth){
+          smtpOptions.auth = {
+            user : mailbox.username,
+            pass: mailbox.password
+          };
+      }
       port = mailbox.smtpPort;
       host = mailbox.smtp;
     }
