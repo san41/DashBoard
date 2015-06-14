@@ -3,11 +3,12 @@ module.exports = function(socket){
 
 
   socket.on('todolist/list', function(callback){
-    TodoList.find({}, callback);
+    TodoList.find({user:socket.request.user}, callback);
   })
 
   socket.on('todolist/create', function(name, callback){
     var todoList = new TodoList({name: name, items: []});
+    todoList.user = socket.request.user;
     todoList.save(callback);
   });
 
