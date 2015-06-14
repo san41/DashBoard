@@ -26,7 +26,6 @@ module.exports = function(passport){
             color: "#f22626"
           });
           mb.save(function(err, mbSaved){
-            console.log(err, mbSaved);
             done(err, mbSaved);
           });    
         }else{

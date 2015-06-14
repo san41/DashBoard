@@ -15,7 +15,7 @@ module.exports = function(socket){
   });
 
   socket.on('mailbox/delete', function(data, callback){
-    MailBox.findOneAndRemove({_id: data._id}, callback);
+    MailBox.findOneAndRemove({_id: data._id, user:socket.request.user}, callback);
   });
 
 }

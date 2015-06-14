@@ -1,6 +1,7 @@
 // load thImape things we need
 var mongoose = require('mongoose');
-//var User = require('../models/user');
+var User = require('../../../../models/user');
+var Schema = mongoose.Schema
 
 // define the schema for our user model
 var mailboxSchema = mongoose.Schema({
@@ -21,6 +22,7 @@ var mailboxSchema = mongoose.Schema({
         refreshToken: String,
         googleId: String,
         email: String,
+        user: { type: Schema.Types.ObjectId, ref: 'User' }
 
 });
 
