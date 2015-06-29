@@ -4,6 +4,7 @@ var pluginsByName = {};
 var Plugin = function(name){
   this.routes = {};
   this.controllers = {};
+  this.widgets = {};
   this.menuItems = [];
   this.settings = new Settings();
 }
@@ -36,6 +37,15 @@ Plugin.prototype.registerMenuItem = function(title, url, iconClass){
     iconClass: iconClass
   }
   this.menuItems.push(data);
+}
+
+Plugin.prototype.registerWidget = function(name, templateURL, controller, configController){
+  this.widgets[name] = {
+    name: name,
+    templateURL: templateURL,
+    controller: controller,
+    configController: configController
+  };
 }
 
 var Settings = function(){

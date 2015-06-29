@@ -1,0 +1,25 @@
+<div class="box">
+  <div class="box-header">
+    Mailbox
+  </div>
+  <div class="box-body">
+    <div class="row" ng-controller="widget.configController">
+      
+      <form ng-submit="save()">
+        <div class="form-group">
+          <label for="">Column width</label>
+          <input type="number" min="1" max="12" ng-model="widget.colWidth">
+        </div>
+        <div class="form-group">
+          <label for="">Mailbox</label>
+          <select ng-model="widget.settings.mailbox">
+            <option value="{{mailbox._id}}" ng-repeat="mailbox in mailboxes">{{mailbox.name}}</option>
+          </select>
+        </div>
+      
+        <input type="submit" value"Save" class="btn btn-primary">
+      </form>
+
+    </div>
+  </div>
+</div>

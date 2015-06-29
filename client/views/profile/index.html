@@ -32,4 +32,22 @@
     </div><!-- /.box-body -->
   </div><!-- /.box -->
 
-        </section><!-- /.content -->
+
+  <div class="box">
+    <div class="box-header">
+      <h3>Widget</h3>
+    </div>
+    <div class="box-body">
+      <h4>Nouveau widget</h4>
+      <select ng-model="newWidgets" id="">
+        <option ng-repeat="widget in pluginsWidgets" value="{{widget.plugin}}/{{widget.name}}">{{widget.plugin}}/{{widget.name}}</option>
+      </select>
+      <button class="btn" ng-click="addWidget()">Ajouter</button>
+      <hr>
+      <ul>
+        <widgetconfig ng-repeat="widget in widgets" widget="widget">{{widget}}</widgetconfig>
+      </ul>
+    </div>
+  </div>
+
+</section><!-- /.content -->

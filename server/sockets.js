@@ -1,4 +1,5 @@
 var User = require('../models/user.js');
+var Widget = require('../models/widget.js');
 
 module.exports = function(io, plugins, domain){
 
@@ -19,7 +20,6 @@ module.exports = function(io, plugins, domain){
 
 
     //Profile
-
     socket.on('getUserData', function(passportUser, callback){
       User.findById(passportUser.id, function(err, user){
         if(err){ callback(err); return; }
@@ -38,6 +38,18 @@ module.exports = function(io, plugins, domain){
         }
         user.save(callback);
       })
+    })
+
+    //Widget 
+
+    socket.on('widget/list', function(callback){
+      Widget.find({user:socket.request.user},callback);
+    });
+
+    socket.on('widget/add', function(widget, callback){
+      widget.user = socket.request.user;
+      var w = new Widget(widget);
+      w.save(callback);
     })
 
     //Erreur

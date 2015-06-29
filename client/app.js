@@ -21,6 +21,8 @@ var loaded = 0;
 var menuItems = [];
 var settingsItems = [];
 
+var widgets = [];
+
 var pluginsList = JSON.parse(xhrPlugins.responseText);
 for(var i in pluginsList){
   var pluginName = pluginsList[i];
@@ -43,6 +45,17 @@ for(var i in pluginsList){
     for(var i in plugin.menuItems){
         menuItems.push(plugin.menuItems[i]);
     }
+    console.log(plugin.widgets);
+    for(var i in plugin.widgets){
+      console.log(i);
+      var w =  plugin.widgets[i];
+      w.plugin = pluginName;
+      console.log(w);
+      w.templateURLConfig= "/plugins/" + pluginName + "/client/views/widget/" + w.templateURL.replace('.html','-config.html'),
+      w.templateURL= "/plugins/" + pluginName + "/client/views/widget/" + w.templateURL,
+      widgets.push(w);
+    }
+
     app.config(function($routeProvider){
       for(var routeName in plugin.routes){
         var routeData = plugin.routes[routeName];
@@ -170,6 +183,7 @@ app.directive('gravatar', require('./directive/gravatar.js'));
 
 
 require('./directive/views.js')(app);
+require('./directive/widget.js')(app);
 
 var tId = setInterval(function(){
   if(countNeedLoad > loaded){ return; }
@@ -178,6 +192,7 @@ var tId = setInterval(function(){
   app.run(function($rootScope){
     $rootScope.menuItems = menuItems;
     $rootScope.settingsItems = settingsItems;
+    $rootScope.pluginsWidgets = widgets;
   })
 
   angular.element(document).ready(function() {
