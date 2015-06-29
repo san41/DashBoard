@@ -8,8 +8,14 @@ module.exports = function() {
     },
     link: function(scope, element, attr){
       if(scope.gravatar != null){
-        var email = gravatar.url(scope.gravatar, {s:100});
+        var email = gravatar.url(scope.gravatar, {s:50});
         element[0].src = email;
+
+        scope.$watch('gravatar', function(newVal, oldVal){
+          var email = gravatar.url(scope.gravatar, {s:50});
+          element[0].src = email;          
+        })
+
       }
     }
     }
