@@ -1,31 +1,29 @@
 <section class="content-header">
-          <h1>
-            Dashboard
-            <small>Control panel</small>
-          </h1>
-          <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-            <li class="active">Dashboard</li>
-          </ol>
-        </section>
+  <h1>
+    Dashboard
+    <small>Control panel</small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+    <li class="active">Dashboard</li>
+  </ol>
+</section>
 
-        <!-- Main content -->
-        <section class="content">
-          <!-- Small boxes (Stat box) -->
-          <div class="row">
-            <div class="col-lg-3 col-xs-6" ng-repeat="mailbox in mailboxes">
-              <div class="small-box" style="background-color: {{mailbox.color}};">
-                <div class="inner">
-                  <h3>{{mailbox.unreadCount}} <small>unread mail</small></h3>
-                  <p>{{mailbox.name}}</p>
-                </div>
-                <div class="icon">
-                  <i class="ion ion-bag"></i>
-                </div>
-                <a href="/#/mail" class="small-box-footer">Goto mail <i class="fa fa-arrow-circle-right"></i></a>
-              </div>
-            </div><!-- ./col -->
-          
-          </div><!-- /.row (main row) -->
+<!-- Main content -->
+<section class="content">
+  <!-- Small boxes (Stat box) -->
+  <div class="row">
+  <div class="col-12-md" ng-show="passport.user.email == 'undefined'">
+    <div class="alert alert-warning alert-dismissable">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+      <h4><i class="icon fa fa-warning"></i>Votre profile n'est pas entierement complété !</h4>
+      <a href="#/profile" class="btn btn-primary">Completer le profile</a>
+    </div>
+  </div>
 
-        </section><!-- /.content -->
+    
+    
+
+  </div><!-- /.row (main row) -->
+
+</section><!-- /.content -->

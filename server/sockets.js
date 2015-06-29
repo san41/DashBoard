@@ -1,3 +1,5 @@
+var User = require('../models/user.js');
+
 module.exports = function(io, plugins, domain){
 
   io.on('connect', function(socket){
@@ -5,7 +7,7 @@ module.exports = function(io, plugins, domain){
     var globalSettings = {};
     for(var i in plugins){
       var plugin = plugins[i];
-      var module = require('../plugins/' + plugin + '/server')
+      var module = require('../plugins/' + plugin + '/server');
       var serverPlugin = module(socket);
       if(module.getSettings != null){
         var pluginSettings = module.getSettings();
@@ -16,6 +18,29 @@ module.exports = function(io, plugins, domain){
     socket.emit("globalSettings", globalSettings);
 
 
+    //Profile
+
+    socket.on('getUserData', function(passportUser, callback){
+      User.findById(passportUser.id, function(err, user){
+        if(err){ callback(err); return; }
+        callback(null, user.local);
+      });
+    });
+
+    socket.on('editProfile', function(userId, userLocal, callback){
+      User.findById(userId, function(err, user){
+        if(err){ callback(err); return}
+        //Merge new data
+        var keys = Object.keys(userLocal);
+        for(var i in keys){
+          var key = keys[i];
+          user.local[key] = userLocal[key];
+        }
+        user.save(callback);
+      })
+    })
+
+    //Erreur
     domain.on('error', function(err){
       socket.emit('server-error', err.message, err); 
     });
@@ -25,4 +50,4 @@ module.exports = function(io, plugins, domain){
   });
 
 
-}
+};

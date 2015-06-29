@@ -99,6 +99,10 @@ app.config(function($routeProvider){
     templateUrl: "views/home/index.html",
     controller:"HomeController"
   });
+  $routeProvider.when('/profile', {
+    templateUrl: "views/profile/index.html",
+    controller:"ProfileController"
+  });
   $routeProvider.otherwise({
     redirectTo: '/home'
   });
@@ -151,12 +155,12 @@ app.run(function($rootScope){
     return l;
   };
   $rootScope.passport = passport;
-
 });
 
 
 app.controller('MainController', function($scope){ $scope.init = true; });
 app.controller('HomeController', require('./controller/home'));
+app.controller('ProfileController', require('./controller/profile'));
 
 app.directive('gravatar', require('./directive/gravatar.js'));
 
