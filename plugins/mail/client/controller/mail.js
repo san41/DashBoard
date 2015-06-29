@@ -12,6 +12,9 @@ module.exports = function($scope, socket, sharedData, $location, $filter, $timeo
 
   var updateData = function(){
     var unReadMailCount = 0;
+    for(var i in $scope.mailboxUnReadMailCount){
+      $scope.mailboxUnReadMailCount[i] = 0;
+    }
     for(var i in $scope.mails){
       var mail = $scope.mails[i];
       var style = {};
