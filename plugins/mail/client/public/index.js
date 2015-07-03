@@ -345,7 +345,8 @@ plugin.registerWidget("mailbox", "mailbox.html", function($scope, socket){
   })
 
   $scope.save = function(){
-    socket.emit('widget/add', $scope.widget);
+    console.log($scope.widget)
+    socket.emit('widget/save', $scope.widget);
   }
 
 })

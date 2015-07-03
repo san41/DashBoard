@@ -46,10 +46,18 @@ module.exports = function(io, plugins, domain){
       Widget.find({user:socket.request.user},callback);
     });
 
-    socket.on('widget/add', function(widget, callback){
+    socket.on('widget/save', function(widget, callback){
       widget.user = socket.request.user;
-      var w = new Widget(widget);
-      w.save(callback);
+      if(widget._id != null){
+        Widget.findById(widget._id, function(err, w){
+          w.settings = widget.settings;
+          w.colWidth = widget.colWidth;
+          w.save(callback);
+        });
+      }else{
+        var w = new Widget(widget);
+        w.save(callback);
+      }
     })
 
     //Erreur
