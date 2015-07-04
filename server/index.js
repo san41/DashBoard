@@ -1,7 +1,9 @@
 var fs  = require('fs');
 var express  = require('express');
 var app      = express();
+
 var port     = process.env.PORT || 5555;
+var host     = process.env.HOST || null;
 var mongoose = require('mongoose');
 var passport = require('passport');
 var flash    = require('connect-flash');
@@ -138,3 +140,26 @@ d.run(function(){
 
 // launch ======================================================================
 console.log('The magic happens on port ' + port);
+
+
+function endApp(){
+  console.log();
+  console.log("=========== Close app ===========")
+  console.log();
+  server.close();
+  process.exit()
+}
+
+
+process.once('SIGUSR1', endApp);
+process.once('SIGUSR2', endApp);
+
+process.once('SIGHUP', endApp);
+
+process.once('SIGINT', endApp);
+process.once('SIGTERM', endApp);
+
+process.on('uncaughtException', function(err) {
+  console.log('Caught exception: ' + err);
+  endApp();
+});
