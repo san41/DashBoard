@@ -47,10 +47,18 @@ plugin.registerWidget("mailbox", "mailbox.html", function($scope, socket){
     $scope.widget.settings = {};
 
   $scope.mailboxes = [];  
+  var mailboxesById = {};  
   socket.emit('mailbox/list', function(err, list){
     if(err) return;
+    for(var i in list){
+      mailboxesById[list[i]._id] = list[i];
+    }
     $scope.mailboxes = list;
-  })
+  });
+
+  $scope.getBoxById = function(id){
+    return mailboxesById[id];
+  }
 
   $scope.save = function(){
     console.log($scope.widget)

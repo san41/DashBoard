@@ -1,10 +1,13 @@
-<div class="box">
-  <div class="box-header">
-    Mailbox
+
+<div class="box box-solid collapsed-box" ng-controller="widget.configController">
+  <div class="box-header with-border" style="background-color:{{ getBoxById(widget.settings.mailbox).color }}; color: white;">
+    <b>Mailbox</b> "{{getBoxById(widget.settings.mailbox).name}}"
+    <div class="box-tools pull-right">
+      <button class="btn btn-box-tool" data-widget="collapse"><i style="color:white;" class="fa fa-plus"></i></button>
+    </div>
   </div>
   <div class="box-body">
-    <div class="row" ng-controller="widget.configController">
-      
+    <div>
       <form ng-submit="save()">
         <div class="form-group">
           <label for="">Column width</label>
@@ -15,10 +18,15 @@
           <select ng-model="widget.settings.mailbox" ng-options="mailbox._id as mailbox.name for mailbox in mailboxes">
           </select>
         </div>
-      
+
         <input type="submit" value"Save" class="btn btn-primary">
       </form>
 
     </div>
   </div>
 </div>
+
+
+<script>
+  $.AdminLTE.boxWidget.activate();
+</script>
