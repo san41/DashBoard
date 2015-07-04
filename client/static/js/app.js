@@ -190,7 +190,7 @@ require('angular-animate');
 require('angularjs-toaster');
 
 var xhrPlugins = new XMLHttpRequest();
-xhrPlugins.open('GET', '/plugins.json', false);
+xhrPlugins.open('GET', './plugins.json', false);
 xhrPlugins.send(null);
 if(xhrPlugins.status != 200 && xhrPlugins.status != 304){
   throw new Error('plugins.json not found');
