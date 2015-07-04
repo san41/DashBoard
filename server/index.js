@@ -14,17 +14,25 @@ var cookieParser = require('cookie-parser');
 var bodyParser   = require('body-parser');
 var session      = require('express-session');
 
+var config = require('../config/config.js');
+
 var MongoStore = require('connect-mongo')(session);
 
 
 var io = require('socket.io')(server);
 
-var databaseURL = require('../config/config.js').database.url;
+var databaseURL = config.database.url;
+var mongoOptions = {}; 
+
+if(config.database.user != null && config.database.pass != null){
+  mongoOptions.user = config.database.user;
+  mongoOptions.pass = config.database.pass;
+}
 
 server.listen(port);
 
 // configuration ===============================================================
-mongoose.connect(databaseURL); // connect to our database
+mongoose.connect(databaseURL, mongoOptions); // connect to our database
 
 var mongoStore = new MongoStore({mongooseConnection: mongoose.connection});
 
