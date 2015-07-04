@@ -12,8 +12,7 @@
         </div>
         <div class="form-group">
           <label for="">Mailbox</label>
-          <select ng-model="widget.settings.mailbox">
-            <option value="{{mailbox._id}}" ng-repeat="mailbox in mailboxes">{{mailbox.name}}</option>
+          <select ng-model="widget.settings.mailbox" ng-options="mailbox._id as mailbox.name for mailbox in mailboxes">
           </select>
         </div>
       
