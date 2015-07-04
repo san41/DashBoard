@@ -65,14 +65,11 @@ module.exports = function(socket, $scope, $rootScope, toaster){
   }
 
   $scope.addWidget = function(){
-    console.log($scope.newWidgets);
-    var plugin = $scope.newWidgets.split('/')[0];
-    var name = $scope.newWidgets.split('/')[1];
-    for(var i in $rootScope.pluginsWidgets){
-      var widget = $rootScope.pluginsWidgets[i];
-      if(plugin != widget.plugin || name != widget.name) continue;
+      var widget = $scope.newWidgets;
+      if(widget == undefined) return;
+      console.log(widget);
       $scope.widgets.push(widget);
-    }
+      console.log($scope.widgets);
   }
 
 }
@@ -144,10 +141,12 @@ module.exports = function(app){
       scope:{
         widget: "="  
       },
-      template :"<div> loading </div>",
+      template :"<div> loading config </div>",
       link: function(scope, element){
+        console.log(scope.widget, scope.widget.templateURLConfig);
         getTemplate(scope.widget.templateURLConfig).then(function(tpl){
           var e = $compile(tpl)(scope);
+          console.log(e);
           element.replaceWith(e);
         })
       }

@@ -58,6 +58,15 @@ module.exports = function(io, plugins, domain){
         var w = new Widget(widget);
         w.save(callback);
       }
+    });
+
+    socket.on('widget/delete', function(widget, callback){
+        Widget.findById(widget._id, function(err, w){
+          if(err){
+            callback(err); return;
+          }
+          w.remove(callback);
+        });
     })
 
     //Erreur

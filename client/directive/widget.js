@@ -11,10 +11,12 @@ module.exports = function(app){
       scope:{
         widget: "="  
       },
-      template :"<div> loading </div>",
+      template :"<div> loading config </div>",
       link: function(scope, element){
+        console.log(scope.widget, scope.widget.templateURLConfig);
         getTemplate(scope.widget.templateURLConfig).then(function(tpl){
           var e = $compile(tpl)(scope);
+          console.log(e);
           element.replaceWith(e);
         })
       }

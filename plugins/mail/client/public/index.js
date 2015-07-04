@@ -332,7 +332,7 @@ plugin.registerWidget("mailbox", "mailbox.html", function($scope, socket){
   })
 
 
-}, function($scope, socket){
+}, function($scope, socket, $element){
   if($scope.widget.colWidth == null)
     $scope.widget.colWidth = 3;
   if($scope.widget.settings == null)
@@ -353,8 +353,14 @@ plugin.registerWidget("mailbox", "mailbox.html", function($scope, socket){
   }
 
   $scope.save = function(){
-    console.log($scope.widget)
     socket.emit('widget/save', $scope.widget);
+  }
+
+  $scope.delete = function(){
+   socket.emit('widget/delete', $scope.widget, function(err){
+    if(err) return;
+    $element.remove();
+   }); 
   }
 
 })
