@@ -45,7 +45,7 @@
       <button class="btn" ng-click="addWidget()">Ajouter</button>
       <hr>
       <ul>
-        <widgetconfig ng-repeat="widget in widgets" widget="widget">{{widget}}</widgetconfig>
+        <widgetconfig ng-repeat="widget in widgets track by $index" widget="widget">{{widget}}</widgetconfig>
       </ul>
     </div>
   </div>
