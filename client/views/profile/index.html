@@ -39,8 +39,7 @@
     </div>
     <div class="box-body">
       <h4>Nouveau widget</h4>
-      <select ng-model="newWidgets" id="">
-        <option ng-repeat="widget in pluginsWidgets" value="{{widget.plugin}}/{{widget.name}}">{{widget.plugin}}/{{widget.name}}</option>
+      <select ng-model="newWidgets" ng-options="widget.plugin+'/'+widget.name for widget in pluginsWidgets">
       </select>
       <button class="btn" ng-click="addWidget()">Ajouter</button>
       <hr>
