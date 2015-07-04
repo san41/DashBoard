@@ -1,13 +1,10 @@
 <div class="col-md-{{ widget.colWidth }}" ng-controller="widget.controller">
-<div class="small-box" style="background-color: {{mailbox.color}};">
-  <div class="inner">
-    <h3 ng-show="mailbox.unreadCount>=0">{{mailbox.unreadCount}} <small>unread mail</small></h3>
-    <p>{{mailbox.name}}</p>
-  </div>
-  <div class="icon">
-    <i class="ion ion-bag"></i>
-  </div>
-  <a href="/#/mail" class="small-box-footer">Goto mail <i class="fa fa-arrow-circle-right"></i></a>
-</div>
-
+  <div class="info-box" style="background-color: {{mailbox.color}};" >
+    <span class="info-box-icon"><i class="fa fa-envelope-o"></i></span>
+    <div class="info-box-content">
+      <span class="info-box-text">{{mailbox.name}}</span>
+      <span class="info-box-number" ng-show="mailbox.unreadCount>=0">{{mailbox.unreadCount}} <small>unread mail</small></span>
+      <a href="/#/mail" style="color:white;" >Goto mail <i class="fa fa-arrow-circle-right"></i></a>
+    </div><!-- /.info-box-content -->
+  </div><!-- /.info-box -->
 </div>
