@@ -159,7 +159,7 @@ process.once('SIGHUP', endApp);
 process.once('SIGINT', endApp);
 process.once('SIGTERM', endApp);
 
-process.on('uncaughtException', function(err) {
-  console.log('Caught exception: ' + err);
-  endApp();
-});
+// process.on('uncaughtException', function(err) {
+//   console.log('Caught exception: ' + err);
+//   endApp();
+// });
