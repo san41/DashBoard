@@ -11,7 +11,7 @@ module.exports = function(app){
       scope:{
         widget: "="  
       },
-      template :"<div> loading config </div>",
+      template :"<div>  </div>",
       link: function(scope, element){
         console.log(scope.widget, scope.widget.templateURLConfig);
         getTemplate(scope.widget.templateURLConfig).then(function(tpl){
@@ -36,7 +36,7 @@ module.exports = function(app){
       scope:{
         widget: "="  
       },
-      template :"<div> loading </div>",
+      template :"<div>  </div>",
       link: function(scope, element){
         getTemplate(scope.widget.templateURL).then(function(tpl){
           var e = $compile(tpl)(scope);

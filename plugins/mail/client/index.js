@@ -65,6 +65,10 @@ plugin.registerWidget("mailbox", "mailbox.html", function($scope, socket){
   }
 
   $scope.delete = function(){
+    if($scope.widget._id == null){
+      $element.remove();
+      return
+    }
    socket.emit('widget/delete', $scope.widget, function(err){
     if(err) return;
     $element.remove();
