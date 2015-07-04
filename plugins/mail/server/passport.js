@@ -9,7 +9,7 @@ module.exports = function(passport){
     passport.use('gmail-login', new GoogleStrategy({
       clientID: GOOGLE_CLIENT_ID,
       clientSecret: GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://127.0.0.1:5555/mailbox/auth/google/callback"
+      callbackURL: config.url+"/mailbox/auth/google/callback"
     }, function(accessToken, refreshToken, profile, done) {
       MailBox.find({googleId: profile.id}, function(err, mailbox){
         if(err == null && mailbox.length == 0){
