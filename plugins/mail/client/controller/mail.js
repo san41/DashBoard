@@ -62,7 +62,7 @@ module.exports = function($scope, socket, sharedData, $location, $filter, $timeo
 
   socket.emit('mailbox/list', function(err, mailboxes){
     if(err){
-      toaster.put('error', 'Erreur', err);
+      toaster.put('error', 'Error', err);
       return; 
     }
     $scope.mailboxes = mailboxes;
@@ -71,7 +71,7 @@ module.exports = function($scope, socket, sharedData, $location, $filter, $timeo
       (function(mailbox){
         socket.emit('mails/request', mailbox, function(err, mails){
           if(err){
-            toaster.pop('error', 'Erreur', err);
+            toaster.pop('error', 'Error', err);
             $rootScope.$apply();
             return;
           }
@@ -108,7 +108,7 @@ module.exports = function($scope, socket, sharedData, $location, $filter, $timeo
       if(errors.length > 0){
         for(var i in errors){
           var err = errors[i];
-          toaster.pop('error', 'Erreur', err);
+          toaster.pop('error', 'Error', err);
           $rootScope.$apply();
 
         }
@@ -136,7 +136,7 @@ module.exports = function($scope, socket, sharedData, $location, $filter, $timeo
       if(errors.length > 0){
         for(var i in errors){
           var err = errors[i];
-          toaster.pop('error', 'Erreur', err);
+          toaster.pop('error', 'Error', err);
           $rootScope.$apply();
 
         }

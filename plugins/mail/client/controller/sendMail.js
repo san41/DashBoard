@@ -13,7 +13,7 @@ module.exports = function($scope, socket, sharedData, $location,$sce, toaster, $
 
   socket.emit('mailbox/list', function(err, mailboxes){
     if(err){
-      toaster.pop('error', 'Erreur', err);
+      toaster.pop('error', 'Error', err);
       $rootScope.$apply();
 
       return;
@@ -45,11 +45,11 @@ module.exports = function($scope, socket, sharedData, $location,$sce, toaster, $
     socket.emit('mailbox/send', mailbox, mail, function(err, data){
       if(err){
         console.log(err, data);
-        toaster.pop('error', 'Erreur', err, 5000);
+        toaster.pop('error', 'Error', err, 5000);
         $rootScope.$apply();
         return;
       };
-      toaster.pop('info', null, 'Email envoyer');
+      toaster.pop('info', null, 'Mail sended');
       $rootScope.$apply();
       $location.path('/mail');
     });

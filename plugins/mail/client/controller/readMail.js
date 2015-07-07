@@ -5,7 +5,7 @@ module.exports = function($scope, socket, sharedData, $location,$sce, toaster, $
   if($scope.mail == null){ $location.path('/mail'); return; }
   socket.emit('mailbox/getMailContent', $scope.mail, function(err, data){
     if(err){
-      toaster.pop('error', 'Erreur', err);
+      toaster.pop('error', 'Error', err);
       $rootScope.$apply();
       return; 
     }
@@ -15,7 +15,7 @@ module.exports = function($scope, socket, sharedData, $location,$sce, toaster, $
   $scope.mailbox = null;
   socket.emit('mailbox/get', {_id: $scope.mail.mailbox.id}, function(err, data){
     if(err){
-      toaster.pop('error', 'Erreur', err);
+      toaster.pop('error', 'Error', err);
       $rootScope.$apply();
 
       return; 
@@ -59,7 +59,7 @@ module.exports = function($scope, socket, sharedData, $location,$sce, toaster, $
       if(errors.length > 0){
         for(var i in errors){
           var err = errors[i];
-          toaster.pop('error', 'Erreur', err);
+          toaster.pop('error', 'Error', err);
           $rootScope.$apply();
 
         }

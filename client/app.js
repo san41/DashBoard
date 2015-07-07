@@ -144,14 +144,14 @@ app.factory('socket', function(socketFactory, $rootScope, toaster){
   });
   myIoSocket.on('server-error', function(msg, error){
     console.log(error, typeof(error), msg);
-    toaster.pop('error', 'Erreur', msg);
+    toaster.pop('error', 'Error', msg);
   });
   myIoSocket.on('disconnect', function(){
-    toaster.pop("warning", "Perte de connexion", "Le serveur socket.io n'est plus joignable");
+    toaster.pop("warning", "Connexion lost", "The server is no longer reachable");
     $rootScope.$apply();
   });
   myIoSocket.on('reconnect', function(){
-    toaster.pop("info", "Reconnexion", "Le serveur socket.io est de nouveau joignable");
+    toaster.pop("info", "Reconnected", "The server is reachable again");
     $rootScope.$apply();
   });
   return socketFactory({ioSocket:myIoSocket});

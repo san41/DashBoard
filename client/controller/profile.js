@@ -30,9 +30,9 @@ module.exports = function(socket, $scope, $rootScope, toaster){
     socket.emit('editProfile', passport.user.id, $scope.user, function(err){
       if(err){
         console.error(err);
-        toaster.pop('error',"Impossible de changer le profile");
+        toaster.pop('error',"Can not change profile");
       }
-      toaster.pop('info',"Votre profile a était mis a jour. Rafraichiser la page");
+      toaster.pop('info',"Your profile has was updated. Refresh page");
     })
   }
 

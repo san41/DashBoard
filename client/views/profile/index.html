@@ -38,10 +38,10 @@
       <h3>Widget</h3>
     </div>
     <div class="box-body">
-      <h4>Nouveau widget</h4>
+      <h4>New widget</h4>
       <select ng-model="newWidgets" ng-options="widget.plugin+'/'+widget.name for widget in pluginsWidgets">
       </select>
-      <button class="btn" ng-click="addWidget()">Ajouter</button>
+      <button class="btn" ng-click="addWidget()">Add</button>
       <hr>
       <ul>
         <widgetconfig ng-repeat="widget in widgets track by $index" widget="widget">{{widget}}</widgetconfig>
