@@ -1,23 +1,19 @@
 # DashBoard
-By [Ralmn](http://ralmn.fr)
+By [Ralmn](http://ralmn.fr) ([Twitter](https://twitter.com/ralmn45))
 
-[Twitter](https://twitter.com/ralmn45)
+[Dashboard.party](http://dashboard.party)
 
 [Trello](https://trello.com/b/ipTaldH0/dashboard)
 
+[Documentation](http://dashboard.readthedocs.org/en/latest/)
+
 ##Installation 
 
-First thing to do:
-
-Rename and setup the `config/config.js.sample` to `config/config.js`
-
-In `config/config.js` set your MongoDB database url
-
-Run `npm install`
-
-Before starting the server, you need to start MongoDB with the command `mongod`
+See [Installation documentation](http://dashboard.readthedocs.org/en/latest/install.html)
 
 To start the server: `node server`
+
+##Developers
 
 To build the client source: 
 ```
