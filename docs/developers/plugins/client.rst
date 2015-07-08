@@ -9,21 +9,21 @@ index.js
 
 The `index.js` file would be located in the root of your `client` folder (see :doc:`structure`). 
 
-First, your `index.js` would be contains 
+First, your `index.js` would contains 
 
 .. code:: javascript
 
   var plugin = getPlugin('pluginName');
 
-Your plugin name muste be exaclty the same as your plugin directory name.
+Your plugin name must be exaclty the same as your plugin directory name.
 
 Controller
 ~~~~~~~~~~~~
 
-After you need to declare your plugin controller. 
+Then, you need to declare your plugin controller. 
 The Dashboard use `AngularJS`_ for the client views.
 
-For declare your controller in your plugin you will use : 
+To declare your controller in your plugin you must use : 
 
 .. code:: javascript 
 
@@ -43,7 +43,7 @@ and in `controller/yourController.js` :
 Routes
 ~~~~~~~
 
-After your add yours controllers, now you will add the roouting rules. 
+After adding your controllers, now you must add the routing rules. 
 
 .. code:: javascript
 
@@ -53,19 +53,19 @@ After your add yours controllers, now you will add the roouting rules.
   });
 
 
-.. note:: The `templateUrl` is the path of your view file in your plugin's `views` folder.
+.. note:: The `templateUrl` is the path of your view file in your plugin `views` folder.
 
 Menu items
 ~~~~~~~~~~~~
 
-Now, you will add the menu item
+Now, you must add the menu item
 
 
 .. code:: javascript
 
   plugin.registerMenuItem('YourMenuTitle', '/yourRoute', 'fa-envelope');
 
-.. note:: The third parameters (`fa-envelope`) is the menu item logo. It use `Font Awesome`_ icons
+.. note:: The third parameter (`fa-envelope`) is the menu item logo. It use `Font Awesome`_ icons
 
 .. _AngularJS: https://angularjs.org
 .. _Font Awesome: http://fortawesome.github.io/Font-Awesome/icons/
