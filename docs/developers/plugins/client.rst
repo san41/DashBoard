@@ -90,3 +90,9 @@ The third parameter is the widget controllers
 The fourth parameter is the widget configuration controllers
 
 .. note:: The widget configuration view path for the `widgetName.html` view is `widgetName-config.html`
+
+
+Settings
+---------
+
+See :doc:`settings`
