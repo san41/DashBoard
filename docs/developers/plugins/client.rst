@@ -9,7 +9,7 @@ index.js
 
 The `index.js` file would be located in the root of your `client` folder (see :doc:`structure`). 
 
-First, your `index.js` would contains 
+First, your index.js file should contain the following code.
 
 .. code:: javascript
 
@@ -85,7 +85,7 @@ Widget
   })
 
 The first parameter is the name of the widget.
-The second parameter is is the path of your view file in your plugin's `views` folder.
+The second parameter is the path of your view file in your plugin's `views` folder.
 The third parameter is the widget controllers
 The fourth parameter is the widget configuration controllers
 
