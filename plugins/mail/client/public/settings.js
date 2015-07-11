@@ -65,7 +65,8 @@ module.exports = function($scope, socket, $location, toaster){
           }
         }
         if(index > -1){
-          $scope.mailboxes.splice(index);
+          console.log($scope.mailboxes);
+          $scope.mailboxes.splice(index, 1);
         }
       }
     });
