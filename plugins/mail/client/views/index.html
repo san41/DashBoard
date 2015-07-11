@@ -9,10 +9,17 @@
   </ol>
 </section>
 
-
+<section class="content" ng-show="mailboxes.length == 0">
+  <div class="col-md-12">
+    <div class="callout callout-danger">
+      <h4>You don't have register mailbox !</h4>
+      <p>For register a mailbox go <a href="#/settings/mailbox">on the settings page.</a></p>
+    </div>
+  </div>
+</section>
 
 <!-- Main content -->
-<section class="content">
+<section class="content" ng-show="mailboxes.length > 0">
   <div class="row">
     <div class="col-md-3">
       <a href="#/mail/send" class="btn btn-primary btn-block margin-bottom">Compose</a>
@@ -33,7 +40,7 @@
         </div><!-- /.box-body -->
       </div><!-- /. box -->
 
-    <!-- MailBox box -->
+      <!-- MailBox box -->
       <div class="box box-solid">
         <div class="box-header with-border"  ng-click="messageFilterData.mailbox = undefined">
           <h3 class="box-title">MailBox</h3>
@@ -41,7 +48,7 @@
         <div class="box-body no-padding">
           <ul class="nav nav-pills nav-stacked">
             <li ng-repeat="mailbox in mailboxes" ng-class="{active: messageFilterData.mailbox.id == mailbox._id}"><a ng-click="messageFilterData.mailbox.id = mailbox._id"><i class="fa fa-circle-o" style="color:{{mailbox.color}}"></i>{{mailbox.name}}
-            <span class="label label-primary pull-right" ng-bind="mailboxUnReadMailCount[mailbox._id]"></span>
+              <span class="label label-primary pull-right" ng-bind="mailboxUnReadMailCount[mailbox._id]"></span>
             </a></li>
           </ul>
         </div><!-- /.box-body -->
