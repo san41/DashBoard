@@ -39,7 +39,7 @@ module.exports = function($scope, socket, $location, toaster){
 
   socket.emit('mailbox/list', function(err, mailboxes){
     if(err){
-      toaster.put('error', 'Erreur', err);
+      toaster.put('error', 'Error', err);
       return; 
     }
     $scope.$apply(function(){
