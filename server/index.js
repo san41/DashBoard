@@ -57,7 +57,7 @@ for(var i in plugins){
 
   try{
     require('../plugins/' + plugin + '/server/passport')(passport);
-  }catch(e){}
+  }catch(e){ console.error(e); }
 
 }
 

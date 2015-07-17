@@ -32,7 +32,7 @@ module.exports = function(socket, $scope, $rootScope, toaster){
         console.error(err);
         toaster.pop('error',"Can not change profile");
       }
-      toaster.pop('info',"Your profile has was updated. Refresh page");
+      toaster.pop('info',"Your profile has been updated. Refresh page");
     })
   }
 

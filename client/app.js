@@ -45,12 +45,9 @@ for(var i in pluginsList){
     for(var i in plugin.menuItems){
         menuItems.push(plugin.menuItems[i]);
     }
-    console.log(plugin.widgets);
     for(var i in plugin.widgets){
-      console.log(i);
       var w =  plugin.widgets[i];
       w.plugin = pluginName;
-      console.log(w);
       w.templateURLConfig= "./plugins/" + pluginName + "/client/views/widget/" + w.templateURL.replace('.html','-config.html'),
       w.templateURL= "./plugins/" + pluginName + "/client/views/widget/" + w.templateURL,
       widgets.push(w);

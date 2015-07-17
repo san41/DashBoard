@@ -58,9 +58,9 @@ module.exports = function(socket, $scope, $rootScope, toaster){
     socket.emit('editProfile', passport.user.id, $scope.user, function(err){
       if(err){
         console.error(err);
-        toaster.pop('error',"Impossible de changer le profile");
+        toaster.pop('error',"Can not change profile");
       }
-      toaster.pop('info',"Votre profile a était mis a jour. Rafraichiser la page");
+      toaster.pop('info',"Your profile has been updated. Refresh page");
     })
   }
 
@@ -227,12 +227,9 @@ for(var i in pluginsList){
     for(var i in plugin.menuItems){
         menuItems.push(plugin.menuItems[i]);
     }
-    console.log(plugin.widgets);
     for(var i in plugin.widgets){
-      console.log(i);
       var w =  plugin.widgets[i];
       w.plugin = pluginName;
-      console.log(w);
       w.templateURLConfig= "./plugins/" + pluginName + "/client/views/widget/" + w.templateURL.replace('.html','-config.html'),
       w.templateURL= "./plugins/" + pluginName + "/client/views/widget/" + w.templateURL,
       widgets.push(w);
@@ -326,14 +323,14 @@ app.factory('socket', function(socketFactory, $rootScope, toaster){
   });
   myIoSocket.on('server-error', function(msg, error){
     console.log(error, typeof(error), msg);
-    toaster.pop('error', 'Erreur', msg);
+    toaster.pop('error', 'Error', msg);
   });
   myIoSocket.on('disconnect', function(){
-    toaster.pop("warning", "Perte de connexion", "Le serveur socket.io n'est plus joignable");
+    toaster.pop("warning", "Connexion lost", "The server is no longer reachable");
     $rootScope.$apply();
   });
   myIoSocket.on('reconnect', function(){
-    toaster.pop("info", "Reconnexion", "Le serveur socket.io est de nouveau joignable");
+    toaster.pop("info", "Reconnected", "The server is reachable again");
     $rootScope.$apply();
   });
   return socketFactory({ioSocket:myIoSocket});
