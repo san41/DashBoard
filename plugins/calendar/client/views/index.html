@@ -35,7 +35,7 @@
   <div class="col-md-12">
     <div class="callout callout-danger">
       <h4>You don't have register calendar !</h4>
-      <p>For register a calendar go <a href="#/settings/calendar">on the settings page.</a></p>
+      <p>To register a calendar go <a href="#/settings/calendar">on the settings page.</a></p>
     </div>
   </div>
 </section>
@@ -44,7 +44,6 @@
 <section class="content" ng-show="calendars.length > 0 ">
   <div class="row">
     <div class="col-md-3">
-      <!-- <a href="#/mail/send" class="btn btn-primary btn-block margin-bottom">Compose</a> -->
       <div class="btn-group">
         <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
           New Event  <span class="caret"></span>
@@ -54,9 +53,9 @@
           <li ng-repeat="calendar in calendars" ng-if="calendar.accessRole == 'writer' || calendar.accessRole == 'owner'"><a href="" ng-click="createEvent(calendar)"><i class="fa fa-circle-o" style="color:{{calendar.color}}"></i>{{calendar.name}}</a></li>
         </ul>
       </div>
-      <!-- MailBox box -->
+      <!-- Calendar box -->
       <div class="box box-solid">
-        <div class="box-header with-border"  ng-click="messageFilterData.mailbox = undefined">
+        <div class="box-header with-border">
           <h3 class="box-title">Calendars</h3>
         </div>
         <div class="box-body no-padding">
