@@ -25,7 +25,7 @@ module.exports = function(passport){
           accessToken: null,
           refreshToken: refreshToken,
           calendarId: 'primary',
-          accessRole: 'owner'
+          accessRole: 'owner',
           color: "#f0f0f0"
         });
         
