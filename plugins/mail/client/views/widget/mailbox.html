@@ -2,7 +2,10 @@
   <div class="info-box" style="background-color: {{mailbox.color}};" >
     <span class="info-box-icon"><i class="fa fa-envelope-o"></i></span>
     <div class="info-box-content">
-      <span class="info-box-text">{{mailbox.name}}</span>
+      <span class="info-box-text" ng-show="mailbox">{{mailbox.name}}</span>
+      <span class="info-box-text" ng-hide="mailbox">No mailbox are currently selected</span>
+      <p ng-hide="mailbox">Please select your mailbox on <a href="#/profile">your profile</a></p>
+
       <span class="info-box-number" ng-show="mailbox.unreadCount>=0">{{mailbox.unreadCount}} <small>unread mail</small></span>
       <a href="/#/mail" style="color:white;" >Goto mail <i class="fa fa-arrow-circle-right"></i></a>
     </div><!-- /.info-box-content -->
