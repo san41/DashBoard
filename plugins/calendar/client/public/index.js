@@ -1564,7 +1564,7 @@ module.exports = function($scope, socket, $compile, toaster){
   $scope.uiConfig = {
     calendar:{
       // height: 250,
-      lang: 'fr',
+      lang: navigator.language || navigator.userLanguage || 'en',
       editable: true,
       header:{
         left: 'title',
