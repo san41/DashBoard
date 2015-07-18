@@ -6,38 +6,25 @@ module.exports = function(passport){
   var GOOGLE_CLIENT_SECRET = config.google.auth.clientSecret;
   if(GOOGLE_CLIENT_ID != null && GOOGLE_CLIENT_ID.length > 1 && GOOGLE_CLIENT_SECRET != null && GOOGLE_CLIENT_SECRET.length > 1){
     MailBox.googleLoginEnable = true;
-    console.log({
-      clientID: GOOGLE_CLIENT_ID,
-      clientSecret: GOOGLE_CLIENT_SECRET,
-      callbackURL: config.url+"/mailbox/auth/google/callback"
-    });
+
     passport.use('gmail-login', new GoogleStrategy({
       clientID: GOOGLE_CLIENT_ID,
       clientSecret: GOOGLE_CLIENT_SECRET,
       callbackURL: config.url+"/mailbox/auth/google/callback"
-    }, function(accessToken, refreshToken, profile, done) {
-      MailBox.find({googleId: profile.id}, function(err, mailbox){
-        if(err == null && mailbox.length == 0){
-          var email = profile.emails[0].value;
-          var mb = new MailBox({
-            type: 'google',
-            name: email,
-            email: email,
-            googleId: profile.id,
-            clientId: GOOGLE_CLIENT_ID,
-            clientSecret: GOOGLE_CLIENT_SECRET,
-            accessToken: accessToken,
-            refreshToken: refreshToken,
-            color: "#f22626"
-          });
-          mb.save(function(err, mbSaved){
-            done(err, mbSaved);
-          });    
-        }else{
-          done(err, mailbox);
-        }
-      })
-    }
-    ));
+    }, function(accessToken, refreshToken, profile, done){
+      var email = profile.emails[0].value;
+      var mb = new MailBox({
+        type: 'google',
+        name: email,
+        email: email,
+        googleId: profile.id,
+        clientId: GOOGLE_CLIENT_ID,
+        clientSecret: GOOGLE_CLIENT_SECRET,
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+        color: "#f22626"
+      });
+      mb.save(done);
+    }));
   }
 }
