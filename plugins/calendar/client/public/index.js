@@ -1605,15 +1605,16 @@ module.exports = function($scope, socket, $compile, toaster){
   }
 
   function initDateRangePicker(event){
+    var format = (event != null && event.allDay) ? 'MM/DD/YYYY' : 'MM/DD/YYYY h:mm A';
     var options = {
       timeZone: jstz.determine().name(),
       showDropdowns: true,
       autoApply: true,
-      timePicker: true,
+      timePicker:   event == null ||( event != null && (event.allDay == null || !event.allDay)),
       timePickerIncrement: 5,
-      format: 'MM/DD/YYYY h:mm A',
+      format: format,
       locale: {
-        format: 'MM/DD/YYYY h:mm A'
+        format: format
       }
     };
     if(event != null){
@@ -1627,11 +1628,28 @@ module.exports = function($scope, socket, $compile, toaster){
 
   function eventClick(calEvent, jsEvent, view){
     $scope.modal = calEvent;
-    $scope.modal.editable = calEvent.calendar.accessRole == "writer" || calEvent.calendar.accessRole == "owner"
-    $('input[datetimerange]').val(calEvent.start.format('MM/DD/YYYY h:mm A') + " - " + calEvent.end.format('MM/DD/YYYY h:mm A'))
+    $scope.modal.editable = calEvent.calendar.accessRole == "writer" || calEvent.calendar.accessRole == "owner";
+
+    var format = event.allDay ? 'MM/DD/YYYY' : 'MM/DD/YYYY h:mm A';
+    var endStr = calEvent.end != null ? calEvent.end.format(format) : calEvent.start.format(format);
+    $('input[datetimerange]').val(calEvent.start.format(format) + " - " + endStr)
+      
     initDateRangePicker(calEvent);
 
     $scope.$apply();
+
+    var unregisterWatchAllDay = $scope.$watch('modal.allDay', function(){
+      if($scope.modal == null){
+        unregisterWatchAllDay();
+        return;
+      }
+      var format = $scope.modal.allDay ? 'MM/DD/YYYY' : 'MM/DD/YYYY h:mm A';
+      var endStr = $scope.modal.end != null ? $scope.modal.end.format(format) : $scope.modal.start.format(format);
+      $('input[datetimerange]').val($scope.modal.start.format(format) + " - " + endStr)
+      initDateRangePicker($scope.modal);      
+    });
+
+
   }
 
   function eventResizeAndDrop(event, delta, revertFunc){
@@ -1709,15 +1727,21 @@ module.exports = function($scope, socket, $compile, toaster){
   }
 
   function parseGoogleEvent(googleEvent, calendar){
+    var allDay = false;
+    if(googleEvent.start.dateTime == null && googleEvent.start.date != null)
+      allDay = true;
+    var startDate = allDay ? googleEvent.start.date : googleEvent.start.dateTime;
+    var endDate = allDay ? googleEvent.end.date : googleEvent.end.dateTime;
     return {
       title: googleEvent.summary,
       location: googleEvent.location,
       description: googleEvent.description,
-      start: new Date(googleEvent.start.dateTime),
-      end: new Date(googleEvent.end.dateTime),
+      start: moment(startDate),
+      end: moment(endDate),
       calendar: calendar,
       className: "pointer",
-      googleEvent: googleEvent
+      googleEvent: googleEvent,
+      allDay: allDay
     };
   }
   
@@ -1748,11 +1772,13 @@ module.exports = function($scope, socket, $compile, toaster){
       return;
     }
     newEvent.start = {
-      dateTime: newDate.startDate.toISOString(),
+      dateTime: !newEvent.allDay ? newDate.startDate.toISOString() : null,
+      date: newEvent.allDay ? newDate.startDate.format('YYYY-MM-DD') : null,
       timeZone: timeZone
     };
     newEvent.end = {
-      dateTime: newDate.endDate.toISOString(),
+      dateTime: !newEvent.allDay ? newDate.endDate.toISOString() : null,
+      date: newEvent.allDay ? newDate.endDate.format('YYYY-MM-DD') : null,
       timeZone: timeZone
     };  
 
@@ -1784,11 +1810,13 @@ module.exports = function($scope, socket, $compile, toaster){
     var timeZone = jstz.determine().name();
     var newDate = $('input[datetimerange]').data('daterangepicker');
     event.nstart = {
-      dateTime: newDate.startDate.toISOString(),
+      dateTime: !event.allDay ? newDate.startDate.toISOString() : null,
+      date: event.allDay ? newDate.startDate.format('YYYY-MM-DD') : null,
       timeZone: timeZone
     };
     event.nend = {
-      dateTime: newDate.endDate.toISOString(),
+      dateTime: !event.allDay ? newDate.endDate.toISOString() : null,
+      date: event.allDay ? newDate.endDate.format('YYYY-MM-DD') : null,
       timeZone: timeZone
     };
     socket.emit('calendar/google/event/edit', event.calendar, event, function(err, res){
