@@ -1,3 +1,5 @@
+var _ = require('underscore');
+
 module.exports = function($scope, socket, toaster){
 
   $scope.todolist = []
@@ -20,15 +22,18 @@ module.exports = function($scope, socket, toaster){
 
   $scope.createList = function(){
     var totoListName = $scope.newTodoName;
+    if(totoListName.length == 0 || todolistByName[totoListName] != null){
+      return;
+    }
     socket.emit('todolist/create', totoListName, function(err, list){
       if(err){
         toaster.pop('error', 'Error', 'Error on creating totolist');
         console.err(err);
         return;
       }
-      $scope.todolist.push(list);
       $scope.newTodoName = "";
       todolistByName[list.name] = list;
+      $scope.todolist = _.values(todolistByName);
     })
   }
 
@@ -40,7 +45,7 @@ module.exports = function($scope, socket, toaster){
         return;
       }
       todolistByName[list.name] = list;
-      $scope.todolist = Object.keys(todolistByName).map(function(key){ return todolistByName[key]; })
+      $scope.todolist = _.values(todolistByName);
     })
   }
   $scope.toggleCheck = function(list, item){
@@ -51,7 +56,7 @@ module.exports = function($scope, socket, toaster){
         return;
       }
       todolistByName[list.name] = list;
-      $scope.todolist = Object.keys(todolistByName).map(function(key){ return todolistByName[key]; })
+      $scope.todolist = _.values(todolistByName);
     })
   }
 
@@ -63,7 +68,7 @@ module.exports = function($scope, socket, toaster){
         return;
       }
       delete todolistByName[list.name];
-      $scope.todolist = Object.keys(todolistByName).map(function(key){ return todolistByName[key]; })
+      $scope.todolist = _.values(todolistByName);
     })
   }
   $scope.deleteItem = function(list, item){
@@ -74,7 +79,7 @@ module.exports = function($scope, socket, toaster){
         return;
       }
       todolistByName[list.name] = list;
-      $scope.todolist = Object.keys(todolistByName).map(function(key){ return todolistByName[key]; })
+      $scope.todolist = _.values(todolistByName);
     })
   }
 
