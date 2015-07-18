@@ -18,12 +18,11 @@ Execute command in a terminal
 From archive file
 *******************
 	
-1. Download [repository archive](https://github.com/ralmn/DashBoard/archive/master.zip)
+1. Download `repository archive <https://github.com/ralmn/DashBoard/archive/>`_ 
 2. Unzip your archive
-3. Download [theme archive](https://github.com/almasaeed2010/AdminLTE)
-4. Create folder ``theme``  in the ``client/static`` folder 
-5. Unzip the ``AdminLTE-master`` of your theme archive in ``client/static/theme/``
-6. Execute in a terminal `npm install`
+3. Download `theme archive <https://github.com/almasaeed2010/AdminLTE/archive/master.zip>`_
+4. Unzip the ``AdminLTE-master`` of your theme archive in ``client/static/theme/``
+5. Execute in a terminal `npm install`
 
 
 
@@ -35,6 +34,7 @@ Configure the dashboard
   
  
 
+:: theme archive:  
 
 
-	
+
