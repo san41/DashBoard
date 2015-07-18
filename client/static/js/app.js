@@ -345,6 +345,14 @@ app.run(function($rootScope){
 });
 
 
+app.run(function($location, $rootScope){
+    $rootScope.currentPath = $location.path();
+    $rootScope.$on('$routeChangeSuccess', function(e, current, pre) {
+        $rootScope.currentPath = $location.path();
+    });
+})
+
+
 app.controller('MainController', function($scope){ $scope.init = true; });
 app.controller('HomeController', require('./controller/home'));
 app.controller('ProfileController', require('./controller/profile'));
