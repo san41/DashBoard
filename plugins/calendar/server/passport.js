@@ -24,6 +24,8 @@ module.exports = function(passport){
           clientSecret: GOOGLE_CLIENT_SECRET,
           accessToken: null,
           refreshToken: refreshToken,
+          calendarId: 'primary',
+          accessRole: 'owner'
           color: "#f0f0f0"
         });
         

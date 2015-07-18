@@ -1,4 +1,4 @@
-module.exports = function($scope, socket, $location, $routeParams){
+module.exports = function($scope, socket, $location, $routeParams, toaster){
   if($routeParams.id == null){
     $location.path('/settings/calendar'); return;
   }
@@ -28,7 +28,10 @@ module.exports = function($scope, socket, $location, $routeParams){
 
   $scope.save = function(){
     $scope.calendar.color = document.querySelector('.colorpicker').value;
-    $scope.calendar.accessRole = calendarById[$scope.calendar.calendarId].accessRole;
+    if($scope.calendar.calendarId != 'primary')
+      $scope.calendar.accessRole = calendarById[$scope.calendar.calendarId].accessRole;
+    else
+      $scope.calendar.accessRole = 'owner'
     socket.emit('calendar/save', $scope.calendar, function(err){
       if(err){ console.error(err); return; }
       $location.path('/settings/calendar');
