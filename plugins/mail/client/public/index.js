@@ -133,7 +133,6 @@ module.exports = function($scope, socket, sharedData, $location, $filter, $timeo
     }
     toaster.pop('info', "Request deletion", 'Request deletion of '+ Object.keys(mailsMarked).length + " mails");
     socket.emit('mailbox/deleteMail', mailsMarked, function(errors, UIDDeleted){
-      console.log(errors, UIDDeleted);
       if(errors.length > 0){
         for(var i in errors){
           var err = errors[i];
@@ -212,8 +211,8 @@ module.exports = function($scope, socket, sharedData, $location,$sce, toaster, $
   $scope.delete = function(){
     toaster.pop('info', "Request to delete", 'request to mail delete');
     socket.emit('mailbox/deleteMail', [$scope.mail], function(errors, UIDDeleted){
-      console.log(errors, UIDDeleted);
       if(errors.length > 0){
+        console.error(errors);
         for(var i in errors){
           var err = errors[i];
           toaster.pop('error', 'Error', err);
@@ -276,7 +275,7 @@ module.exports = function($scope, socket, sharedData, $location,$sce, toaster, $
     };
     socket.emit('mailbox/send', mailbox, mail, function(err, data){
       if(err){
-        console.log(err, data);
+        console.error(err, data);
         toaster.pop('error', 'Error', err, 5000);
         $rootScope.$apply();
         return;

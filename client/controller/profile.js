@@ -3,7 +3,6 @@ module.exports = function(socket, $scope, $rootScope, toaster){
   $scope.widgets = [];
   socket.emit('getUserData', passport.user, function(err, userData){
     if(err) return;
-    console.log(userData);
     $scope.user = userData;
   });
 
@@ -39,9 +38,7 @@ module.exports = function(socket, $scope, $rootScope, toaster){
   $scope.addWidget = function(){
       var widget = $scope.newWidgets;
       if(widget == undefined) return;
-      console.log(widget);
       $scope.widgets.push(widget);
-      console.log($scope.widgets);
   }
 
 }

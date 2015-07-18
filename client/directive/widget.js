@@ -13,10 +13,8 @@ module.exports = function(app){
       },
       template :"<div>  </div>",
       link: function(scope, element){
-        console.log(scope.widget, scope.widget.templateURLConfig);
         getTemplate(scope.widget.templateURLConfig).then(function(tpl){
           var e = $compile(tpl)(scope);
-          console.log(e);
           element.replaceWith(e);
         })
       }

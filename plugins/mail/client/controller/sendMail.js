@@ -44,7 +44,7 @@ module.exports = function($scope, socket, sharedData, $location,$sce, toaster, $
     };
     socket.emit('mailbox/send', mailbox, mail, function(err, data){
       if(err){
-        console.log(err, data);
+        console.error(err, data);
         toaster.pop('error', 'Error', err, 5000);
         $rootScope.$apply();
         return;

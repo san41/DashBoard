@@ -9,15 +9,14 @@ module.exports = function($scope, socket, $location, $routeParams){
   }
 
   $scope.create = function(){
-    console.log($scope.data);
     $scope.data.color = document.querySelector('.colorpicker').value;
     $scope.data.secure = document.querySelector('#secure').checked;
     $scope.data.smtpAuth = document.querySelector('#auth').checked;
     socket.emit('mailbox/save', $scope.data, function(err, data){
       if(!err)
-        $location.path('/settings/mailbox')
+        $location.path('/settings/mailbox');
       else
-        console.log(err);
+        console.error(err);
     });
   }
 

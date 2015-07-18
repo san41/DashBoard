@@ -55,8 +55,8 @@ module.exports = function($scope, socket, sharedData, $location,$sce, toaster, $
   $scope.delete = function(){
     toaster.pop('info', "Request to delete", 'request to mail delete');
     socket.emit('mailbox/deleteMail', [$scope.mail], function(errors, UIDDeleted){
-      console.log(errors, UIDDeleted);
       if(errors.length > 0){
+        console.error(errors);
         for(var i in errors){
           var err = errors[i];
           toaster.pop('error', 'Error', err);

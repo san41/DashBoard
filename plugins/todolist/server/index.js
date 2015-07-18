@@ -36,7 +36,6 @@ module.exports = function(socket){
           todoList.items[i] = it; 
         }
       }
-      console.log(todoList.items);
       todoList.save(callback);
     });
   });
@@ -47,7 +46,6 @@ module.exports = function(socket){
     });
   });
   socket.on('todolist/deleteItem', function(list, item, callback){
-    console.log(item);
     TodoList.findById(list._id, function(err, todoList){
       var index = -1;
       for(var i in todoList.items){

@@ -31,7 +31,6 @@ module.exports = function(socket, $scope, $rootScope, toaster){
   $scope.widgets = [];
   socket.emit('getUserData', passport.user, function(err, userData){
     if(err) return;
-    console.log(userData);
     $scope.user = userData;
   });
 
@@ -67,9 +66,7 @@ module.exports = function(socket, $scope, $rootScope, toaster){
   $scope.addWidget = function(){
       var widget = $scope.newWidgets;
       if(widget == undefined) return;
-      console.log(widget);
       $scope.widgets.push(widget);
-      console.log($scope.widgets);
   }
 
 }
@@ -143,10 +140,8 @@ module.exports = function(app){
       },
       template :"<div>  </div>",
       link: function(scope, element){
-        console.log(scope.widget, scope.widget.templateURLConfig);
         getTemplate(scope.widget.templateURLConfig).then(function(tpl){
           var e = $compile(tpl)(scope);
-          console.log(e);
           element.replaceWith(e);
         })
       }
@@ -322,7 +317,7 @@ app.factory('socket', function(socketFactory, $rootScope, toaster){
     $rootScope.globalSettings = globalSettings;
   });
   myIoSocket.on('server-error', function(msg, error){
-    console.log(error, typeof(error), msg);
+    console.error(error, typeof(error), msg);
     toaster.pop('error', 'Error', msg);
   });
   myIoSocket.on('disconnect', function(){
@@ -378,7 +373,7 @@ var tId = setInterval(function(){
     setTimeout(function(){
       while(angular.element(document.body).scope() == null){
         angular.bootstrap(document.body, ['dbapp']);
-        console.log('retry start angular module')
+        console.warm('retry start angular module')
       }
     },0);
   });
