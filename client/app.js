@@ -172,6 +172,10 @@ app.run(function($location, $rootScope){
     $rootScope.currentPath = $location.path();
     $rootScope.$on('$routeChangeSuccess', function(e, current, pre) {
         $rootScope.currentPath = $location.path();
+
+        $('aside.control-sidebar').removeClass('control-sidebar-open');
+        $('body').removeClass('sidebar-open');
+
     });
 })
 
@@ -204,7 +208,7 @@ var tId = setInterval(function(){
     setTimeout(function(){
       while(angular.element(document.body).scope() == null){
         angular.bootstrap(document.body, ['dbapp']);
-        console.warm('retry start angular module')
+        console.warn('retry start angular module')
       }
     },0);
   });
