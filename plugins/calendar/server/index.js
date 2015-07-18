@@ -18,7 +18,6 @@ module.exports = function(socket){
   });
 
   socket.on('calendar/save', function(calendar, callback){
-    console.log(calendar);
     if(calendar._id == null){
       calendar.user = socket.request.user;
       Calendar.create(calendar, callback);

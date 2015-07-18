@@ -73,6 +73,9 @@ module.exports = function($scope, socket, $compile, toaster){
         options.endDate = event.end;
     }
     $('input[datetimerange]').daterangepicker(options);
+
+    
+
   };
 
   function eventClick(calEvent, jsEvent, view){
@@ -82,10 +85,11 @@ module.exports = function($scope, socket, $compile, toaster){
     var format = event.allDay ? 'MM/DD/YYYY' : 'MM/DD/YYYY h:mm A';
     var endStr = calEvent.end != null ? calEvent.end.format(format) : calEvent.start.format(format);
     $('input[datetimerange]').val(calEvent.start.format(format) + " - " + endStr)
+    
+    $scope.$apply();
       
     initDateRangePicker(calEvent);
 
-    $scope.$apply();
 
     var unregisterWatchAllDay = $scope.$watch('modal.allDay', function(){
       if($scope.modal == null){
@@ -99,17 +103,27 @@ module.exports = function($scope, socket, $compile, toaster){
     });
 
 
+
   }
 
   function eventResizeAndDrop(event, delta, revertFunc){
     var timeZone = jstz.determine().name();
+    if(event.end == null){
+      if(event.allDay){
+        event.end =  event.start;
+      }else{
+        event.end = event.start.clone().add(moment.duration(2, 'hours'));
+      }
+    }
     var newEvent = {
       nend: {
-        dateTime: event.end.toISOString(),
+        dateTime: !event.allDay ? event.end.toISOString() : null,
+        date: event.allDay ? event.end.format('YYYY-MM-DD') : null,
         timeZone: timeZone
       },
       nstart: {
-        dateTime: event.start.toISOString(),
+        dateTime: !event.allDay ? event.start.toISOString() : null,
+        date: event.allDay ? event.start.format('YYYY-MM-DD') : null,
         timeZone: timeZone
       },
       googleEvent: event.googleEvent
@@ -200,11 +214,27 @@ module.exports = function($scope, socket, $compile, toaster){
     var newEvent = {
       calendar: calendar,
       isNew: true,
-      editable: true
+      editable: true,
+      allDay: false
     }
 
     $scope.modal = newEvent;
     initDateRangePicker();
+
+    var unregisterWatchAllDay = $scope.$watch('modal.allDay', function(){
+      if($scope.modal == null){
+        unregisterWatchAllDay();
+        return;
+      }
+      var format = $scope.modal.allDay ? 'MM/DD/YYYY' : 'MM/DD/YYYY h:mm A';
+      if($scope.modal.start != null){
+        var endStr = $scope.modal.end != null ? $scope.modal.end.format(format) : $scope.modal.start.format(format);
+        $('input[datetimerange]').val($scope.modal.start.format(format) + " - " + endStr)
+      }
+      initDateRangePicker($scope.modal);      
+    });
+
+
   }
 
   function modalNewEvent(){

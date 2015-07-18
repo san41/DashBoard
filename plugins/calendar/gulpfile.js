@@ -17,7 +17,7 @@ gulp.task("settings-browserify", function(){
 })
 
 function onError(err) {
-  console.log(err);
+  console.error(err);
   this.emit('end');
 }
 
