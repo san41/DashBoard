@@ -1,10 +1,14 @@
 var io = require('socket.io-client');
+var fs = require('fs');
+var path = require('path');
+var  _ = require('underscore');
 var angular = require('angular');
 require('angular-route');
 require('angular-sanitize');
 require('angular-socket-io');
 require('angular-animate');
 require('angularjs-toaster');
+require('angular-gettext');
 
 var xhrPlugins = new XMLHttpRequest();
 xhrPlugins.open('GET', './plugins.json', false);
@@ -13,7 +17,7 @@ if(xhrPlugins.status != 200 && xhrPlugins.status != 304){
   throw new Error('plugins.json not found');
 }
 
-var app = angular.module("dbapp", ['ngRoute', 'btford.socket-io', 'ngSanitize', 'toaster', 'ngAnimate']);
+var app = angular.module("dbapp", ['ngRoute', 'btford.socket-io', 'ngSanitize', 'toaster', 'ngAnimate', 'gettext']);
 
 var countNeedLoad = 0;
 var loaded = 0;
@@ -22,6 +26,17 @@ var menuItems = [];
 var settingsItems = [];
 
 var widgets = [];
+
+var locales = fs.readdirSync('../locales/translations/');
+console.log(locales);
+for(var i in locales){
+  var local = locales[i];
+  var localPath = './locales/translations/' + local + '/app.js';
+  var script = document.createElement('script');
+  script.src = localPath;
+  document.body.appendChild(script);
+}
+
 
 var pluginsList = JSON.parse(xhrPlugins.responseText);
 for(var i in pluginsList){
@@ -133,6 +148,12 @@ app.directive('ngEnter', function () {
     };
 });
 
+app.run(function(gettextCatalog){
+    gettextCatalog.setCurrentLanguage(currentLanguage);
+    gettextCatalog.currentLanguage = currentLanguage;
+    gettextCatalog.debug = false;
+});
+
 app.factory('socket', function(socketFactory, $rootScope, toaster){
 
   var myIoSocket = io.connect();
@@ -214,3 +235,13 @@ var tId = setInterval(function(){
   });
 }, 5);
 
+
+
+
+// glob('../locales/translations/**/*.js', function(files){
+//   console.log(files);
+//   for(var i in files){
+//     var file = files[i];
+//     console.log(file);
+//   }
+// })

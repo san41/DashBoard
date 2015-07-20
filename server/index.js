@@ -8,6 +8,7 @@ var mongoose = require('mongoose');
 var passport = require('passport');
 var flash    = require('connect-flash');
 var domain = require('domain');
+var gettext = require('express-gettext')
 
 var server = require('http').Server(app);
 
@@ -71,6 +72,7 @@ app.use(cookieParser()); // read cookies (needed for auth)
 app.use(bodyParser()); // get information from html forms
 
 
+
 app.set('view engine', 'ejs'); // set up ejs for templating
 
 // required for passport
@@ -82,10 +84,17 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 app.use(flash()); // use connect-flash for flash messages stored in session
+//gettext
+app.use(gettext(app, {
+  directory: __dirname + '/../locales/',
+  useAcceptedLanguageHeader: true,
+  // fallback: function(text){ return text }
+}))
 
 
 app.use('/static', express.static('./client/static/'));
 app.use('/views', express.static('./client/views/'));
+app.use('/locales', express.static('./locales'));
 
 
 for(var i in plugins){
