@@ -42,19 +42,29 @@ module.exports = function(socket){
     var auth = getAuth(calendar);
     if(auth == null){ callback(new Error("Calendar auth error")); return }
     var gCalendar = google.calendar('v3');
-    gCalendar.events.list({
-      auth: auth,
-      calendarId: calendar.calendarId,
-      timeMin: (new Date(now.getFullYear() -1, now.getMonth())).toISOString(),
-      timeMax: (new Date(now.getFullYear() +1, now.getMonth())).toISOString(),
-      // maxResults: 50,
-      singleEvents: true,
-      orderBy: 'startTime'
-    }, function(err, response) {
-      if(err){ callback(err); return; }
-      socket.emit('calendar/google/events/year', calendar, response.items);
-    });
+    
+    function list(pageToken){
+      gCalendar.events.list({
+        auth: auth,
+        calendarId: calendar.calendarId,
+        timeMin: (new Date(now.getFullYear() -1, now.getMonth())).toISOString(),
+        timeMax: (new Date(now.getFullYear() +1, now.getMonth())).toISOString(),
+        pageToken: pageToken,
+        maxResults: 1000,
+        singleEvents: true,
+        orderBy: 'startTime'
+      }, function(err, response) {
+        if(err){ callback(err); return; }
+        socket.emit('calendar/google/events/year', calendar, response.items);
+        if(response.nextPageToken != null){
+          list(response.nextPageToken);
+        }
+      });
+    }
+    list();
   });
+
+
 
   socket.on('calendar/google/event/create', function(calendar, newEvent, callback){
     var auth = getAuth(calendar);
