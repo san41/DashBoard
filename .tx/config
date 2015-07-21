@@ -1,0 +1,27 @@
+[main]
+host = https://www.transifex.com
+
+[dashboardparty.apppot-1]
+source_file = locales/app.pot
+file_filter = locales/<lang>/app.po
+source_lang = en_US
+type = PO
+
+[dashboardparty.calendar-plugin]
+source_file = plugins/calendar/locales/app.pot
+file_filter = plugins/calendar/locales/<lang>/app.po
+source_lang = en_US
+type = PO
+
+[dashboardparty.mail-plugin]
+source_file = plugins/mail/locales/app.pot
+file_filter = plugins/mail/locales/<lang>/app.po
+source_lang = en_US
+type = PO
+
+[dashboardparty.todolist-plugin]
+source_file = plugins/todolist/locales/app.pot
+file_filter = plugins/todolist/locales/<lang>/app.po
+source_lang = en_US
+type = PO
+

@@ -1,7 +1,7 @@
 <div ng-controller="widget.configController">
   <div class="box box-solid collapsed-box" >
   <div class="box-header with-border" style="background-color:{{ getBoxById(widget.settings.mailbox).color }};">
-      <b>Mailbox</b> "{{getBoxById(widget.settings.mailbox).name}}"
+      <b translate>Mailbox</b> "{{getBoxById(widget.settings.mailbox).name}}"
       <div class="box-tools pull-right">
 
         <button class="btn btn-box-tool" data-widget="collapse"><i style="color:black;" class="fa fa-plus"></i></button>
@@ -12,16 +12,16 @@
       <div>
         <form ng-submit="save()">
           <div class="form-group">
-            <label for="">Column width</label>
+            <label for="" translate>Column width</label>
             <input type="number" min="1" max="12" ng-model="widget.colWidth">
           </div>
           <div class="form-group">
-            <label for="">Mailbox</label>
+            <label for="" translate>Mailbox</label>
             <select ng-model="widget.settings.mailbox" ng-options="mailbox._id as mailbox.name for mailbox in mailboxes">
             </select>
           </div>
 
-          <input type="submit" value"Save" class="btn btn-primary">
+          <button type="submit" translate class="btn btn-primary">Save</button>
         </form>
 
       </div>

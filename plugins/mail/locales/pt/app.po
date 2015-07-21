@@ -1,0 +1,126 @@
+# 
+# Translators:
+msgid ""
+msgstr ""
+"Project-Id-Version: dashboard\n"
+"PO-Revision-Date: 2015-07-20 23:28+0000\n"
+"Language-Team: Portuguese (http://www.transifex.com/projects/p/dashboardparty/language/pt/)\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: pt\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: widget/mailbox.html:9
+msgid "{{mailbox.unreadCount}} <small>unread mail</small>"
+msgid_plural "{{$count}} <small>unread mail</small>"
+msgstr[0] ""
+msgstr[1] ""
+
+#: index.html:4
+msgid "1 new message"
+msgid_plural "{{$count}} new message"
+msgstr[0] ""
+msgstr[1] ""
+
+#: index.html:36
+msgid "All"
+msgstr ""
+
+#: send.html:16
+msgid "Back to Inbox"
+msgstr ""
+
+#: widget/mailbox-config.html:15
+msgid "Column width"
+msgstr ""
+
+#: index.html:25
+msgid "Compose"
+msgstr ""
+
+#: send.html:22
+msgid "Compose New Message"
+msgstr ""
+
+#: read.html:50
+msgid "Delete"
+msgstr ""
+
+#: index.html:16
+msgid ""
+"For register a mailbox go <a href=\"#/settings/mailbox\">on the settings "
+"page.</a>"
+msgstr ""
+
+#: read.html:30
+msgid "From"
+msgstr ""
+
+#: widget/mailbox.html:10
+msgid "Goto mail"
+msgstr ""
+
+#: index.html:7 read.html:7 send.html:6
+msgid "Home"
+msgstr ""
+
+#: index.html:60
+msgid "Inbox"
+msgstr ""
+
+#: index.html:3 index.html:8 read.html:8 send.html:2 send.html:26 send.html:7
+#: widget/mailbox-config.html:19 widget/mailbox-config.html:4
+msgid "Mailbox"
+msgstr ""
+
+#: index.html:46
+msgid "MailBox"
+msgstr ""
+
+#: index.html:29
+msgid "Messages"
+msgstr ""
+
+#: widget/mailbox.html:6
+msgid "No mailbox are currently selected"
+msgstr ""
+
+#: widget/mailbox.html:7
+msgid "Please select your mailbox on <a href=\"#/profile\">your profile</a>"
+msgstr ""
+
+#: read.html:51
+msgid "Print"
+msgstr ""
+
+#: index.html:38
+msgid "Read"
+msgstr ""
+
+#: read.html:21 read.html:3
+msgid "Read Mail"
+msgstr ""
+
+#: read.html:47
+msgid "Reply"
+msgstr ""
+
+#: read.html:16
+msgid "Return mailbox"
+msgstr ""
+
+#: widget/mailbox-config.html:24
+msgid "Save"
+msgstr ""
+
+#: send.html:8
+msgid "Send"
+msgstr ""
+
+#: index.html:37
+msgid "Unread"
+msgstr ""
+
+#: index.html:15
+msgid "You don't have register mailbox !"
+msgstr ""

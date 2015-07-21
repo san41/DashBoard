@@ -1,0 +1,19 @@
+# 
+# Translators:
+msgid ""
+msgstr ""
+"Project-Id-Version: dashboard\n"
+"PO-Revision-Date: 2015-07-20 23:29+0000\n"
+"Language-Team: English (http://www.transifex.com/projects/p/dashboardparty/language/en/)\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: index.html:18
+msgid "Create"
+msgstr ""
+
+#: index.html:24
+msgid "Home"
+msgstr "Home"

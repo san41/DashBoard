@@ -1,0 +1,116 @@
+# 
+# Translators:
+# xhelty19 <baptiste.dixneuf@gmail.com>, 2015
+# ralmn <ranger_tigre@hotmail.fr>, 2015
+msgid ""
+msgstr ""
+"Project-Id-Version: dashboard\n"
+"PO-Revision-Date: 2015-07-20 23:54+0000\n"
+"Last-Translator: atchisson <antoine.lenoir3@gmail.com>\n"
+"Language-Team: French (http://www.transifex.com/projects/p/dashboardparty/language/fr/)\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: fr\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: index.html:106
+msgid "All Day"
+msgstr "Toute la journée "
+
+#: google/view.html:40 index.html:25 index.html:26 index.html:30 index.html:8
+msgid "Calendar"
+msgstr "Calendrier "
+
+#: google/view.html:27
+msgid "Calendar name"
+msgstr "Nom du calendrier"
+
+#: google/view.html:2 index.html:2
+msgid "Calendar Settings"
+msgstr "Paramètres du calendrier"
+
+#: index.html:59
+msgid "Calendars"
+msgstr "Calendriers"
+
+#: index.html:115
+msgid "Close"
+msgstr "Fermer"
+
+#: google/view.html:35
+msgid "Color"
+msgstr "Couleur"
+
+#: index.html:35
+msgid "Delete"
+msgstr "Supprimer"
+
+#: index.html:116
+msgid "Delete event"
+msgstr "Supprimer cet évènement"
+
+#: index.html:96
+msgid "Description"
+msgstr "Description"
+
+#: google/view.html:43 index.html:34
+msgid "Edit"
+msgstr "Editer"
+
+#: google/view.html:21
+msgid "Edit Google Calendar"
+msgstr ""
+
+#: google/view.html:31
+msgid "Email"
+msgstr "Email"
+
+#: index.html:88
+msgid "Events view"
+msgstr ""
+
+#: google/view.html:6 index.html:29 index.html:6
+msgid "Home"
+msgstr "Acceuil"
+
+#: index.html:100
+msgid "Location"
+msgstr "Lieu"
+
+#: index.html:49
+msgid "New Event"
+msgstr "Nouvel évènement"
+
+#: index.html:117
+msgid "Save"
+msgstr "Sauvegarder"
+
+#: google/view.html:7 index.html:7
+msgid "Settings"
+msgstr "Paramètres"
+
+#: index.html:20
+msgid "Sign in with Google"
+msgstr "Connectez-vous avec Google"
+
+#: index.html:110
+msgid "Start and end date"
+msgstr "Date de début et de fin"
+
+#: index.html:92
+msgid "Title"
+msgstr "Titre"
+
+#: index.html:38
+msgid ""
+"To register a calendar go <a href=\"#/settings/calendar\">on the settings "
+"page.</a>"
+msgstr ""
+
+#: index.html:50
+msgid "Toggle Dropdown"
+msgstr "Menu Déroulant"
+
+#: index.html:37
+msgid "You don't have register calendar !"
+msgstr ""

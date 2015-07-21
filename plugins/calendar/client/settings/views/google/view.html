@@ -1,10 +1,10 @@
 <section class="content-header">
-  <h1>
+  <h1 translate>
     Calendar Settings
   </h1>
   <ol class="breadcrumb">
-    <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-    <li>Settings</li>
+    <li><a href="#"><i class="fa fa-dashboard"></i> <translate>Home</translate></a></li>
+    <li translate>Settings</li>
     <li><a href="#settings/calendar">Calendar</a></li>
     <li class="active">{{submitValue}}</li>
   </ol>
@@ -18,29 +18,29 @@
     <div class="col-md-12">
       <div class="box">
         <div class="box-header">
-          <h3 class="box-title">Edit Google Calendar</h3>
+          <h3 class="box-title" translate>Edit Google Calendar</h3>
         </div>
         <div class="box-body">
           <form role="form" ng-submit="save()">
 
             <div class="form-group">
-              <label for="">Calendar name</label>
+              <label for="" translate>Calendar name</label>
               <input type="text" class='form-control' ng-model="calendar.name">
             </div>
             <div class="form-group">
-              <label for="">Email</label>
+              <label for="" translate>Email</label>
               <input type="email" class='form-control' ng-model="calendar.email" disabled>
             </div>
             <div class="form-group">
-              <label>Color</label>
+              <label translate>Color</label>
                 <input ng-model="calendar.color" type="text" class="form-control colorpicker"/>
             </div><!-- /.form group -->
 
             <div class="form-group">
-              <label>Calendar</label>
+              <label translate>Calendar</label>
               <select ng-model="calendar.calendarId" ng-options="c.id as c.summary for c in calendars"></select>
             </div>
-            <input type="submit" class="btn btn-primary" value="Edit">
+            <button type="submit" class="btn btn-primary" translate> Edit</button>
           </form>
         </div>
       </div>

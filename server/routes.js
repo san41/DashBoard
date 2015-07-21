@@ -6,6 +6,9 @@ module.exports = function(app, passport) {
 
     app.get('/',
       function(req, res) { 
+        if(req.query && req.query.locale) {
+            res.setLocale(req.query.locale);
+        }
         isLoggedIn(req, res, function(){
             res.render('index.ejs', {user: req.user});
         });
@@ -30,9 +33,15 @@ module.exports = function(app, passport) {
     // =====================================
     // show the login form
     app.get('/login', function(req, res) {
+        if(req.query && req.query.locale) {
+            res.setLocale(req.query.locale);
+        }
         if(req.isAuthenticated()){
             res.redirect('./');
         }
+
+        res.setHeader('currentLang', res.getLocale());
+
         // render the page and pass in any flash data if it exists
         res.render('login.ejs', { message: req.flash('loginMessage') }); 
     });
@@ -51,7 +60,9 @@ module.exports = function(app, passport) {
     // =====================================
     // show the signup form
     app.get('/register', function(req, res) {
-
+        if(req.query && req.query.locale) {
+            res.setLocale(req.query.locale);
+        }
         // render the page and pass in any flash data if it exists
         res.render('register.ejs', { message: req.flash('signupMessage') });
     });

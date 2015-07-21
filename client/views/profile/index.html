@@ -3,7 +3,7 @@
     Profile
   </h1>
   <ol class="breadcrumb">
-    <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+    <li><a href="#" translate><i class="fa fa-dashboard"></i> Home</a></li>
     <li class="active">Profile</li>
   </ol>
 </section>
@@ -19,14 +19,14 @@
     <div class="box-body">
       <form ng-submit="editProfile()">
         <div class="form-group">
-          <label for="">Username</label>
+          <label for="" translate>Username</label>
           <input type="text" ng-model="user.username" class="form-control">
         </div>
         <div class="form-group">
-          <label for="">Email</label>
+          <label for="" translate>Email</label>
           <input type="text" ng-model="user.email" class="form-control">
         </div>
-        <input type="submit" class="btn btn-primary" value="Save">
+        <button type="submit" class="btn btn-primary" translate>Save</button>
       </form>
 
     </div><!-- /.box-body -->
@@ -35,13 +35,13 @@
 
   <div class="box">
     <div class="box-header">
-      <h3>Widget</h3>
+      <h3 translate>Widget</h3>
     </div>
     <div class="box-body">
-      <h4>New widget</h4>
+      <h4 translate>New widget</h4>
       <select ng-model="newWidgets" ng-options="widget.plugin+'/'+widget.name for widget in pluginsWidgets">
       </select>
-      <button class="btn" ng-click="addWidget()">Add</button>
+      <button class="btn" ng-click="addWidget()" translate>Add</button>
       <hr>
       <ul>
         <widgetconfig ng-repeat="widget in widgets track by $index" widget="widget">{{widget}}</widgetconfig>
