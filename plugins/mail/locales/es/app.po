@@ -4,8 +4,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: dashboard\n"
-"PO-Revision-Date: 2015-07-21 17:31+0000\n"
-"Last-Translator: Fabzoul <fabzoul.web@netcourrier.com>\n"
+"PO-Revision-Date: 2015-07-21 23:32+0000\n"
+"Last-Translator: ralmn <ranger_tigre@hotmail.fr>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/dashboardparty/language/es/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -44,9 +44,17 @@ msgstr "Componer"
 msgid "Compose New Message"
 msgstr "Escribe un nuevo mensaje"
 
-#: read.html:50
+#: index.html:18
+msgid "Create"
+msgstr ""
+
+#: index.html:37 read.html:50
 msgid "Delete"
 msgstr "Suprimir"
+
+#: index.html:36
+msgid "Edit"
+msgstr ""
 
 #: index.html:16
 msgid ""
@@ -62,7 +70,7 @@ msgstr "De"
 msgid "Goto mail"
 msgstr "Abra el correo"
 
-#: index.html:7 read.html:7 send.html:6
+#: index.html:6 index.html:7 read.html:7 send.html:6
 msgid "Home"
 msgstr "Hogar"
 
@@ -70,14 +78,19 @@ msgstr "Hogar"
 msgid "Inbox"
 msgstr "Buzón de correo"
 
-#: index.html:3 index.html:8 read.html:8 send.html:2 send.html:26 send.html:7
-#: widget/mailbox-config.html:19 widget/mailbox-config.html:4
+#: index.html:26 index.html:3 index.html:8 read.html:8 send.html:2
+#: send.html:26 send.html:7 widget/mailbox-config.html:19
+#: widget/mailbox-config.html:4
 msgid "Mailbox"
 msgstr "Buzón De Correo"
 
 #: index.html:46
 msgid "MailBox"
 msgstr "Buzón De Correo"
+
+#: index.html:2
+msgid "Mailbox Settings"
+msgstr ""
 
 #: index.html:29
 msgid "Messages"
@@ -118,6 +131,14 @@ msgstr "Guardar"
 #: send.html:8
 msgid "Send"
 msgstr "Enviar"
+
+#: index.html:7
+msgid "Settings"
+msgstr ""
+
+#: index.html:20
+msgid "Sign in with Google"
+msgstr ""
 
 #: index.html:37
 msgid "Unread"

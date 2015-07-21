@@ -36,8 +36,17 @@ msgstr ""
 msgid "Compose New Message"
 msgstr ""
 
+#: index.html:18
+msgid "Create"
+msgstr ""
+
+#: index.html:37
 #: read.html:50
 msgid "Delete"
+msgstr ""
+
+#: index.html:36
+msgid "Edit"
 msgstr ""
 
 #: index.html:16
@@ -52,6 +61,7 @@ msgstr ""
 msgid "Goto mail"
 msgstr ""
 
+#: index.html:6
 #: index.html:7
 #: read.html:7
 #: send.html:6
@@ -62,6 +72,7 @@ msgstr ""
 msgid "Inbox"
 msgstr ""
 
+#: index.html:26
 #: index.html:3
 #: index.html:8
 #: read.html:8
@@ -75,6 +86,10 @@ msgstr ""
 
 #: index.html:46
 msgid "MailBox"
+msgstr ""
+
+#: index.html:2
+msgid "Mailbox Settings"
 msgstr ""
 
 #: index.html:29
@@ -116,6 +131,14 @@ msgstr ""
 
 #: send.html:8
 msgid "Send"
+msgstr ""
+
+#: index.html:7
+msgid "Settings"
+msgstr ""
+
+#: index.html:20
+msgid "Sign in with Google"
 msgstr ""
 
 #: index.html:37

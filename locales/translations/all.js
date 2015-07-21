@@ -10,7 +10,7 @@ angular.module('dbapp').run(['gettextCatalog', function (gettextCatalog) {
 }]);
 angular.module('dbapp').run(['gettextCatalog', function (gettextCatalog) {
 /* jshint -W100 */
-    gettextCatalog.setStrings('es', {"Email":"Email","New widget":"Nuevo widget","Profile":"Perfil","Sign out":"Cerrar sesión","Widget":"Widget","Sign in":"iniciar sesión","Remember me":"Acuérdate de mí","I forgot my password":"He perdido mi contraseña","Sign up":"Registrarse"});
+    gettextCatalog.setStrings('es', {"<i class=\"fa fa-circle text-success\"></i> Online":"<i class=\"fa fa-circle text-success\"></i> Connectado","<i class=\"fa fa-dashboard\"></i> Home":"<i class=\"fa fa-dashboard\"></i> Hogar","<i class=\"icon fa fa-warning\"></i>Your profile is incomplete !":"<i class=\"icon fa fa-warning\"></i>Vuestro perfil está incompleto !","Add":"Añadir","Complete your profile":"Complete vosotros perfil","Control panel":"Panel de control","Email":"Correo","New widget":"Nuevo widget","Profile":"Perfil","Save":"Guardar","Sign out":"Cerrar sesión","Toggle navigation":"Volcar la navegación","Username":"Nombre de usuario","Widget":"Nuevo widget","Sign in":"Iniciar sesión","Remember me":"Acuérdate de mí","I forgot my password":"He perdido mi contraseña","Sign up":"Registrarse"});
 /* jshint +W100 */
 }]);
 angular.module('dbapp').run(['gettextCatalog', function (gettextCatalog) {
