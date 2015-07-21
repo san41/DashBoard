@@ -1,19 +1,19 @@
 <section class="content-header">
   <h1>
-    Mailbox
-    <small ng-show="unReadMailCount > 0"> {{unReadMailCount}} new messages</small>
+    <translate>Mailbox</translate>
+    <small ng-show="unReadMailCount > 0" translate translate-n="unreadCount" translate-plural="{{$count}} new message"> 1 new message</small>
   </h1>
   <ol class="breadcrumb">
-    <li><a href="#/"><i class="fa fa-dashboard"></i> Home</a></li>
-    <li class="active">Mailbox</li>
+    <li><a href="#/"><i class="fa fa-dashboard"></i> <translate>Home</translate></a></li>
+    <li class="active" translate>Mailbox</li>
   </ol>
 </section>
 
 <section class="content" ng-show="mailboxes.length == 0">
   <div class="col-md-12">
     <div class="callout callout-danger">
-      <h4>You don't have register mailbox !</h4>
-      <p>For register a mailbox go <a href="#/settings/mailbox">on the settings page.</a></p>
+      <h4 translate>You don't have register mailbox !</h4>
+      <p translate>For register a mailbox go <a href="#/settings/mailbox">on the settings page.</a></p>
     </div>
   </div>
 </section>
@@ -22,20 +22,20 @@
 <section class="content" ng-show="mailboxes.length > 0">
   <div class="row">
     <div class="col-md-3">
-      <a href="#/mail/send" class="btn btn-primary btn-block margin-bottom">Compose</a>
+      <a href="#/mail/send" class="btn btn-primary btn-block margin-bottom" translate>Compose</a>
       <!-- Folder box -->
       <div class="box box-solid">
         <div class="box-header with-border">
-          <h3 class="box-title">Messages</h3>
+          <h3 class="box-title" translate>Messages</h3>
           <div class='box-tools'>
             <button class='btn btn-box-tool' data-widget='collapse'><i class='fa fa-minus'></i></button>
           </div>
         </div>
         <div class="box-body no-padding">
           <ul class="nav nav-pills nav-stacked">
-            <li ng-click="messageFilterData.read = undefined" ng-class="{active:messageFilterData.read == null}"><a href=""><i class="fa fa-inbox"></i> All<span class="label label-primary pull-right" ng-bind="mails.length"></span></a></li>
-            <li ng-click="messageFilterData.read = false" ng-class="{active:(messageFilterData.read == false)}"><a href=""><i class="fa fa-inbox"></i> Unread <span class="label label-primary pull-right" ng-bind="unReadMailCount"></span></a></li>
-            <li ng-click="messageFilterData.read = true" ng-class="{active:messageFilterData.read == true}"><a href=""><i class="fa fa-inbox"></i> Read <span class="label label-primary pull-right" ng-bind="mails.length - unReadMailCount"></span></a></li>
+            <li ng-click="messageFilterData.read = undefined" ng-class="{active:messageFilterData.read == null}"><a href=""><i class="fa fa-inbox"></i> <translate>All</translate><span class="label label-primary pull-right" ng-bind="mails.length"></span></a></li>
+            <li ng-click="messageFilterData.read = false" ng-class="{active:(messageFilterData.read == false)}"><a href=""><i class="fa fa-inbox"></i> <translate>Unread</translate> <span class="label label-primary pull-right" ng-bind="unReadMailCount"></span></a></li>
+            <li ng-click="messageFilterData.read = true" ng-class="{active:messageFilterData.read == true}"><a href=""><i class="fa fa-inbox"></i> <translate>Read</translate> <span class="label label-primary pull-right" ng-bind="mails.length - unReadMailCount"></span></a></li>
           </ul>
         </div><!-- /.box-body -->
       </div><!-- /. box -->
@@ -43,7 +43,7 @@
       <!-- MailBox box -->
       <div class="box box-solid">
         <div class="box-header with-border"  ng-click="messageFilterData.mailbox = undefined">
-          <h3 class="box-title">MailBox</h3>
+          <h3 class="box-title" translate>MailBox</h3>
         </div>
         <div class="box-body no-padding">
           <ul class="nav nav-pills nav-stacked">
@@ -57,7 +57,7 @@
     <div class="col-md-9">
       <div class="box box-primary">
         <div class="box-header with-border">
-          <h3 class="box-title">Inbox</h3>
+          <h3 class="box-title" translate>Inbox</h3>
           <div class="box-tools pull-right">
             <div class="has-feedback">
               <input type="text" class="form-control input-sm" placeholder="Search Mail"/>

@@ -2,6 +2,7 @@ var gulp  = require('gulp');
 var browserify = require('gulp-browserify');
 var _ = require('underscore');
 var shell = require('gulp-shell')
+var concat = require('gulp-concat')
 var File = require('vinyl');
 var fs = require('fs');
 var path = require('path');
@@ -53,6 +54,7 @@ gulp.task('translations', function () {
   .pipe(gettext.compile({
     module: 'dbapp'
   }))
+  .pipe(concat('all.js'))
   .pipe(gulp.dest('../locales/translations/'));
 });
 
@@ -61,10 +63,12 @@ function onError(err) {
   this.emit('end');
 }
 
-gulp.task('default', ['gettext-extract', 'pot', 'translations', 'browserify'], function(){
+gulp.task('default', ['no-watch'], function(){
   gulp.watch(['app.js', '**/*.js', '!gulpfile.js','!static/js/app.js'], ['browserify']);
   gulp.watch(['**/*.ejs'], ['gettext-extract']);
   gulp.watch(['views/**/*.html'], ['pot']);
   gulp.watch(['../locales/**/*.po'], ['translations']);
 })
 
+
+gulp.task('no-watch', ['gettext-extract', 'pot', 'translations', 'browserify'])

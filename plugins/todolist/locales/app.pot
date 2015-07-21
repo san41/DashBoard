@@ -1,0 +1,13 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: \n"
+
+#: index.html:18
+msgid "Create"
+msgstr ""
+
+#: index.html:24
+msgid "Home"
+msgstr ""

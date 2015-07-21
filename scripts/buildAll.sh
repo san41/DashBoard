@@ -1,0 +1,10 @@
+#! /bin/bash
+echo "$(pwd)"
+cd client
+gulp no-watch
+cd ../plugins/calendar
+gulp no-watch
+cd ../mail
+gulp no-watch
+cd ../todolist
+gulp no-watch

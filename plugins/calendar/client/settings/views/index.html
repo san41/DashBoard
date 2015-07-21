@@ -1,11 +1,11 @@
 <section class="content-header">
-  <h1>
+  <h1 translate>
     Calendar Settings
   </h1>
   <ol class="breadcrumb">
-    <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-    <li>Settings</li>
-    <li class="active">Calendar</li>
+    <li><a href="#"><i class="fa fa-dashboard"></i> <translate>Home</translate></a></li>
+    <li translate>Settings</li>
+    <li class="active" translate>Calendar</li>
   </ol>
 </section>
 
@@ -17,13 +17,13 @@
     <div class="col-md-3">
       <!-- <a href="#/settings/calendar/create" class="btn btn-primary btn-block margin-bottom">Create</a> -->
       <a href="calendar/auth/google" class="btn btn-block btn-social btn-google-plus" ng-show="globalSettings.mail.MailBox.googleLoginEnable">
-        <i class="fa fa-google-plus"></i> Sign in with Google
+        <i class="fa fa-google-plus"></i> <translate>Sign in with Google</translate>
       </a>
     </div><!-- /.col -->
     <div class="col-md-9">
       <div class="box box-primary">
         <div class="box-header with-border">
-          <h3 class="box-title">Calendar</h3>
+          <h3 class="box-title" translate>Calendar</h3>
         </div><!-- /.box-header -->
         <div class="box-body no-padding">
           <div class="table-responsive mailbox-messages">
@@ -31,8 +31,8 @@
               <tbody>
                 <tr ng-repeat="calendar in calendars">
                   <td class="mailbox-sender"><b>{{calendar.name}}</b></td>
-                  <td style="cursor:pointer;" ng-click="edit(calendar)"><i class="fa fa-pencil"></i> Edit</td>
-                  <td style="cursor:pointer;" ng-click="delete(calendar)"><i class="fa fa-trash-o"></i> Delete</td>
+                  <td style="cursor:pointer;" ng-click="edit(calendar)"><i class="fa fa-pencil"></i> <translate>Edit</translate></td>
+                  <td style="cursor:pointer;" ng-click="delete(calendar)"><i class="fa fa-trash-o"></i> <translate>Delete</translate></td>
                 </tr>
 
               </tbody>

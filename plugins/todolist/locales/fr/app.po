@@ -1,0 +1,21 @@
+# 
+# Translators:
+# xhelty19 <baptiste.dixneuf@gmail.com>, 2015
+msgid ""
+msgstr ""
+"Project-Id-Version: dashboard\n"
+"PO-Revision-Date: 2015-07-20 23:46+0000\n"
+"Last-Translator: xhelty19 <baptiste.dixneuf@gmail.com>\n"
+"Language-Team: French (http://www.transifex.com/projects/p/dashboardparty/language/fr/)\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: fr\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: index.html:18
+msgid "Create"
+msgstr "Créer"
+
+#: index.html:24
+msgid "Home"
+msgstr "Acceuil"

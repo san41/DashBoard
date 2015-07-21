@@ -106,6 +106,8 @@ for(var i in plugins){
     app.use('/plugins/'+pluginName + '/client/views', express.static('./plugins/' + pluginName + '/client/views'));
     //Settings views
     app.use('/plugins/'+pluginName + '/client/settings/views', express.static('./plugins/' + pluginName + '/client/settings/views'));
+    //Locales
+    app.use('/plugins/'+pluginName + '/locales', express.static('./plugins/' + pluginName + '/locales'));
 }
 
 

@@ -48,6 +48,7 @@
     "gulp-angular-gettext": "^2.1.0",
     "gulp-brfs": "^0.1.0",
     "gulp-browserify": "^0.5.1",
+    "gulp-concat": "^2.6.0",
     "gulp-rename": "^1.2.2",
     "gulp-shell": "^0.4.2",
     "jsxgettext": "^0.8.0",

@@ -22,20 +22,20 @@
 </style>
 
 <section class="content-header">
-  <h1>
+  <h1 translate>
     Calendar
   </h1>
   <ol class="breadcrumb">
-    <li><a href="#/"><i class="fa fa-dashboard"></i> Home</a></li>
-    <li class="active">Calendar</li>
+    <li><a href="#/"><i class="fa fa-dashboard"></i> <translate>Home</translate></a></li>
+    <li class="active" translate>Calendar</li>
   </ol>
 </section>
 
 <section class="content" ng-show="calendars.length == 0">
   <div class="col-md-12">
     <div class="callout callout-danger">
-      <h4>You don't have register calendar !</h4>
-      <p>To register a calendar go <a href="#/settings/calendar">on the settings page.</a></p>
+      <h4 translate>You don't have register calendar !</h4>
+      <p translate>To register a calendar go <a href="#/settings/calendar">on the settings page.</a></p>
     </div>
   </div>
 </section>
@@ -46,8 +46,8 @@
     <div class="col-md-3">
       <div class="btn-group">
         <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
-          New Event  <span class="caret"></span>
-          <span class="sr-only">Toggle Dropdown</span>
+          <translate>New Event</translate>  <span class="caret"></span>
+          <span class="sr-only" translate>Toggle Dropdown</span>
         </button>
         <ul class="dropdown-menu" role="menu">
           <li ng-repeat="calendar in calendars" ng-if="calendar.accessRole == 'writer' || calendar.accessRole == 'owner'"><a href="" ng-click="createEvent(calendar)"><i class="fa fa-circle-o" style="color:{{calendar.color}}"></i>{{calendar.name}}</a></li>
@@ -56,7 +56,7 @@
       <!-- Calendar box -->
       <div class="box box-solid">
         <div class="box-header with-border">
-          <h3 class="box-title">Calendars</h3>
+          <h3 class="box-title" translate>Calendars</h3>
         </div>
         <div class="box-body no-padding">
           <ul class="nav nav-pills nav-stacked">
@@ -85,36 +85,36 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" ng-click="modal = null" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">Events view</h4>
+        <h4 class="modal-title" translate>Events view</h4>
       </div>
       <div class="modal-body">
         <div class="form-group">
-          <label for="">Title</label>
+          <label for="" translate>Title</label>
           <input type="text" class="form-control" ng-disabled="modal.editable == null || !modal.editable" ng-model="modal.title">
         </div>
         <div class="form-group">
-          <label for="">Description</label>
+          <label for="" translate>Description</label>
           <input type="text" class="form-control" ng-disabled="modal.editable == null || !modal.editable" ng-model="modal.description">
         </div>
         <div class="form-group">
-          <label for="">Location</label>
+          <label for="" translate>Location</label>
           <input type="text" class="form-control" ng-disabled="modal.editable == null || !modal.editable" ng-model="modal.location">  
         </div>
 
         <div class="form-group">
            <input type="checkbox" ng-model="modal.allDay">
-           <label for="">All Day</label>
+           <label for="" translate>All Day</label>
         </div>
 
         <div class="form-group">
-          <label for="">Start and end date</label>
+          <label for="" translate>Start and end date</label>
           <input type="text" class="form-control" datetimerange >
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" ng-click="modal = null" class="btn pull-left" data-dismiss="modal">Close</button>
-        <button type="button" ng-click="modalDelete()" class="btn btn-danger pull-left" ng-hide="modal.isNew">Delete event</button>
-        <button type="button" ng-click="modalEdit()" class="btn" ng-disabled="modal.editable == null || !modal.editable">Save</button>
+        <button type="button" ng-click="modal = null" class="btn pull-left" data-dismiss="modal" translate>Close</button>
+        <button type="button" ng-click="modalDelete()" class="btn btn-danger pull-left" ng-hide="modal.isNew" translate>Delete event</button>
+        <button type="button" ng-click="modalEdit()" class="btn" ng-disabled="modal.editable == null || !modal.editable" translate>Save</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->

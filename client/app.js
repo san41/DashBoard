@@ -27,15 +27,10 @@ var settingsItems = [];
 
 var widgets = [];
 
-var locales = fs.readdirSync('../locales/translations/');
-console.log(locales);
-for(var i in locales){
-  var local = locales[i];
-  var localPath = './locales/translations/' + local + '/app.js';
-  var script = document.createElement('script');
-  script.src = localPath;
-  document.body.appendChild(script);
-}
+var translationsPath = './locales/translations/all.js';
+var translationsScript = document.createElement('script');
+translationsScript.src = translationsPath;
+document.body.appendChild(translationsScript);
 
 
 var pluginsList = JSON.parse(xhrPlugins.responseText);
@@ -114,6 +109,10 @@ for(var i in pluginsList){
   settingsScript.addEventListener('error', function(){
     loaded++;
   });
+
+  var translationsScript = document.createElement('script');
+  translationsScript.src = './plugins/'+ pluginName +'/locales/translations/all.js';
+  document.body.appendChild(translationsScript);
 })(pluginName);
 }
 
