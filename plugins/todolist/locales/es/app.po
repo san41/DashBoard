@@ -16,4 +16,4 @@ msgstr ""
 
 #: index.html:24
 msgid "Home"
-msgstr ""
+msgstr "Hogar"

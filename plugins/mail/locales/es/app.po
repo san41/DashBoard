@@ -1,9 +1,11 @@
 # 
 # Translators:
+# Fabzoul <fabzoul.web@netcourrier.com>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: dashboard\n"
-"PO-Revision-Date: 2015-07-20 23:28+0000\n"
+"PO-Revision-Date: 2015-07-21 17:31+0000\n"
+"Last-Translator: Fabzoul <fabzoul.web@netcourrier.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/dashboardparty/language/es/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -13,114 +15,114 @@ msgstr ""
 #: widget/mailbox.html:9
 msgid "{{mailbox.unreadCount}} <small>unread mail</small>"
 msgid_plural "{{$count}} <small>unread mail</small>"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "{{$count}} <small>correo no leído</small>"
+msgstr[1] "{{$count}} <small>correos no leídos</small>"
 
 #: index.html:4
 msgid "1 new message"
 msgid_plural "{{$count}} new message"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "1 nuevo correo"
+msgstr[1] "{{$count}} nuevos correos"
 
 #: index.html:36
 msgid "All"
-msgstr ""
+msgstr "Todos"
 
 #: send.html:16
 msgid "Back to Inbox"
-msgstr ""
+msgstr "Volver a la bandeja de entrada"
 
 #: widget/mailbox-config.html:15
 msgid "Column width"
-msgstr ""
+msgstr "Ancho de columna"
 
 #: index.html:25
 msgid "Compose"
-msgstr ""
+msgstr "Componer"
 
 #: send.html:22
 msgid "Compose New Message"
-msgstr ""
+msgstr "Escribe un nuevo mensaje"
 
 #: read.html:50
 msgid "Delete"
-msgstr ""
+msgstr "Suprimir"
 
 #: index.html:16
 msgid ""
 "For register a mailbox go <a href=\"#/settings/mailbox\">on the settings "
 "page.</a>"
-msgstr ""
+msgstr "Para añadir una nueva buzón de correo va <a href=\"#/settings/mailbox\"> página de parámetros.</a>"
 
 #: read.html:30
 msgid "From"
-msgstr ""
+msgstr "De"
 
 #: widget/mailbox.html:10
 msgid "Goto mail"
-msgstr ""
+msgstr "Abra el correo"
 
 #: index.html:7 read.html:7 send.html:6
 msgid "Home"
-msgstr ""
+msgstr "Hogar"
 
 #: index.html:60
 msgid "Inbox"
-msgstr ""
+msgstr "Buzón de correo"
 
 #: index.html:3 index.html:8 read.html:8 send.html:2 send.html:26 send.html:7
 #: widget/mailbox-config.html:19 widget/mailbox-config.html:4
 msgid "Mailbox"
-msgstr ""
+msgstr "Buzón De Correo"
 
 #: index.html:46
 msgid "MailBox"
-msgstr ""
+msgstr "Buzón De Correo"
 
 #: index.html:29
 msgid "Messages"
-msgstr ""
+msgstr "Messajes"
 
 #: widget/mailbox.html:6
 msgid "No mailbox are currently selected"
-msgstr ""
+msgstr "Sin buzón se seleccionan actualmente"
 
 #: widget/mailbox.html:7
 msgid "Please select your mailbox on <a href=\"#/profile\">your profile</a>"
-msgstr ""
+msgstr "Por favor, seleccione su buzón de correo en <a href=\"#/profile\">tu perfil</a>"
 
 #: read.html:51
 msgid "Print"
-msgstr ""
+msgstr "Impresión"
 
 #: index.html:38
 msgid "Read"
-msgstr ""
+msgstr "Lee"
 
 #: read.html:21 read.html:3
 msgid "Read Mail"
-msgstr ""
+msgstr "Leer correo"
 
 #: read.html:47
 msgid "Reply"
-msgstr ""
+msgstr "Responder"
 
 #: read.html:16
 msgid "Return mailbox"
-msgstr ""
+msgstr "Volver en la buzón de correo"
 
 #: widget/mailbox-config.html:24
 msgid "Save"
-msgstr ""
+msgstr "Guardar"
 
 #: send.html:8
 msgid "Send"
-msgstr ""
+msgstr "Enviar"
 
 #: index.html:37
 msgid "Unread"
-msgstr ""
+msgstr "No leído"
 
 #: index.html:15
 msgid "You don't have register mailbox !"
-msgstr ""
+msgstr "No tiene buzón de registro !"

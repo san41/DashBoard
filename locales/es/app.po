@@ -1,13 +1,14 @@
 # 
 # Translators:
 # xhelty19 <baptiste.dixneuf@gmail.com>, 2015
+# Fabzoul <fabzoul.web@netcourrier.com>, 2015
 # San37 <contact@san41.eu>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: dashboard\n"
 "POT-Creation-Date: 2015-07-20 23:07+0000\n"
-"PO-Revision-Date: 2015-07-21 13:31+0000\n"
-"Last-Translator: ralmn <ranger_tigre@hotmail.fr>\n"
+"PO-Revision-Date: 2015-07-21 17:38+0000\n"
+"Last-Translator: Fabzoul <fabzoul.web@netcourrier.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/dashboardparty/language/es/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -16,31 +17,31 @@ msgstr ""
 
 #: sidebar/index.html:14
 msgid "<i class=\"fa fa-circle text-success\"></i> Online"
-msgstr ""
+msgstr "<i class=\"fa fa-circle text-success\"></i> Connectado"
 
 #: profile/index.html:6
 msgid "<i class=\"fa fa-dashboard\"></i> Home"
-msgstr ""
+msgstr "<i class=\"fa fa-dashboard\"></i> Hogar"
 
 #: home/index.html:19
 msgid "<i class=\"icon fa fa-warning\"></i>Your profile is incomplete !"
-msgstr ""
+msgstr "<i class=\"icon fa fa-warning\"></i>Vuestro perfil está incompleto !"
 
 #: profile/index.html:44
 msgid "Add"
-msgstr ""
+msgstr "Añadir"
 
 #: home/index.html:20
 msgid "Complete your profile"
-msgstr ""
+msgstr "Complete vosotros perfil"
 
 #: home/index.html:4
 msgid "Control panel"
-msgstr ""
+msgstr "Panel de control"
 
 #: profile/index.html:26
 msgid "Email"
-msgstr "Email"
+msgstr "Correo"
 
 #: profile/index.html:41
 msgid "New widget"
@@ -52,7 +53,7 @@ msgstr "Perfil"
 
 #: profile/index.html:29
 msgid "Save"
-msgstr ""
+msgstr "Guardar"
 
 #: topbar/index.html:43
 msgid "Sign out"
@@ -60,21 +61,21 @@ msgstr "Cerrar sesión"
 
 #: topbar/index.html:15
 msgid "Toggle navigation"
-msgstr ""
+msgstr "Volcar la navegación"
 
 #: profile/index.html:22
 msgid "Username"
-msgstr ""
+msgstr "Nombre de usuario"
 
 #: profile/index.html:38
 msgid "Widget"
-msgstr "Widget"
+msgstr "Nuevo widget"
 
 #: /home/ralmn/Developpement/dashboard/client/login.ejs:11
 #: /home/ralmn/Developpement/dashboard/client/login.ejs:35
 #: /home/ralmn/Developpement/dashboard/client/login.ejs:57
 msgid "Sign in"
-msgstr "iniciar sesión"
+msgstr "Iniciar sesión"
 
 #: /home/ralmn/Developpement/dashboard/client/login.ejs:52
 msgid "Remember me"

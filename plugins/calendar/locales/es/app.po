@@ -40,7 +40,7 @@ msgstr ""
 
 #: index.html:35
 msgid "Delete"
-msgstr ""
+msgstr "Suprimir"
 
 #: index.html:116
 msgid "Delete event"
@@ -68,7 +68,7 @@ msgstr ""
 
 #: google/view.html:6 index.html:29 index.html:6
 msgid "Home"
-msgstr ""
+msgstr "Hogar"
 
 #: index.html:100
 msgid "Location"
@@ -80,7 +80,7 @@ msgstr ""
 
 #: index.html:117
 msgid "Save"
-msgstr ""
+msgstr "Guardar"
 
 #: google/view.html:7 index.html:7
 msgid "Settings"

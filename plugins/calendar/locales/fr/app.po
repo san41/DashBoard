@@ -1,12 +1,13 @@
 # 
 # Translators:
 # xhelty19 <baptiste.dixneuf@gmail.com>, 2015
+# Fabzoul <fabzoul.web@netcourrier.com>, 2015
 # ralmn <ranger_tigre@hotmail.fr>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: dashboard\n"
-"PO-Revision-Date: 2015-07-20 23:54+0000\n"
-"Last-Translator: atchisson <antoine.lenoir3@gmail.com>\n"
+"PO-Revision-Date: 2015-07-21 16:56+0000\n"
+"Last-Translator: Fabzoul <fabzoul.web@netcourrier.com>\n"
 "Language-Team: French (http://www.transifex.com/projects/p/dashboardparty/language/fr/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -59,7 +60,7 @@ msgstr "Editer"
 
 #: google/view.html:21
 msgid "Edit Google Calendar"
-msgstr ""
+msgstr "Éditer le calendrier Google"
 
 #: google/view.html:31
 msgid "Email"
@@ -67,7 +68,7 @@ msgstr "Email"
 
 #: index.html:88
 msgid "Events view"
-msgstr ""
+msgstr "Voir l’évènement"
 
 #: google/view.html:6 index.html:29 index.html:6
 msgid "Home"
@@ -105,7 +106,7 @@ msgstr "Titre"
 msgid ""
 "To register a calendar go <a href=\"#/settings/calendar\">on the settings "
 "page.</a>"
-msgstr ""
+msgstr "Pour ajouter un calendrier allez sur <a href=\"#/settings/mailbox\">sur la page de paramètres.</a>"
 
 #: index.html:50
 msgid "Toggle Dropdown"
@@ -113,4 +114,4 @@ msgstr "Menu Déroulant"
 
 #: index.html:37
 msgid "You don't have register calendar !"
-msgstr ""
+msgstr "Vous n'avez pas enregistré de calendrier !"

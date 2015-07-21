@@ -1,9 +1,11 @@
 # 
 # Translators:
+# Matthieu B <pourit4@yahoo.fr>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: dashboard\n"
-"PO-Revision-Date: 2015-07-20 23:29+0000\n"
+"PO-Revision-Date: 2015-07-21 18:04+0000\n"
+"Last-Translator: Matthieu B <pourit4@yahoo.fr>\n"
 "Language-Team: English (http://www.transifex.com/projects/p/dashboardparty/language/en/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -12,7 +14,7 @@ msgstr ""
 
 #: index.html:18
 msgid "Create"
-msgstr ""
+msgstr "Create"
 
 #: index.html:24
 msgid "Home"
