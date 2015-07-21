@@ -88,7 +88,7 @@ app.use(flash()); // use connect-flash for flash messages stored in session
 app.use(gettext(app, {
   directory: __dirname + '/../locales/',
   useAcceptedLanguageHeader: true,
-  // fallback: function(text){ return text }
+  fallback: function(text){ return text }
 }))
 
 
