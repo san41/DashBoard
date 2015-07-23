@@ -15,7 +15,8 @@ module.exports = function(app){
       link: function(scope, element){
         getTemplate(scope.widget.templateURLConfig).then(function(tpl){
           var e = $compile(tpl)(scope);
-          element.replaceWith(e);
+          
+          element.append(e);
         })
       }
 
@@ -38,7 +39,8 @@ module.exports = function(app){
       link: function(scope, element){
         getTemplate(scope.widget.templateURL).then(function(tpl){
           var e = $compile(tpl)(scope);
-          element.replaceWith(e);
+          e.addClass("col-md-" + scope.widget.colWidth);
+          element.append(e);
         })
       }
 

@@ -1,3 +1,11 @@
+<style>
+
+[ui-sortable] li{
+  list-style: none;
+}
+
+</style>
+
 <section class="content-header">
   <h1>
     Profile
@@ -43,9 +51,14 @@
       </select>
       <button class="btn" ng-click="addWidget()" translate>Add</button>
       <hr>
-      <ul>
-        <widgetconfig ng-repeat="widget in widgets track by $index" widget="widget">{{widget}}</widgetconfig>
+      
+      <ul class="rowa" ui-sortable="sortableOptions" ng-model="widgets">
+        <li ng-repeat="widget in widgets |orderBy:'order' track by $index " class="col-md-{{widget.colWidth}}">
+        <widgetconfig widget="widget" class="col-md-{{widget.colWidth}}a">{{widget}}</widgetconfig>
+          
+        </li>
       </ul>
+
     </div>
   </div>
 

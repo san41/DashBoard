@@ -28,6 +28,7 @@ module.exports = function($scope, socket, $rootScope, toaster){
 },{}],2:[function(require,module,exports){
 module.exports = function(socket, $scope, $rootScope, toaster){
   $scope.user = passport.user;
+
   $scope.widgets = [];
   socket.emit('getUserData', passport.user, function(err, userData){
     if(err) return;
@@ -69,6 +70,33 @@ module.exports = function(socket, $scope, $rootScope, toaster){
       $scope.widgets.push(widget);
   }
 
+  $scope.draggableOptions = {
+    connectWith: ".connected-drop-target-sortable",
+    stop: function (e, ui) {
+      // if the element is removed from the first container
+      if (ui.item.sortable.source.hasClass('draggable-element-container') &&
+          ui.item.sortable.droptarget &&
+          ui.item.sortable.droptarget != ui.item.sortable.source &&
+          ui.item.sortable.droptarget.hasClass('connected-drop-target-sortable')) {
+        // restore the removed item
+        ui.item.sortable.sourceModel.push(ui.item.sortable.model);
+      }
+    }
+  }
+
+  $scope.sortableOptions = {
+    "ui-floating" : 'auto',
+    stop: function(e, ui){
+      for(var i in $scope.widgets){
+        var widget = $scope.widgets[i];
+        widget.order = i;
+        if(widget._id != null)
+          socket.emit('widget/save', widget, function(){
+            console.log('ok?')
+          })
+      }
+    }
+  }
 }
 },{}],3:[function(require,module,exports){
 var gravatar = require("gravatar");
@@ -93,7 +121,7 @@ module.exports = function() {
     }
     }
 };
-},{"gravatar":53}],4:[function(require,module,exports){
+},{"gravatar":54}],4:[function(require,module,exports){
 module.exports = function(app){
   app.directive("topBar", function(){
     return {
@@ -159,7 +187,8 @@ module.exports = function(app){
       link: function(scope, element){
         getTemplate(scope.widget.templateURLConfig).then(function(tpl){
           var e = $compile(tpl)(scope);
-          element.replaceWith(e);
+          
+          element.append(e);
         })
       }
 
@@ -182,7 +211,8 @@ module.exports = function(app){
       link: function(scope, element){
         getTemplate(scope.widget.templateURL).then(function(tpl){
           var e = $compile(tpl)(scope);
-          element.replaceWith(e);
+          e.addClass("col-md-" + scope.widget.colWidth);
+          element.append(e);
         })
       }
 
@@ -203,6 +233,7 @@ require('angular-socket-io');
 require('angular-animate');
 require('angularjs-toaster');
 require('angular-gettext');
+require('angular-ui-sortable');
 
 var xhrPlugins = new XMLHttpRequest();
 xhrPlugins.open('GET', './plugins.json', false);
@@ -211,7 +242,7 @@ if(xhrPlugins.status != 200 && xhrPlugins.status != 304){
   throw new Error('plugins.json not found');
 }
 
-var app = angular.module("dbapp", ['ngRoute', 'btford.socket-io', 'ngSanitize', 'toaster', 'ngAnimate', 'gettext']);
+var app = angular.module("dbapp", ['ngRoute', 'btford.socket-io', 'ngSanitize', 'toaster', 'ngAnimate', 'gettext', 'ui.sortable']);
 
 var countNeedLoad = 0;
 var loaded = 0;
@@ -438,7 +469,7 @@ var tId = setInterval(function(){
 //     console.log(file);
 //   }
 // })
-},{"./controller/home":1,"./controller/profile":2,"./directive/gravatar.js":3,"./directive/views.js":4,"./directive/widget.js":5,"./service/sharedData.js":7,"angular":18,"angular-animate":10,"angular-gettext":11,"angular-route":13,"angular-sanitize":15,"angular-socket-io":16,"angularjs-toaster":19,"path":65,"socket.io-client":70,"underscore":83}],7:[function(require,module,exports){
+},{"./controller/home":1,"./controller/profile":2,"./directive/gravatar.js":3,"./directive/views.js":4,"./directive/widget.js":5,"./service/sharedData.js":7,"angular":19,"angular-animate":10,"angular-gettext":11,"angular-route":13,"angular-sanitize":15,"angular-socket-io":16,"angular-ui-sortable":17,"angularjs-toaster":20,"path":66,"socket.io-client":71,"underscore":84}],7:[function(require,module,exports){
 module.exports = function(){
   var data = {};
 
@@ -6355,6 +6386,358 @@ angular.module('btford.socket-io', []).
   });
 
 },{}],17:[function(require,module,exports){
+/*
+ jQuery UI Sortable plugin wrapper
+
+ @param [ui-sortable] {object} Options to pass to $.fn.sortable() merged onto ui.config
+ */
+angular.module('ui.sortable', [])
+  .value('uiSortableConfig',{})
+  .directive('uiSortable', [
+    'uiSortableConfig', '$timeout', '$log',
+    function(uiSortableConfig, $timeout, $log) {
+      return {
+        require: '?ngModel',
+        scope: {
+          ngModel: '=',
+          uiSortable: '='
+        },
+        link: function(scope, element, attrs, ngModel) {
+          var savedNodes;
+
+          function combineCallbacks(first,second){
+            if(second && (typeof second === 'function')) {
+              return function() {
+                first.apply(this, arguments);
+                second.apply(this, arguments);
+              };
+            }
+            return first;
+          }
+
+          function getSortableWidgetInstance(element) {
+            // this is a fix to support jquery-ui prior to v1.11.x
+            // otherwise we should be using `element.sortable('instance')`
+            var data = element.data('ui-sortable');
+            if (data && typeof data === 'object' && data.widgetFullName === 'ui-sortable') {
+              return data;
+            }
+            return null;
+          }
+
+          function hasSortingHelper (element, ui) {
+            var helperOption = element.sortable('option','helper');
+            return helperOption === 'clone' || (typeof helperOption === 'function' && ui.item.sortable.isCustomHelperUsed());
+          }
+
+          // thanks jquery-ui
+          function isFloating (item) {
+            return (/left|right/).test(item.css('float')) || (/inline|table-cell/).test(item.css('display'));
+          }
+
+          function getElementScope(elementScopes, element) {
+            var result = null;
+            for (var i = 0; i < elementScopes.length; i++) {
+              var x = elementScopes[i];
+              if (x.element[0] === element[0]) {
+                result = x.scope;
+                break;
+              }
+            }
+            return result;
+          }
+
+          function afterStop(e, ui) {
+            ui.item.sortable._destroy();
+          }
+
+          var opts = {};
+
+          // directive specific options
+          var directiveOpts = {
+            'ui-floating': undefined
+          };
+
+          var callbacks = {
+            receive: null,
+            remove:null,
+            start:null,
+            stop:null,
+            update:null
+          };
+
+          var wrappers = {
+            helper: null
+          };
+
+          angular.extend(opts, directiveOpts, uiSortableConfig, scope.uiSortable);
+
+          if (!angular.element.fn || !angular.element.fn.jquery) {
+            $log.error('ui.sortable: jQuery should be included before AngularJS!');
+            return;
+          }
+
+          if (ngModel) {
+
+            // When we add or remove elements, we need the sortable to 'refresh'
+            // so it can find the new/removed elements.
+            scope.$watch('ngModel.length', function() {
+              // Timeout to let ng-repeat modify the DOM
+              $timeout(function() {
+                // ensure that the jquery-ui-sortable widget instance
+                // is still bound to the directive's element
+                if (!!getSortableWidgetInstance(element)) {
+                  element.sortable('refresh');
+                }
+              }, 0, false);
+            });
+
+            callbacks.start = function(e, ui) {
+              if (opts['ui-floating'] === 'auto') {
+                // since the drag has started, the element will be
+                // absolutely positioned, so we check its siblings
+                var siblings = ui.item.siblings();
+                var sortableWidgetInstance = getSortableWidgetInstance(angular.element(e.target));
+                sortableWidgetInstance.floating = isFloating(siblings);
+              }
+
+              // Save the starting position of dragged item
+              ui.item.sortable = {
+                model: ngModel.$modelValue[ui.item.index()],
+                index: ui.item.index(),
+                source: ui.item.parent(),
+                sourceModel: ngModel.$modelValue,
+                cancel: function () {
+                  ui.item.sortable._isCanceled = true;
+                },
+                isCanceled: function () {
+                  return ui.item.sortable._isCanceled;
+                },
+                isCustomHelperUsed: function () {
+                  return !!ui.item.sortable._isCustomHelperUsed;
+                },
+                _isCanceled: false,
+                _isCustomHelperUsed: ui.item.sortable._isCustomHelperUsed,
+                _destroy: function () {
+                  angular.forEach(ui.item.sortable, function(value, key) {
+                    ui.item.sortable[key] = undefined;
+                  });
+                }
+              };
+            };
+
+            callbacks.activate = function(e, ui) {
+              // We need to make a copy of the current element's contents so
+              // we can restore it after sortable has messed it up.
+              // This is inside activate (instead of start) in order to save
+              // both lists when dragging between connected lists.
+              savedNodes = element.contents();
+
+              // If this list has a placeholder (the connected lists won't),
+              // don't inlcude it in saved nodes.
+              var placeholder = element.sortable('option','placeholder');
+
+              // placeholder.element will be a function if the placeholder, has
+              // been created (placeholder will be an object).  If it hasn't
+              // been created, either placeholder will be false if no
+              // placeholder class was given or placeholder.element will be
+              // undefined if a class was given (placeholder will be a string)
+              if (placeholder && placeholder.element && typeof placeholder.element === 'function') {
+                var phElement = placeholder.element();
+                // workaround for jquery ui 1.9.x,
+                // not returning jquery collection
+                phElement = angular.element(phElement);
+
+                // exact match with the placeholder's class attribute to handle
+                // the case that multiple connected sortables exist and
+                // the placehoilder option equals the class of sortable items
+                var excludes = element.find('[class="' + phElement.attr('class') + '"]:not([ng-repeat], [data-ng-repeat])');
+
+                savedNodes = savedNodes.not(excludes);
+              }
+
+              // save the directive's scope so that it is accessible from ui.item.sortable
+              var connectedSortables = ui.item.sortable._connectedSortables || [];
+
+              connectedSortables.push({
+                element: element,
+                scope: scope
+              });
+
+              ui.item.sortable._connectedSortables = connectedSortables;
+            };
+
+            callbacks.update = function(e, ui) {
+              // Save current drop position but only if this is not a second
+              // update that happens when moving between lists because then
+              // the value will be overwritten with the old value
+              if(!ui.item.sortable.received) {
+                ui.item.sortable.dropindex = ui.item.index();
+                var droptarget = ui.item.parent();
+                ui.item.sortable.droptarget = droptarget;
+
+                var droptargetScope = getElementScope(ui.item.sortable._connectedSortables, droptarget);
+                ui.item.sortable.droptargetModel = droptargetScope.ngModel;
+
+                // Cancel the sort (let ng-repeat do the sort for us)
+                // Don't cancel if this is the received list because it has
+                // already been canceled in the other list, and trying to cancel
+                // here will mess up the DOM.
+                element.sortable('cancel');
+              }
+
+              // Put the nodes back exactly the way they started (this is very
+              // important because ng-repeat uses comment elements to delineate
+              // the start and stop of repeat sections and sortable doesn't
+              // respect their order (even if we cancel, the order of the
+              // comments are still messed up).
+              if (hasSortingHelper(element, ui) && !ui.item.sortable.received &&
+                  element.sortable( 'option', 'appendTo' ) === 'parent') {
+                // restore all the savedNodes except .ui-sortable-helper element
+                // (which is placed last). That way it will be garbage collected.
+                savedNodes = savedNodes.not(savedNodes.last());
+              }
+              savedNodes.appendTo(element);
+
+              // If this is the target connected list then
+              // it's safe to clear the restored nodes since:
+              // update is currently running and
+              // stop is not called for the target list.
+              if(ui.item.sortable.received) {
+                savedNodes = null;
+              }
+
+              // If received is true (an item was dropped in from another list)
+              // then we add the new item to this list otherwise wait until the
+              // stop event where we will know if it was a sort or item was
+              // moved here from another list
+              if(ui.item.sortable.received && !ui.item.sortable.isCanceled()) {
+                scope.$apply(function () {
+                  ngModel.$modelValue.splice(ui.item.sortable.dropindex, 0,
+                                             ui.item.sortable.moved);
+                });
+              }
+            };
+
+            callbacks.stop = function(e, ui) {
+              // If the received flag hasn't be set on the item, this is a
+              // normal sort, if dropindex is set, the item was moved, so move
+              // the items in the list.
+              if(!ui.item.sortable.received &&
+                 ('dropindex' in ui.item.sortable) &&
+                 !ui.item.sortable.isCanceled()) {
+
+                scope.$apply(function () {
+                  ngModel.$modelValue.splice(
+                    ui.item.sortable.dropindex, 0,
+                    ngModel.$modelValue.splice(ui.item.sortable.index, 1)[0]);
+                });
+              } else {
+                // if the item was not moved, then restore the elements
+                // so that the ngRepeat's comment are correct.
+                if ((!('dropindex' in ui.item.sortable) || ui.item.sortable.isCanceled()) &&
+                    !hasSortingHelper(element, ui)) {
+                  savedNodes.appendTo(element);
+                }
+              }
+
+              // It's now safe to clear the savedNodes
+              // since stop is the last callback.
+              savedNodes = null;
+            };
+
+            callbacks.receive = function(e, ui) {
+              // An item was dropped here from another list, set a flag on the
+              // item.
+              ui.item.sortable.received = true;
+            };
+
+            callbacks.remove = function(e, ui) {
+              // Workaround for a problem observed in nested connected lists.
+              // There should be an 'update' event before 'remove' when moving
+              // elements. If the event did not fire, cancel sorting.
+              if (!('dropindex' in ui.item.sortable)) {
+                element.sortable('cancel');
+                ui.item.sortable.cancel();
+              }
+
+              // Remove the item from this list's model and copy data into item,
+              // so the next list can retrive it
+              if (!ui.item.sortable.isCanceled()) {
+                scope.$apply(function () {
+                  ui.item.sortable.moved = ngModel.$modelValue.splice(
+                    ui.item.sortable.index, 1)[0];
+                });
+              }
+            };
+
+            wrappers.helper = function (inner) {
+              if (inner && typeof inner === 'function') {
+                return function (e, item) {
+                  var innerResult = inner.apply(this, arguments);
+                  item.sortable._isCustomHelperUsed = item !== innerResult;
+                  return innerResult;
+                };
+              }
+              return inner;
+            };
+
+            scope.$watch('uiSortable', function(newVal /*, oldVal*/) {
+              // ensure that the jquery-ui-sortable widget instance
+              // is still bound to the directive's element
+              var sortableWidgetInstance = getSortableWidgetInstance(element);
+              if (!!sortableWidgetInstance) {
+                angular.forEach(newVal, function(value, key) {
+                  // if it's a custom option of the directive,
+                  // handle it approprietly
+                  if (key in directiveOpts) {
+                    if (key === 'ui-floating' && (value === false || value === true)) {
+                      sortableWidgetInstance.floating = value;
+                    }
+
+                    opts[key] = value;
+                    return;
+                  }
+
+                  if (callbacks[key]) {
+                    if( key === 'stop' ){
+                      // call apply after stop
+                      value = combineCallbacks(
+                        value, function() { scope.$apply(); });
+
+                      value = combineCallbacks(value, afterStop);
+                    }
+                    // wrap the callback
+                    value = combineCallbacks(callbacks[key], value);
+                  } else if (wrappers[key]) {
+                    value = wrappers[key](value);
+                  }
+
+                  opts[key] = value;
+                  element.sortable('option', key, value);
+                });
+              }
+            }, true);
+
+            angular.forEach(callbacks, function(value, key) {
+              opts[key] = combineCallbacks(value, opts[key]);
+              if( key === 'stop' ){
+                opts[key] = combineCallbacks(opts[key], afterStop);
+              }
+            });
+
+          } else {
+            $log.info('ui.sortable: ngModel not provided!', element);
+          }
+
+          // Create sortable
+          element.sortable(opts);
+        }
+      };
+    }
+  ]);
+
+},{}],18:[function(require,module,exports){
 /**
  * @license AngularJS v1.4.3
  * (c) 2010-2015 Google, Inc. http://angularjs.org
@@ -34719,15 +35102,15 @@ var minlengthDirective = function() {
 })(window, document);
 
 !window.angular.$$csp() && window.angular.element(document.head).prepend('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}</style>');
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 require('./angular');
 module.exports = angular;
 
-},{"./angular":17}],19:[function(require,module,exports){
+},{"./angular":18}],20:[function(require,module,exports){
 require("./toaster.js");
 module.exports = "toaster";
 
-},{"./toaster.js":20}],20:[function(require,module,exports){
+},{"./toaster.js":21}],21:[function(require,module,exports){
 /* global angular */
 (function (window, document) {
     'use strict';
@@ -35154,7 +35537,7 @@ module.exports = "toaster";
             }]
     );
 })(window, document);
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 /**
  * An abstraction for slicing an arraybuffer even when
  * ArrayBuffer.prototype.slice is not supported
@@ -35185,7 +35568,7 @@ module.exports = function(arraybuffer, start, end) {
   return result.buffer;
 };
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 
 /**
  * Expose `Backoff`.
@@ -35272,7 +35655,7 @@ Backoff.prototype.setJitter = function(jitter){
 };
 
 
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 /*
  * base64-arraybuffer
  * https://github.com/niklasvh/base64-arraybuffer
@@ -35333,7 +35716,7 @@ Backoff.prototype.setJitter = function(jitter){
   };
 })("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/");
 
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
@@ -35459,7 +35842,7 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	exports.fromByteArray = uint8ToBase64
 }(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
 
-},{}],25:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 (function (global){
 /**
  * Create a blob builder even when vendor prefixes exist
@@ -35512,7 +35895,7 @@ module.exports = (function() {
 })();
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 /*!
  * The buffer module from node.js, for the browser.
  *
@@ -36623,7 +37006,7 @@ function assert (test, message) {
   if (!test) throw new Error(message || 'Failed assertion')
 }
 
-},{"base64-js":24,"ieee754":57}],27:[function(require,module,exports){
+},{"base64-js":25,"ieee754":58}],28:[function(require,module,exports){
 /**
  * Slice reference.
  */
@@ -36648,7 +37031,7 @@ module.exports = function(obj, fn){
   }
 };
 
-},{}],28:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 
 /**
  * Expose `Emitter`.
@@ -36814,7 +37197,7 @@ Emitter.prototype.hasListeners = function(event){
   return !! this.listeners(event).length;
 };
 
-},{}],29:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 
 module.exports = function(a, b){
   var fn = function(){};
@@ -36822,7 +37205,7 @@ module.exports = function(a, b){
   a.prototype = new fn;
   a.prototype.constructor = a;
 };
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 var Buffer = require('buffer').Buffer;
 var intSize = 4;
 var zeroBuffer = new Buffer(intSize); zeroBuffer.fill(0);
@@ -36859,7 +37242,7 @@ function hash(buf, fn, hashSize, bigEndian) {
 
 module.exports = { hash: hash };
 
-},{"buffer":26}],31:[function(require,module,exports){
+},{"buffer":27}],32:[function(require,module,exports){
 var Buffer = require('buffer').Buffer
 var sha = require('./sha')
 var sha256 = require('./sha256')
@@ -36958,7 +37341,7 @@ each(['createCredentials'
   }
 })
 
-},{"./md5":32,"./rng":33,"./sha":34,"./sha256":35,"buffer":26}],32:[function(require,module,exports){
+},{"./md5":33,"./rng":34,"./sha":35,"./sha256":36,"buffer":27}],33:[function(require,module,exports){
 /*
  * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
  * Digest Algorithm, as defined in RFC 1321.
@@ -37123,7 +37506,7 @@ module.exports = function md5(buf) {
   return helpers.hash(buf, core_md5, 16);
 };
 
-},{"./helpers":30}],33:[function(require,module,exports){
+},{"./helpers":31}],34:[function(require,module,exports){
 // Original code adapted from Robert Kieffer.
 // details at https://github.com/broofa/node-uuid
 (function() {
@@ -37156,7 +37539,7 @@ module.exports = function md5(buf) {
 
 }())
 
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-1, as defined
  * in FIPS PUB 180-1
@@ -37259,7 +37642,7 @@ module.exports = function sha1(buf) {
   return helpers.hash(buf, core_sha1, 20, true);
 };
 
-},{"./helpers":30}],35:[function(require,module,exports){
+},{"./helpers":31}],36:[function(require,module,exports){
 
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
@@ -37340,11 +37723,11 @@ module.exports = function sha256(buf) {
   return helpers.hash(buf, core_sha256, 32, true);
 };
 
-},{"./helpers":30}],36:[function(require,module,exports){
+},{"./helpers":31}],37:[function(require,module,exports){
 
 module.exports =  require('./lib/');
 
-},{"./lib/":37}],37:[function(require,module,exports){
+},{"./lib/":38}],38:[function(require,module,exports){
 
 module.exports = require('./socket');
 
@@ -37356,7 +37739,7 @@ module.exports = require('./socket');
  */
 module.exports.parser = require('engine.io-parser');
 
-},{"./socket":38,"engine.io-parser":50}],38:[function(require,module,exports){
+},{"./socket":39,"engine.io-parser":51}],39:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies.
@@ -38065,7 +38448,7 @@ Socket.prototype.filterUpgrades = function (upgrades) {
 };
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./transport":39,"./transports":40,"component-emitter":28,"debug":46,"engine.io-parser":50,"indexof":58,"parsejson":62,"parseqs":63,"parseuri":49}],39:[function(require,module,exports){
+},{"./transport":40,"./transports":41,"component-emitter":29,"debug":47,"engine.io-parser":51,"indexof":59,"parsejson":63,"parseqs":64,"parseuri":50}],40:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -38226,7 +38609,7 @@ Transport.prototype.onClose = function () {
   this.emit('close');
 };
 
-},{"component-emitter":28,"engine.io-parser":50}],40:[function(require,module,exports){
+},{"component-emitter":29,"engine.io-parser":51}],41:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies
@@ -38283,7 +38666,7 @@ function polling(opts){
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling-jsonp":41,"./polling-xhr":42,"./websocket":44,"xmlhttprequest":45}],41:[function(require,module,exports){
+},{"./polling-jsonp":42,"./polling-xhr":43,"./websocket":45,"xmlhttprequest":46}],42:[function(require,module,exports){
 (function (global){
 
 /**
@@ -38520,7 +38903,7 @@ JSONPPolling.prototype.doWrite = function (data, fn) {
 };
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling":43,"component-inherit":29}],42:[function(require,module,exports){
+},{"./polling":44,"component-inherit":30}],43:[function(require,module,exports){
 (function (global){
 /**
  * Module requirements.
@@ -38908,7 +39291,7 @@ function unloadHandler() {
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling":43,"component-emitter":28,"component-inherit":29,"debug":46,"xmlhttprequest":45}],43:[function(require,module,exports){
+},{"./polling":44,"component-emitter":29,"component-inherit":30,"debug":47,"xmlhttprequest":46}],44:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -39155,7 +39538,7 @@ Polling.prototype.uri = function(){
   return schema + '://' + this.hostname + port + this.path + query;
 };
 
-},{"../transport":39,"component-inherit":29,"debug":46,"engine.io-parser":50,"parseqs":63,"xmlhttprequest":45}],44:[function(require,module,exports){
+},{"../transport":40,"component-inherit":30,"debug":47,"engine.io-parser":51,"parseqs":64,"xmlhttprequest":46}],45:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -39395,7 +39778,7 @@ WS.prototype.check = function(){
   return !!WebSocket && !('__initialize' in WebSocket && this.name === WS.prototype.name);
 };
 
-},{"../transport":39,"component-inherit":29,"debug":46,"engine.io-parser":50,"parseqs":63,"ws":85}],45:[function(require,module,exports){
+},{"../transport":40,"component-inherit":30,"debug":47,"engine.io-parser":51,"parseqs":64,"ws":86}],46:[function(require,module,exports){
 // browser shim for xmlhttprequest module
 var hasCORS = require('has-cors');
 
@@ -39433,7 +39816,7 @@ module.exports = function(opts) {
   }
 }
 
-},{"has-cors":56}],46:[function(require,module,exports){
+},{"has-cors":57}],47:[function(require,module,exports){
 
 /**
  * This is the web browser implementation of `debug()`.
@@ -39582,7 +39965,7 @@ function load() {
 
 exports.enable(load());
 
-},{"./debug":47}],47:[function(require,module,exports){
+},{"./debug":48}],48:[function(require,module,exports){
 
 /**
  * This is the common logic for both the Node.js and web browser
@@ -39781,7 +40164,7 @@ function coerce(val) {
   return val;
 }
 
-},{"ms":48}],48:[function(require,module,exports){
+},{"ms":49}],49:[function(require,module,exports){
 /**
  * Helpers.
  */
@@ -39894,7 +40277,7 @@ function plural(ms, n, name) {
   return Math.ceil(ms / n) + ' ' + name + 's';
 }
 
-},{}],49:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 /**
  * Parses an URI
  *
@@ -39935,7 +40318,7 @@ module.exports = function parseuri(str) {
     return uri;
 };
 
-},{}],50:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies.
@@ -40533,7 +40916,7 @@ exports.decodePayloadAsBinary = function (data, binaryType, callback) {
 };
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./keys":51,"after":8,"arraybuffer.slice":21,"base64-arraybuffer":23,"blob":25,"has-binary":55,"utf8":84}],51:[function(require,module,exports){
+},{"./keys":52,"after":8,"arraybuffer.slice":22,"base64-arraybuffer":24,"blob":26,"has-binary":56,"utf8":85}],52:[function(require,module,exports){
 
 /**
  * Gets the keys for an object.
@@ -40554,7 +40937,7 @@ module.exports = Object.keys || function keys (obj){
   return arr;
 };
 
-},{}],52:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 
 /**
  * Returns `this`. Execute this without a "context" (i.e. without it being
@@ -40564,10 +40947,10 @@ module.exports = Object.keys || function keys (obj){
 
 module.exports = (function () { return this; })();
 
-},{}],53:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 module.exports = require('./lib/gravatar');
 
-},{"./lib/gravatar":54}],54:[function(require,module,exports){
+},{"./lib/gravatar":55}],55:[function(require,module,exports){
 var crypto = require('crypto')
   , querystring = require('querystring');
 
@@ -40599,7 +40982,7 @@ var gravatar = module.exports = {
     }
 };
 
-},{"crypto":31,"querystring":69}],55:[function(require,module,exports){
+},{"crypto":32,"querystring":70}],56:[function(require,module,exports){
 (function (global){
 
 /*
@@ -40661,7 +41044,7 @@ function hasBinary(data) {
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"isarray":59}],56:[function(require,module,exports){
+},{"isarray":60}],57:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -40686,7 +41069,7 @@ try {
   module.exports = false;
 }
 
-},{"global":52}],57:[function(require,module,exports){
+},{"global":53}],58:[function(require,module,exports){
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
   var eLen = nBytes * 8 - mLen - 1
@@ -40772,7 +41155,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],58:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 
 var indexOf = [].indexOf;
 
@@ -40783,12 +41166,12 @@ module.exports = function(arr, obj){
   }
   return -1;
 };
-},{}],59:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 module.exports = Array.isArray || function (arr) {
   return Object.prototype.toString.call(arr) == '[object Array]';
 };
 
-},{}],60:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 /*! JSON v3.2.6 | http://bestiejs.github.io/json3 | Copyright 2012-2013, Kit Cambridge | http://kit.mit-license.org */
 ;(function (window) {
   // Convenience aliases.
@@ -41651,7 +42034,7 @@ module.exports = Array.isArray || function (arr) {
   }
 }(this));
 
-},{}],61:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 
 /**
  * HOP ref.
@@ -41736,7 +42119,7 @@ exports.length = function(obj){
 exports.isEmpty = function(obj){
   return 0 == exports.length(obj);
 };
-},{}],62:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 (function (global){
 /**
  * JSON parse.
@@ -41771,7 +42154,7 @@ module.exports = function parsejson(data) {
   }
 };
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],63:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 /**
  * Compiles a querystring
  * Returns string representation of the object
@@ -41810,7 +42193,7 @@ exports.decode = function(qs){
   return qry;
 };
 
-},{}],64:[function(require,module,exports){
+},{}],65:[function(require,module,exports){
 /**
  * Parses an URI
  *
@@ -41837,7 +42220,7 @@ module.exports = function parseuri(str) {
   return uri;
 };
 
-},{}],65:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -42065,7 +42448,7 @@ var substr = 'ab'.substr(-1) === 'b'
 ;
 
 }).call(this,require("pBGvAp"))
-},{"pBGvAp":66}],66:[function(require,module,exports){
+},{"pBGvAp":67}],67:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -42130,7 +42513,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],67:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -42216,7 +42599,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{}],68:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -42303,17 +42686,17 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],69:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 'use strict';
 
 exports.decode = exports.parse = require('./decode');
 exports.encode = exports.stringify = require('./encode');
 
-},{"./decode":67,"./encode":68}],70:[function(require,module,exports){
+},{"./decode":68,"./encode":69}],71:[function(require,module,exports){
 
 module.exports = require('./lib/');
 
-},{"./lib/":71}],71:[function(require,module,exports){
+},{"./lib/":72}],72:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -42402,7 +42785,7 @@ exports.connect = lookup;
 exports.Manager = require('./manager');
 exports.Socket = require('./socket');
 
-},{"./manager":72,"./socket":74,"./url":75,"debug":76,"socket.io-parser":79}],72:[function(require,module,exports){
+},{"./manager":73,"./socket":75,"./url":76,"debug":77,"socket.io-parser":80}],73:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -42907,7 +43290,7 @@ Manager.prototype.onreconnect = function(){
   this.emitAll('reconnect', attempt);
 };
 
-},{"./on":73,"./socket":74,"./url":75,"backo2":22,"component-bind":27,"component-emitter":28,"debug":76,"engine.io-client":36,"indexof":58,"object-component":61,"socket.io-parser":79}],73:[function(require,module,exports){
+},{"./on":74,"./socket":75,"./url":76,"backo2":23,"component-bind":28,"component-emitter":29,"debug":77,"engine.io-client":37,"indexof":59,"object-component":62,"socket.io-parser":80}],74:[function(require,module,exports){
 
 /**
  * Module exports.
@@ -42933,7 +43316,7 @@ function on(obj, ev, fn) {
   };
 }
 
-},{}],74:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -43320,7 +43703,7 @@ Socket.prototype.disconnect = function(){
   return this;
 };
 
-},{"./on":73,"component-bind":27,"component-emitter":28,"debug":76,"has-binary":77,"socket.io-parser":79,"to-array":82}],75:[function(require,module,exports){
+},{"./on":74,"component-bind":28,"component-emitter":29,"debug":77,"has-binary":78,"socket.io-parser":80,"to-array":83}],76:[function(require,module,exports){
 (function (global){
 
 /**
@@ -43397,7 +43780,7 @@ function url(uri, loc){
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"debug":76,"parseuri":64}],76:[function(require,module,exports){
+},{"debug":77,"parseuri":65}],77:[function(require,module,exports){
 
 /**
  * Expose `debug()` as the module.
@@ -43536,7 +43919,7 @@ try {
   if (window.localStorage) debug.enable(localStorage.debug);
 } catch(e){}
 
-},{}],77:[function(require,module,exports){
+},{}],78:[function(require,module,exports){
 (function (global){
 
 /*
@@ -43598,7 +43981,7 @@ function hasBinary(data) {
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"isarray":59}],78:[function(require,module,exports){
+},{"isarray":60}],79:[function(require,module,exports){
 (function (global){
 /*global Blob,File*/
 
@@ -43743,7 +44126,7 @@ exports.removeBlobs = function(data, callback) {
 };
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./is-buffer":80,"isarray":59}],79:[function(require,module,exports){
+},{"./is-buffer":81,"isarray":60}],80:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -44145,7 +44528,7 @@ function error(data){
   };
 }
 
-},{"./binary":78,"./is-buffer":80,"component-emitter":28,"debug":81,"isarray":59,"json3":60}],80:[function(require,module,exports){
+},{"./binary":79,"./is-buffer":81,"component-emitter":29,"debug":82,"isarray":60,"json3":61}],81:[function(require,module,exports){
 (function (global){
 
 module.exports = isBuf;
@@ -44162,9 +44545,9 @@ function isBuf(obj) {
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],81:[function(require,module,exports){
-module.exports=require(76)
 },{}],82:[function(require,module,exports){
+module.exports=require(77)
+},{}],83:[function(require,module,exports){
 module.exports = toArray
 
 function toArray(list, index) {
@@ -44179,7 +44562,7 @@ function toArray(list, index) {
     return array
 }
 
-},{}],83:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
 //     Underscore.js 1.8.3
 //     http://underscorejs.org
 //     (c) 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -45729,7 +46112,7 @@ function toArray(list, index) {
   }
 }.call(this));
 
-},{}],84:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 (function (global){
 /*! http://mths.be/utf8js v2.0.0 by @mathias */
 ;(function(root) {
@@ -45972,7 +46355,7 @@ function toArray(list, index) {
 }(this));
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],85:[function(require,module,exports){
+},{}],86:[function(require,module,exports){
 
 /**
  * Module dependencies.

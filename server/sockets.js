@@ -52,6 +52,7 @@ module.exports = function(io, plugins, domain){
         Widget.findById(widget._id, function(err, w){
           w.settings = widget.settings;
           w.colWidth = widget.colWidth;
+          w.order = widget.order;
           w.save(callback);
         });
       }else{

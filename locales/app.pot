@@ -3,13 +3,13 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2015-07-21 23:47+0000\n"
+"POT-Creation-Date: 2015-07-23 15:13+0000\n"
 
 #: sidebar/index.html:14
 msgid "<i class=\"fa fa-circle text-success\"></i> Online"
 msgstr ""
 
-#: profile/index.html:6
+#: profile/index.html:14
 msgid "<i class=\"fa fa-dashboard\"></i> Home"
 msgstr ""
 
@@ -17,7 +17,7 @@ msgstr ""
 msgid "<i class=\"icon fa fa-warning\"></i>Your profile is incomplete !"
 msgstr ""
 
-#: profile/index.html:44
+#: profile/index.html:52
 msgid "Add"
 msgstr ""
 
@@ -29,11 +29,11 @@ msgstr ""
 msgid "Control panel"
 msgstr ""
 
-#: profile/index.html:26
+#: profile/index.html:34
 msgid "Email"
 msgstr ""
 
-#: profile/index.html:41
+#: profile/index.html:49
 msgid "New widget"
 msgstr ""
 
@@ -41,7 +41,7 @@ msgstr ""
 msgid "Profile"
 msgstr ""
 
-#: profile/index.html:29
+#: profile/index.html:37
 msgid "Save"
 msgstr ""
 
@@ -53,11 +53,11 @@ msgstr ""
 msgid "Toggle navigation"
 msgstr ""
 
-#: profile/index.html:22
+#: profile/index.html:30
 msgid "Username"
 msgstr ""
 
-#: profile/index.html:38
+#: profile/index.html:46
 msgid "Widget"
 msgstr ""
 

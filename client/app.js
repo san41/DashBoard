@@ -9,6 +9,7 @@ require('angular-socket-io');
 require('angular-animate');
 require('angularjs-toaster');
 require('angular-gettext');
+require('angular-ui-sortable');
 
 var xhrPlugins = new XMLHttpRequest();
 xhrPlugins.open('GET', './plugins.json', false);
@@ -17,7 +18,7 @@ if(xhrPlugins.status != 200 && xhrPlugins.status != 304){
   throw new Error('plugins.json not found');
 }
 
-var app = angular.module("dbapp", ['ngRoute', 'btford.socket-io', 'ngSanitize', 'toaster', 'ngAnimate', 'gettext']);
+var app = angular.module("dbapp", ['ngRoute', 'btford.socket-io', 'ngSanitize', 'toaster', 'ngAnimate', 'gettext', 'ui.sortable']);
 
 var countNeedLoad = 0;
 var loaded = 0;
