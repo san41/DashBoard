@@ -3,7 +3,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: dashboard\n"
-"PO-Revision-Date: 2015-07-21 23:32+0000\n"
+"PO-Revision-Date: 2015-07-22 22:01+0000\n"
 "Last-Translator: ralmn <ranger_tigre@hotmail.fr>\n"
 "Language-Team: English (http://www.transifex.com/projects/p/dashboardparty/language/en/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -49,7 +49,7 @@ msgstr "Create"
 
 #: index.html:37 read.html:50
 msgid "Delete"
-msgstr ""
+msgstr "Supprimer"
 
 #: index.html:36
 msgid "Edit"

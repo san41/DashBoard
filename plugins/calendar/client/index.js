@@ -8,3 +8,6 @@ plugin.registerRoute('/calendar', {
 });
 
 plugin.registerMenuItem('Calendar', '/calendar', 'fa-calendar');
+
+
+require('./widget.js')(plugin);

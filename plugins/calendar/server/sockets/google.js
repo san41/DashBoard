@@ -34,6 +34,23 @@ module.exports = function(socket){
       callback(null, response.items);
     });
   });
+  socket.on('calendar/google/nextEvent', function(calendar, callback){
+    var auth = getAuth(calendar);
+    if(auth == null){ callback(new Error("Calendar auth error")); return }
+    var gCalendar = google.calendar('v3');
+    gCalendar.events.list({
+      auth: auth,
+      calendarId: calendar.calendarId,
+      timeMin: (new Date()).toISOString(),
+      maxResults: 1,
+      singleEvents: true,
+      orderBy: 'startTime'
+    }, function(err, response) {
+      if(err){ callback(err); return; }
+      if(response.items == null || response.items.length == 0){ callback("No event found"); return; }
+      callback(null, response.items[0]);
+    });
+  });
 
   socket.on('calendar/google/events/year', function(calendar, callback){
 

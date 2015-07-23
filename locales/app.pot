@@ -1,9 +1,8 @@
 msgid ""
 msgstr ""
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2015-07-23 15:13+0000\n"
 
 #: sidebar/index.html:14
 msgid "<i class=\"fa fa-circle text-success\"></i> Online"
@@ -59,22 +58,4 @@ msgstr ""
 
 #: profile/index.html:46
 msgid "Widget"
-msgstr ""
-
-#: /home/ralmn/Developpement/dashboard/client/login.ejs:11
-#: /home/ralmn/Developpement/dashboard/client/login.ejs:35
-#: /home/ralmn/Developpement/dashboard/client/login.ejs:57
-msgid "Sign in"
-msgstr ""
-
-#: /home/ralmn/Developpement/dashboard/client/login.ejs:52
-msgid "Remember me"
-msgstr ""
-
-#: /home/ralmn/Developpement/dashboard/client/login.ejs:68
-msgid "I forgot my password"
-msgstr ""
-
-#: /home/ralmn/Developpement/dashboard/client/login.ejs:69
-msgid "Sign up"
 msgstr ""

@@ -6,8 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: dashboard\n"
-"POT-Creation-Date: 2015-07-21 22:16+0000\n"
-"PO-Revision-Date: 2015-07-21 13:31+0000\n"
+"PO-Revision-Date: 2015-07-23 16:02+0000\n"
 "Last-Translator: ralmn <ranger_tigre@hotmail.fr>\n"
 "Language-Team: English (http://www.transifex.com/projects/p/dashboardparty/language/en/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -19,7 +18,7 @@ msgstr ""
 msgid "<i class=\"fa fa-circle text-success\"></i> Online"
 msgstr "<i class=\"fa fa-circle text-success\"></i> Online"
 
-#: profile/index.html:6
+#: profile/index.html:14
 msgid "<i class=\"fa fa-dashboard\"></i> Home"
 msgstr "<i class=\"fa fa-dashboard\"></i>pagina principal"
 
@@ -27,7 +26,7 @@ msgstr "<i class=\"fa fa-dashboard\"></i>pagina principal"
 msgid "<i class=\"icon fa fa-warning\"></i>Your profile is incomplete !"
 msgstr "<i class=\"icon fa fa-warning\"></i>Su perfil está incompleto!"
 
-#: profile/index.html:44
+#: profile/index.html:52
 msgid "Add"
 msgstr "Add"
 
@@ -39,11 +38,11 @@ msgstr "Complete your profile"
 msgid "Control panel"
 msgstr "Control panel"
 
-#: profile/index.html:26
+#: profile/index.html:34
 msgid "Email"
 msgstr "Correo electrónico"
 
-#: profile/index.html:41
+#: profile/index.html:49
 msgid "New widget"
 msgstr "New widget"
 
@@ -51,7 +50,7 @@ msgstr "New widget"
 msgid "Profile"
 msgstr "Profile"
 
-#: profile/index.html:29
+#: profile/index.html:37
 msgid "Save"
 msgstr "Save"
 
@@ -63,28 +62,10 @@ msgstr "Sign out"
 msgid "Toggle navigation"
 msgstr "Toggle navigation"
 
-#: profile/index.html:22
+#: profile/index.html:30
 msgid "Username"
 msgstr "Username"
 
-#: profile/index.html:38
+#: profile/index.html:46
 msgid "Widget"
 msgstr "Widget"
-
-#: /home/ralmn/Developpement/dashboard/client/login.ejs:11
-#: /home/ralmn/Developpement/dashboard/client/login.ejs:35
-#: /home/ralmn/Developpement/dashboard/client/login.ejs:57
-msgid "Sign in"
-msgstr "Sign in"
-
-#: /home/ralmn/Developpement/dashboard/client/login.ejs:52
-msgid "Remember me"
-msgstr "Remember me"
-
-#: /home/ralmn/Developpement/dashboard/client/login.ejs:68
-msgid "I forgot my password"
-msgstr "I forgot my password"
-
-#: /home/ralmn/Developpement/dashboard/client/login.ejs:69
-msgid "Sign up"
-msgstr "Sign up"

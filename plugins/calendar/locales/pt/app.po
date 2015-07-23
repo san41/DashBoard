@@ -3,7 +3,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: dashboard\n"
-"PO-Revision-Date: 2015-07-20 23:12+0000\n"
+"PO-Revision-Date: 2015-07-23 16:02+0000\n"
+"Last-Translator: ralmn <ranger_tigre@hotmail.fr>\n"
 "Language-Team: Portuguese (http://www.transifex.com/projects/p/dashboardparty/language/pt/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -15,11 +16,16 @@ msgid "All Day"
 msgstr ""
 
 #: google/view.html:40 index.html:25 index.html:26 index.html:30 index.html:8
+#: widget/nextEvent-config.html:19
 msgid "Calendar"
 msgstr ""
 
 #: google/view.html:27
 msgid "Calendar name"
+msgstr ""
+
+#: widget/nextEvent-config.html:4
+msgid "Calendar NextEvent"
 msgstr ""
 
 #: google/view.html:2 index.html:2
@@ -36,6 +42,10 @@ msgstr ""
 
 #: google/view.html:35
 msgid "Color"
+msgstr ""
+
+#: widget/nextEvent-config.html:15
+msgid "Column width"
 msgstr ""
 
 #: index.html:35
@@ -66,6 +76,10 @@ msgstr ""
 msgid "Events view"
 msgstr ""
 
+#: widget/nextEvent.html:11
+msgid "Goto calendar"
+msgstr ""
+
 #: google/view.html:6 index.html:29 index.html:6
 msgid "Home"
 msgstr ""
@@ -78,7 +92,19 @@ msgstr ""
 msgid "New Event"
 msgstr ""
 
-#: index.html:117
+#: widget/nextEvent.html:6
+msgid "No calendar are currently selected"
+msgstr ""
+
+#: widget/nextEvent.html:10
+msgid "No next event"
+msgstr ""
+
+#: widget/nextEvent.html:7
+msgid "Please select your calendar on <a href=\"#/profile\">your profile</a>"
+msgstr ""
+
+#: index.html:117 widget/nextEvent-config.html:24
 msgid "Save"
 msgstr ""
 
