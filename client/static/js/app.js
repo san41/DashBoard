@@ -26,6 +26,7 @@ module.exports = function($scope, socket, $rootScope, toaster){
 
 }
 },{}],2:[function(require,module,exports){
+var _ = require('underscore');
 module.exports = function(socket, $scope, $rootScope, toaster){
   $scope.user = passport.user;
 
@@ -52,6 +53,7 @@ module.exports = function(socket, $scope, $rootScope, toaster){
         $scope.widgets.push(w);
       }      
     }
+    $scope.widgets = _.sortBy($scope.widgets, 'order');  
   });
 
   $scope.editProfile = function(){
@@ -70,35 +72,20 @@ module.exports = function(socket, $scope, $rootScope, toaster){
       $scope.widgets.push(widget);
   }
 
-  $scope.draggableOptions = {
-    connectWith: ".connected-drop-target-sortable",
-    stop: function (e, ui) {
-      // if the element is removed from the first container
-      if (ui.item.sortable.source.hasClass('draggable-element-container') &&
-          ui.item.sortable.droptarget &&
-          ui.item.sortable.droptarget != ui.item.sortable.source &&
-          ui.item.sortable.droptarget.hasClass('connected-drop-target-sortable')) {
-        // restore the removed item
-        ui.item.sortable.sourceModel.push(ui.item.sortable.model);
-      }
-    }
-  }
-
   $scope.sortableOptions = {
     "ui-floating" : 'auto',
+    
     stop: function(e, ui){
       for(var i in $scope.widgets){
         var widget = $scope.widgets[i];
         widget.order = i;
         if(widget._id != null)
-          socket.emit('widget/save', widget, function(){
-            console.log('ok?')
-          })
+          socket.emit('widget/save', widget, function(){});
       }
     }
   }
 }
-},{}],3:[function(require,module,exports){
+},{"underscore":84}],3:[function(require,module,exports){
 var gravatar = require("gravatar");
 
 module.exports = function() {
@@ -172,52 +159,60 @@ module.exports = function(app){
 },{}],5:[function(require,module,exports){
 module.exports = function(app){
   app.directive("widgetconfig", function($compile, $templateCache, $templateRequest){
-  var getTemplate = function(data) {
+    var getTemplate = function(data) {
         // use data to determine which template to use
         var template = $templateRequest(data);
         return template;
-    }
-
-    return {
-      restrict: "E",
-      scope:{
-        widget: "="  
-      },
-      template :"<div>  </div>",
-      link: function(scope, element){
-        getTemplate(scope.widget.templateURLConfig).then(function(tpl){
-          var e = $compile(tpl)(scope);
-          
-          element.append(e);
-        })
       }
 
-    };
-  });
+      return {
+        restrict: "E",
+        scope:{
+          widget: "="  
+        },
+        template :"<div>  </div>",
+        link: function(scope, element){
+          function update(){
+            getTemplate(scope.widget.templateURLConfig).then(function(tpl){
+              console.log('update');
+              var e = $compile(tpl)(scope);
+              element.empty();
+              element.append(e);
+            });
+          }
+          scope.$watch('widget._id', function(){
+            console.log(scope.widget);
+            update();
+          });
+          update();
+        }
+
+      };
+    });
 
   app.directive("widget", function($compile, $templateCache, $templateRequest){
-  var getTemplate = function(data) {
+    var getTemplate = function(data) {
         // use data to determine which template to use
         var template = $templateRequest(data);
         return template;
-    }
-
-    return {
-      restrict: "E",
-      scope:{
-        widget: "="  
-      },
-      template :"<div>  </div>",
-      link: function(scope, element){
-        getTemplate(scope.widget.templateURL).then(function(tpl){
-          var e = $compile(tpl)(scope);
-          e.addClass("col-md-" + scope.widget.colWidth);
-          element.append(e);
-        })
       }
 
-    };
-  });
+      return {
+        restrict: "E",
+        scope:{
+          widget: "="  
+        },
+        template :"<div>  </div>",
+        link: function(scope, element){
+          getTemplate(scope.widget.templateURL).then(function(tpl){
+            var e = $compile(tpl)(scope);
+            e.addClass("col-md-" + scope.widget.colWidth);
+            element.append(e);
+          });
+        }
+
+      };
+    });
   
 
 }

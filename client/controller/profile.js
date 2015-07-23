@@ -1,3 +1,4 @@
+var _ = require('underscore');
 module.exports = function(socket, $scope, $rootScope, toaster){
   $scope.user = passport.user;
 
@@ -24,6 +25,7 @@ module.exports = function(socket, $scope, $rootScope, toaster){
         $scope.widgets.push(w);
       }      
     }
+    $scope.widgets = _.sortBy($scope.widgets, 'order');  
   });
 
   $scope.editProfile = function(){
@@ -42,30 +44,15 @@ module.exports = function(socket, $scope, $rootScope, toaster){
       $scope.widgets.push(widget);
   }
 
-  $scope.draggableOptions = {
-    connectWith: ".connected-drop-target-sortable",
-    stop: function (e, ui) {
-      // if the element is removed from the first container
-      if (ui.item.sortable.source.hasClass('draggable-element-container') &&
-          ui.item.sortable.droptarget &&
-          ui.item.sortable.droptarget != ui.item.sortable.source &&
-          ui.item.sortable.droptarget.hasClass('connected-drop-target-sortable')) {
-        // restore the removed item
-        ui.item.sortable.sourceModel.push(ui.item.sortable.model);
-      }
-    }
-  }
-
   $scope.sortableOptions = {
     "ui-floating" : 'auto',
+    
     stop: function(e, ui){
       for(var i in $scope.widgets){
         var widget = $scope.widgets[i];
         widget.order = i;
         if(widget._id != null)
-          socket.emit('widget/save', widget, function(){
-            console.log('ok?')
-          })
+          socket.emit('widget/save', widget, function(){});
       }
     }
   }
