@@ -16,6 +16,8 @@
   <link href="./static/theme/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
   <link href="./static/theme/plugins/colorpicker/bootstrap-colorpicker.min.css" rel="stylesheet"/>
   <link href="./static/theme/plugins/iCheck/all.css" rel="stylesheet"/>
+  <link href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet" type="text/css" />
+
 
   <link rel="stylesheet" href="./static/theme/dist/css/AdminLTE.min.css">
   <link href="./static/theme/dist/css/skins/_all-skins.min.css" rel="stylesheet" type="text/css" />
@@ -79,6 +81,11 @@
 
       }
     }
+    var adminUniq = null;
+    <% if (user.isAdmin()) {
+      %>
+      adminUniq = "<%= adminUniq %>";
+    <% } %> 
     var currentLanguage = '<%= getLocale().substring(0,2) %>';
   </script>
 

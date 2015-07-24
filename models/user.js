@@ -9,6 +9,7 @@ var userSchema = mongoose.Schema({
         email        : String,
         password     : String,
     },
+    admin: Boolean,
     password     : String
 });
 
@@ -32,4 +33,8 @@ userSchema.methods.validPassword = function(password) {
 };
 
 // create the model for users and expose it to our app
-module.exports = mongoose.model('User', userSchema);
+ var User = mongoose.model('User', userSchema);
+ User.prototype.isAdmin = function() {
+   return this.admin;
+ };
+ module.exports = User;

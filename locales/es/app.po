@@ -6,7 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: dashboard\n"
-"PO-Revision-Date: 2015-07-23 16:02+0000\n"
+"POT-Creation-Date: 2015-07-24 19:36+0000\n"
+"PO-Revision-Date: 2015-07-24 19:48+0000\n"
 "Last-Translator: ralmn <ranger_tigre@hotmail.fr>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/dashboardparty/language/es/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -69,3 +70,21 @@ msgstr "Nombre de usuario"
 #: profile/index.html:46
 msgid "Widget"
 msgstr "Nuevo widget"
+
+#: /home/ralmn/Developpement/dashboard/client/login.ejs:11
+#: /home/ralmn/Developpement/dashboard/client/login.ejs:35
+#: /home/ralmn/Developpement/dashboard/client/login.ejs:57
+msgid "Sign in"
+msgstr "Iniciar sesión"
+
+#: /home/ralmn/Developpement/dashboard/client/login.ejs:52
+msgid "Remember me"
+msgstr "Acuérdate de mí"
+
+#: /home/ralmn/Developpement/dashboard/client/login.ejs:68
+msgid "I forgot my password"
+msgstr "He perdido mi contraseña"
+
+#: /home/ralmn/Developpement/dashboard/client/login.ejs:69
+msgid "Sign up"
+msgstr "Registrarse"

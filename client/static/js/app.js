@@ -257,11 +257,17 @@ var pluginsList = JSON.parse(xhrPlugins.responseText);
 for(var i in pluginsList){
   var pluginName = pluginsList[i];
   (function(pluginName){
-  countNeedLoad+=2; //Client + settings
+  var pluginURL = pluginName;
+  if(pluginURL == 'admin'){
+    if(adminUniq != null)
+      pluginURL = adminUniq +'/admin';
+    else return;
+  }
+  countNeedLoad += 2; //Client + settings
   
   //Load client script
   var script = document.createElement('script');
-  script.src = './plugins/'+ pluginName +'/client/index.js';
+  script.src = './plugins/'+ pluginURL +'/client/index.js';
   document.body.appendChild(script);
   
   script.addEventListener('load', function(){
@@ -278,8 +284,8 @@ for(var i in pluginsList){
     for(var i in plugin.widgets){
       var w =  plugin.widgets[i];
       w.plugin = pluginName;
-      w.templateURLConfig= "./plugins/" + pluginName + "/client/views/widget/" + w.templateURL.replace('.html','-config.html'),
-      w.templateURL= "./plugins/" + pluginName + "/client/views/widget/" + w.templateURL,
+      w.templateURLConfig= "./plugins/" + pluginURL + "/client/views/widget/" + w.templateURL.replace('.html','-config.html'),
+      w.templateURL= "./plugins/" + pluginURL + "/client/views/widget/" + w.templateURL,
       widgets.push(w);
     }
 
@@ -289,7 +295,7 @@ for(var i in pluginsList){
 
         $routeProvider.when(routeName, {
           controller: routeData.controller,
-          templateUrl: "./plugins/" + pluginName + "/client/views/" + routeData.templateUrl,
+          templateUrl: "./plugins/" + pluginURL + "/client/views/" + routeData.templateUrl,
         });
       }
     });
@@ -300,7 +306,7 @@ for(var i in pluginsList){
   });
   //Load client settings script
   var settingsScript =  document.createElement('script');
-  settingsScript.src = './plugins/'+ pluginName +'/client/settings.js';
+  settingsScript.src = './plugins/'+ pluginURL +'/client/settings.js';
   document.body.appendChild(settingsScript);
 
   settingsScript.addEventListener('load', function(){
@@ -318,7 +324,7 @@ for(var i in pluginsList){
         var routeData = plugin.settings.routes[routeName];
         $routeProvider.when(routeName, {
           controller: routeData.controller,
-          templateUrl: "./plugins/" + pluginName + "/client/settings/views/" + routeData.templateUrl,
+          templateUrl: "./plugins/" + pluginURL + "/client/settings/views/" + routeData.templateUrl,
 
         });
 
@@ -331,7 +337,7 @@ for(var i in pluginsList){
   });
 
   var translationsScript = document.createElement('script');
-  translationsScript.src = './plugins/'+ pluginName +'/locales/translations/all.js';
+  translationsScript.src = './plugins/'+ pluginURL +'/locales/translations/all.js';
   document.body.appendChild(translationsScript);
 })(pluginName);
 }

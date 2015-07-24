@@ -25,3 +25,8 @@ file_filter = plugins/todolist/locales/<lang>/app.po
 source_lang = en_US
 type = PO
 
+[dashboardparty.admin-plugin]
+source_file = plugins/admin/locales/app.pot
+file_filter = plugins/admin/locales/<lang>/app.po
+source_lang = en_US
+type = PO

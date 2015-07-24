@@ -8,3 +8,5 @@ cd ../mail
 gulp no-watch
 cd ../todolist
 gulp no-watch
+cd ../admin
+gulp no-watch

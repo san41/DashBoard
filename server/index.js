@@ -17,6 +17,9 @@ var cookieParser = require('cookie-parser');
 var bodyParser   = require('body-parser');
 var session      = require('express-session');
 
+var uniqid = require('uniqid');
+
+
 var config = require('../config/config.js');
 
 var MongoStore = require('connect-mongo')(session);
@@ -97,17 +100,22 @@ app.use('/views', express.static('./client/views/'));
 app.use('/locales', express.static('./locales'));
 
 
+global.adminUniq = uniqid();
 for(var i in plugins){
     var pluginName = plugins[i];
+    var pluginURL = plugins[i];
+    if(pluginURL == "admin"){
+      pluginURL = global.adminUniq + "/admin"
+    }
 
     //Client & settings js scripts
-    app.use('/plugins/'+pluginName + '/client', express.static('./plugins/' + pluginName + '/client/public'));
+    app.use('/plugins/'+pluginURL + '/client', express.static('./plugins/' + pluginName + '/client/public'));
     //Client views
-    app.use('/plugins/'+pluginName + '/client/views', express.static('./plugins/' + pluginName + '/client/views'));
+    app.use('/plugins/'+pluginURL + '/client/views', express.static('./plugins/' + pluginName + '/client/views'));
     //Settings views
-    app.use('/plugins/'+pluginName + '/client/settings/views', express.static('./plugins/' + pluginName + '/client/settings/views'));
+    app.use('/plugins/'+pluginURL + '/client/settings/views', express.static('./plugins/' + pluginName + '/client/settings/views'));
     //Locales
-    app.use('/plugins/'+pluginName + '/locales', express.static('./plugins/' + pluginName + '/locales'));
+    app.use('/plugins/'+pluginURL + '/locales', express.static('./plugins/' + pluginName + '/locales'));
 }
 
 
