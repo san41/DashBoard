@@ -53,6 +53,11 @@
 
 <!-- Main content -->
 <section class="content" ng-show="rssfeedCount > 0">
+  <div class="overlay center  text-center" ng-show="rssload == true">
+    <h2>
+      <i class="fa fa-refresh fa-spin"></i> Loading
+    </h2>
+  </div>
 <ul class="timeline">
 
   <!-- timeline time label -->
@@ -64,40 +69,19 @@
     <!-- /.timeline-label -->
 
     <!-- timeline item -->
-    <li>
+    <li ng-repeat="feed in rssfeed | orderBy:'-published'">
         <!-- timeline icon -->
-        <i class="fa fa-newspaper-o bg-blue"></i>
+        <i class="fa fa-newspaper-o "></i>
         <div class="timeline-item">
-            <span class="time"><i class="fa fa-clock-o"></i> 12:05 | <i class="fa fa-wrench"></i>
-</span>
-            <h3 class="timeline-header">Clubic - <a href="#">Live Japon: le fax pas encore au rebut</a> </h3>
-
-            <div class="timeline-body">
-"Mon grand-père était un type irascible: il n'aimait pas discuter par téléphone. Alors quand il avait un truc à dire, il expédiait un fax": cette anecdote d'un Japonais qui évoque ainsi des so [...]
-            </div>
-
-            <div class="timeline-footer">
-
-            </div>
+          <span class="time"><i class="fa fa-clock-o"></i> {{feed.published | date:'dd/MM/yyyy HH:mm'}}</span>
+          <h3 class="timeline-header">{{feed.feed.name}} - <a href="{{feed.link}}" target="_blank">{{feed.title}} </a> </h3>
         </div>
     </li>
-    <li>
-        <!-- timeline icon -->
-        <i class="fa fa-newspaper-o bg-grey"></i>
-        <div class="timeline-item">
-            <span class="time"><i class="fa fa-clock-o"></i> 13:05 | <i class="fa fa-wrench"></i>
-</span>
-            <h3 class="timeline-header">Clubic - <a href="#">Live Japon: le fax pas encore au rebut</a> </h3>
-
-            <div class="timeline-body">
-"Mon grand-père était un type irascible: il n'aimait pas discuter par téléphone. Alors quand il avait un truc à dire, il expédiait un fax": cette anecdote d'un Japonais qui évoque ainsi des so [...]
-            </div>
-
-            <div class="timeline-footer">
-
-            </div>
-        </div>
-    </li>
+  <li class="time-label">
+    <span class="bg-blue">
+      Older
+    </span>
+  </li>
     <!-- END timeline item -->
 </ul>
 </section>
@@ -111,26 +95,32 @@
         <h4 class="modal-title">Add RSS feed</h4>
       </div>
       <div class="modal-body">
-        <div class="form-group">
-          <label for="">Name</label>
-          <input placeholder="Enter website name" type="text" class="form-control" ng-disabled="modal.editable == null || !modal.editable" ng-model="modal.name">
+        <div class="input-group">
+          <span class="input-group-addon"><i class="fa fa-bookmark"></i></span>
+            <input placeholder="Enter feed name" type="text" class="form-control" ng-disabled="modal.editable == null || !modal.editable" ng-model="modal.name">
         </div>
-        <div class="form-group">
-          <label for="">Link (http://..)</label>
-          <input placeholder="Enter link rss feed" type="url" class="form-control" ng-disabled="modal.editable == null || !modal.editable" ng-model="modal.link" required>
+        <br />
+        <div class="input-group">
+          <span class="input-group-addon"><i class="fa fa-link"></i></span>
+            <input placeholder="Enter feed link" type="url" class="form-control" ng-disabled="modal.editable == null || !modal.editable" ng-model="modal.link" required>
         </div>
+        <br />
         <div class="form-group">
-          <label for="">Category <span class="text text-muted">Default : Général</span></label>
-          <input placeholder="General" ng-model="modal.category"  type="text" class="form-control" ng-disabled="modal.editable == null || !modal.editable"/>  
-        </div>
+          <label>Category</label>
+          <select class="form-control select2 select2-hidden-accessible" style="width: 100%;" tabindex="-1" aria-hidden="true" ng-disabled="modal.editable == null || !modal.editable" ng-model="modal.category" >
+            <option ng-repeat='category in modal.categorysList'>
+              {{category}}
+            </option>
+          </select>
+        </div> 
         <div class="form-group">
-          <label for="">Website color <span class="text text-muted">Default : Grey </span></label>
-            <input placeholder="#bcbcbc" ng-model="modal.color" type="text" ng-disabled="modal.editable == null || !modal.editable" class="form-control colorpicker"/>
+          <label for="">Feed color</label>
+            <input placeholder="Click to select the feed color" ng-model="modal.color" type="text" ng-disabled="modal.editable == null || !modal.editable" class="form-control colorpicker"/>
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" ng-click="modal = null" class="btn pull-left" data-dismiss="modal">Close</button>
-        <button type="btn btn-valid" ng-click="modalNewFeed()" class="btn" ng-disabled="modal.editable == null || !modal.editable">Add feed</button>
+        <button type="button" ng-click="modal = null" class="btn btn-danger pull-left " data-dismiss="modal">Close</button>
+        <button type="button" ng-click="modalNewFeed()" class="btn btn-success" ng-disabled="modal.editable == null || !modal.editable">Add feed</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->

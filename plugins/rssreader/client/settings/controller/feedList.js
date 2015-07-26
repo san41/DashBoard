@@ -1,18 +1,12 @@
 module.exports = function($scope, socket, $location, $routeParams, toaster){
 
   $scope.rssfeeds = [];
-  $scope.modal = null;
+  $scope.editmodal = null;
 
   socket.emit('rssreader/list', function(err, list){
     if(err) return;
     $scope.rssfeeds = list; 
   });
-
-  $scope.edit = function(feed){
-    console.log('edit');
-  }
-
-
 
   $scope.delete = function(feed){
     if(!confirm('Are you sure to delete the rss feed ' + feed.name +' ?')){
@@ -40,6 +34,7 @@ module.exports = function($scope, socket, $location, $routeParams, toaster){
 
   $scope.edit = function(feed){
     console.log(feed);
+    $scope.editmodal = true;
     toaster.pop('error', 'Error', 'Edit is not avaible');
   }
 

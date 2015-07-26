@@ -1,4 +1,5 @@
 var RssReader = require('./models/rssreader.js');
+var feed = require('feed-read');
 module.exports = function(socket){
 
   // Socket to add feed link in database 
@@ -28,17 +29,46 @@ module.exports = function(socket){
     RssReader.count({'user':socket.request.user}, callback);
   });
 
-// List feed by user  Todo change for adpte 
+// List feed by user  Todo change for adpte and seeting
 
   socket.on('rssreader/list', function(callback){
     RssReader.find({user:socket.request.user}, callback);
-    console.log('ok')
   });
 
   socket.on('rssreader/delete', function(rssreaderp, callback){
     RssReader.findOneAndRemove({_id:rssreaderp._id, user:socket.request.user}, callback);
   });
 
+  socket.on('feed/read', function(callback){
+    RssReader.find({user:socket.request.user}, function(err ,feedLists){
+      if(err){
+        callback('Pas de lien sur la base de donnée');
+      }
+      var test = requestFeed(feedLists);
+      callback(test);
+    });
+  });
 
 
+  function requestFeed(feedLists){
+    var feeds = [];
+    var i =  0;
+    var ConWhile = feedLists.length;
+    var feedListsSend = ConWhile -1;
+    while( i < feedLists.length){
+          var ConWhile = feedLists.length;
+    var feedListsSend = ConWhile -1;
+
+      feed(feedLists[i].url, function(err, feed){
+
+        socket.emit('get/feeds', feed,function(err, feeds){
+
+        });
+      });
+      i++ ;
+
+    }      
+
+
+  }
 }

@@ -1,6 +1,6 @@
 <section class="content-header">
   <h1>
-    <i class="fa fa-rss-square"></i>  Reader Settings
+    <i class="fa fa-rss-square"></i> Reader Settings
   </h1>
   <ol class="breadcrumb">
     <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -9,8 +9,6 @@
   </ol>
 </section>
 
-
-<!-- Main content -->
 <section class="content">
   <div class="row">
     <div class="col-md-12">
@@ -19,7 +17,7 @@
           <h3 class="box-title">RSS Feed avaible</h3>
           <div class="box-tools">
             <div class="input-group" style="width: 150px;">
-              <input type="text" name="table_search" class="form-control input-sm pull-right" ng-model="searchName" placeholder="Search feed by name">
+              <input type="text" name="table_search" class="form-control input-sm pull-right" ng-model="searchName" placeholder="Search feed">
               <div class="input-group-btn">
                 <button class="btn btn-sm btn-default"><i class="fa fa-search"></i></button>
               </div>
@@ -35,56 +33,53 @@
                 <th>Category</th>
                 <th>Color</th>
                 <th>Actions</th>
-                <th></th>
+<!--                 <th></th> -->
               </tr>
               <tr ng-repeat="feed in rssfeeds | filter:searchName">
                 <td>{{feed.name}}</td>
                 <td>{{feed.url}}</td>
                 <td>{{feed.category}}</td>
                 <td style="background:{{feed.color}};">{{feed.color}}</td>
-                <td style="cursor:pointer;" ng-click="edit(feed)"><i class="fa fa-pencil"></i> Edit</td>
+<!--                 <td style="cursor:pointer;" ng-click="edit(feed)"><i class="fa fa-pencil"></i> Edit</td> -->
                 <td style="cursor:pointer;" ng-click="delete(feed)"><i class="fa fa-trash-o"></i> Delete</td>
               </tr>
             </tbody>
           </table>
-        </div><!-- /.box-body -->
-      </div>
-    </div><!-- /.col -->
-  </div><!-- /.row -->
-
-
-<!--  Start modal to add RSS link -->
-<div class="modal modal-open" ng-show="editmodal != null">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" ng-click="modal = null" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">Edit RSS feed</h4>
-      </div>
-      <div class="modal-body">
-        <div class="form-group">
-          <label for="">Name</label>
-          <input placeholder="Enter website name" type="text" class="form-control" ng-disabled="modal.editable == null || !modal.editable" ng-model="modal.name">
-        </div>
-        <div class="form-group">
-          <label for="">Link (http://..)</label>
-          <input placeholder="Enter link rss feed" type="url" class="form-control" ng-disabled="modal.editable == null || !modal.editable" ng-model="modal.link" required>
-        </div>
-        <div class="form-group">
-          <label for="">Category <span class="text text-muted">Default : Général</span></label>
-          <input placeholder="General" ng-model="modal.category"  type="text" class="form-control" ng-disabled="modal.editable == null || !modal.editable"/>  
-        </div>
-        <div class="form-group">
-          <label for="">Website color <span class="text text-muted">Default : Grey </span></label>
-            <input placeholder="#bcbcbc" ng-model="modal.color" type="text" ng-disabled="modal.editable == null || !modal.editable" class="form-control colorpicker"/>
         </div>
       </div>
-      <div class="modal-footer">
-        <button type="button" ng-click="modal = null" class="btn pull-left" data-dismiss="modal">Close</button>
-        <button type="btn btn-valid" ng-click="modalNewFeed()" class="btn" ng-disabled="modal.editable == null || !modal.editable">Add feed</button>
+    </div>
+  </div>
+</section>
+<!--  Start modal to edit feed link -->
+  <div class="modal modal-open" ng-show="editmodal != null">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" ng-click="modal = null" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">Edit RSS feed</h4>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="">Name</label>
+            <input placeholder="Enter website name" type="text" class="form-control" ng-disabled="modal.editable == null || !modal.editable" ng-model="modal.name">
+          </div>
+          <div class="form-group">
+            <label for="">Link (http://..)</label>
+            <input placeholder="Enter link rss feed" type="url" class="form-control" ng-disabled="modal.editable == null || !modal.editable" ng-model="modal.link" required>
+          </div>
+          <div class="form-group">
+            <label for="">Category <span class="text text-muted">Default : Général</span></label>
+            <input placeholder="General" ng-model="modal.category"  type="text" class="form-control" ng-disabled="modal.editable == null || !modal.editable"/>  
+          </div>
+          <div class="form-group">
+            <label for="">Website color <span class="text text-muted">Default : Grey </span></label>
+              <input placeholder="#bcbcbc" ng-model="modal.color" type="text" ng-disabled="modal.editable == null || !modal.editable" class="form-control colorpicker"/>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" ng-click="modal = null" class="btn pull-left" data-dismiss="modal">Close</button>
+          <button type="btn btn-valid" ng-click="modalNewFeed()" class="btn" ng-disabled="modal.editable == null || !modal.editable">Add feed</button>
+        </div>
       </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-
-</section><!-- /.content -->
+    </div>
+  </div>
