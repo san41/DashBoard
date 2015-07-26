@@ -3,3 +3,5 @@ config/config.js
 nodemon.json
 plugins/plugins.json
 docs/_build/
+
+sftp-config.json
