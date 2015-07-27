@@ -53,23 +53,17 @@ module.exports = function($scope, socket, toaster){
     }
   });
 
+  function updateData(){
+    socket.emit('feed/read', function(result){
+      $scope.rssload = true;
+      $scope.rssfeed = [];
+    });
+  }
 
-function updateData(){
-  socket.emit('feed/read', function(result){
-    $scope.rssload = true;
-    $scope.rssfeed = [];
-});
-}
-setInterval(updateData, 100000);
+  setInterval(updateData, 100000);
 
-
-socket.on('get/feeds',function(data, callback){
-
+  socket.on('get/feeds',function(data, callback){
     $scope.rssfeed = $scope.rssfeed.concat(data);
-        $scope.rssload = false;
-
-});
-
-
-
+    $scope.rssload = false;
+  });
 }

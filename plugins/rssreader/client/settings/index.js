@@ -9,5 +9,4 @@ settings.registerRoute('/rssreader',{
   templateUrl :  'index.html'
 });
 
-
 settings.registerSettingsItem('RssReader', '/rssreader', 'fa-rss-square');
