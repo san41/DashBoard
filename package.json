@@ -1,16 +1,3 @@
-Skip to content
-This repository  
-Pull requests
-Issues
-Gist
- @san41
- Unwatch 7
-  Star 5
- Fork 8DashboardParty/DashBoard
-Branch: master  DashBoard/package.json
-@ralmnralmn 3 days ago admin: Starting plugins admin
-1 contributor
-RawBlameHistory     64 lines (63 sloc)  1.721 kB
 {
   "name": "Dashboard",
   "version": "1.0.0",
@@ -75,5 +62,3 @@ RawBlameHistory     64 lines (63 sloc)  1.721 kB
     "vinyl-source-stream": "^1.1.0"
   }
 }
-Status API Training Shop Blog About Help
-© 2015 GitHub, Inc. Terms Privacy Security Contact
