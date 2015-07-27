@@ -28,7 +28,6 @@ module.exports = function($scope, socket, $location, $routeParams, toaster){
       if(index > -1){
         $scope.rssfeeds.splice(index, 1);
       }
-
     });
   }
 
@@ -37,13 +36,4 @@ module.exports = function($scope, socket, $location, $routeParams, toaster){
     $scope.editmodal = true;
     toaster.pop('error', 'Error', 'Edit is not avaible');
   }
-
-  // $scope.edit = function(calendar){
-  //   if(calendar.type == "google"){
-  //     $location.path('/settings/calendar/google/edit/' + calendar._id);
-
-  //   }
-  // }
-
-
 }

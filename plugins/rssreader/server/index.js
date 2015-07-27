@@ -24,12 +24,11 @@ module.exports = function(socket){
       });
   });
 
-
   socket.on('feed/list', function(callback){
     RssReader.count({'user':socket.request.user}, callback);
   });
 
-// List feed by user  Todo change for adpte and seeting
+  // List feed by user  Todo change for adpte and seting
 
   socket.on('rssreader/list', function(callback){
     RssReader.find({user:socket.request.user}, callback);
@@ -42,13 +41,12 @@ module.exports = function(socket){
   socket.on('feed/read', function(callback){
     RssReader.find({user:socket.request.user}, function(err ,feedLists){
       if(err){
-        callback('Pas de lien sur la base de donnée');
+        callback('Database is empty');
       }
       var test = requestFeed(feedLists);
       callback(test);
     });
   });
-
 
   function requestFeed(feedLists){
     var feeds = [];
@@ -56,19 +54,14 @@ module.exports = function(socket){
     var ConWhile = feedLists.length;
     var feedListsSend = ConWhile -1;
     while( i < feedLists.length){
-          var ConWhile = feedLists.length;
-    var feedListsSend = ConWhile -1;
-
+      var ConWhile = feedLists.length;
+      var feedListsSend = ConWhile -1;
       feed(feedLists[i].url, function(err, feed){
-
         socket.emit('get/feeds', feed,function(err, feeds){
-
+          
         });
       });
       i++ ;
-
     }      
-
-
   }
 }
