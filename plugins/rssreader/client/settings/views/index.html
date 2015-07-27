@@ -1,11 +1,11 @@
 <section class="content-header">
   <h1>
-    <i class="fa fa-rss-square"></i> Reader Settings
+    <i class="fa fa-rss-square"></i> <translate>Reader Settings</translate>
   </h1>
   <ol class="breadcrumb">
-    <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-    <li>Settings</li>
-    <li class="active">Rss Reader</li>
+    <li><a href="#"><i class="fa fa-dashboard"></i> <translate>Home</translate></a></li>
+    <li translate>Settings</li>
+    <li class="active" translate>Rss Reader</li>
   </ol>
 </section>
 
@@ -14,7 +14,7 @@
     <div class="col-md-12">
       <div class="box">
         <div class="box-header">
-          <h3 class="box-title">RSS Feed avaible</h3>
+          <h3 class="box-title" translate>RSS Feed avaible</h3>
           <div class="box-tools">
             <div class="input-group" style="width: 150px;">
               <input type="text" name="table_search" class="form-control input-sm pull-right" ng-model="searchName" placeholder="Search feed">
@@ -28,11 +28,11 @@
           <table class="table table-hover">
             <tbody>
               <tr>
-                <th>Name</th>
-                <th>Url</th>
-                <th>Category</th>
-                <th>Color</th>
-                <th>Actions</th>
+                <th translate>Name</th>
+                <th translate>Url</th>
+                <th translate>Category</th>
+                <th translate>Color</th>
+                <th translate>Actions</th>
 <!--                 <th></th> -->
               </tr>
               <tr ng-repeat="feed in rssfeeds | filter:searchName">
@@ -41,7 +41,7 @@
                 <td>{{feed.category}}</td>
                 <td style="background:{{feed.color}};">{{feed.color}}</td>
 <!--                 <td style="cursor:pointer;" ng-click="edit(feed)"><i class="fa fa-pencil"></i> Edit</td> -->
-                <td style="cursor:pointer;" ng-click="delete(feed)"><i class="fa fa-trash-o"></i> Delete</td>
+                <td style="cursor:pointer;" ng-click="delete(feed)"><i class="fa fa-trash-o"></i> <translate>Delete</translate></td>
               </tr>
             </tbody>
           </table>
@@ -56,29 +56,29 @@
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" ng-click="modal = null" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title">Edit RSS feed</h4>
+          <h4 class="modal-title" translate>Edit RSS feed</h4>
         </div>
         <div class="modal-body">
           <div class="form-group">
-            <label for="">Name</label>
+            <label for="" translate>Name</label>
             <input placeholder="Enter website name" type="text" class="form-control" ng-disabled="modal.editable == null || !modal.editable" ng-model="modal.name">
           </div>
           <div class="form-group">
-            <label for="">Link (http://..)</label>
+            <label for="" translate>Link (http://..)</label>
             <input placeholder="Enter link rss feed" type="url" class="form-control" ng-disabled="modal.editable == null || !modal.editable" ng-model="modal.link" required>
           </div>
           <div class="form-group">
-            <label for="">Category <span class="text text-muted">Default : Général</span></label>
+            <label for=""><translate>Category</translate> <span class="text text-muted" translate>Default : Général</span></label>
             <input placeholder="General" ng-model="modal.category"  type="text" class="form-control" ng-disabled="modal.editable == null || !modal.editable"/>  
           </div>
           <div class="form-group">
-            <label for="">Website color <span class="text text-muted">Default : Grey </span></label>
+            <label for=""><translate>Website color</translate> <span class="text text-muted" translate>Default : Grey </span></label>
               <input placeholder="#bcbcbc" ng-model="modal.color" type="text" ng-disabled="modal.editable == null || !modal.editable" class="form-control colorpicker"/>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" ng-click="modal = null" class="btn pull-left" data-dismiss="modal">Close</button>
-          <button type="btn btn-valid" ng-click="modalNewFeed()" class="btn" ng-disabled="modal.editable == null || !modal.editable">Add feed</button>
+          <button type="button" ng-click="modal = null" class="btn pull-left" data-dismiss="modal" translate>Close</button>
+          <button type="btn btn-valid" ng-click="modalNewFeed()" class="btn" ng-disabled="modal.editable == null || !modal.editable" translate>Add feed</button>
         </div>
       </div>
     </div>

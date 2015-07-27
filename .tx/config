@@ -30,3 +30,9 @@ source_file = plugins/admin/locales/app.pot
 file_filter = plugins/admin/locales/<lang>/app.po
 source_lang = en_US
 type = PO
+
+[dashboardparty.rss-plugin]
+source_file = plugins/rssreader/locales/app.pot
+file_filter = plugins/rssreader/locales/<lang>/app.po
+source_lang = en_US
+type = PO
