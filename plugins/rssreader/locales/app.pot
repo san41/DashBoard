@@ -1,0 +1,113 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: \n"
+
+#: index.html:35
+msgid "Actions"
+msgstr ""
+
+#: index.html:123
+#: index.html:30
+#: index.html:81
+msgid "Add feed"
+msgstr ""
+
+#: index.html:95
+msgid "Add RSS feed"
+msgstr ""
+
+#: index.html:109
+#: index.html:33
+#: index.html:71
+msgid "Category"
+msgstr ""
+
+#: index.html:122
+#: index.html:80
+msgid "Close"
+msgstr ""
+
+#: index.html:34
+msgid "Color"
+msgstr ""
+
+#: index.html:71
+msgid "Default : Général"
+msgstr ""
+
+#: index.html:75
+msgid "Default : Grey"
+msgstr ""
+
+#: index.html:44
+msgid "Delete"
+msgstr ""
+
+#: index.html:59
+msgid "Edit RSS feed"
+msgstr ""
+
+#: index.html:117
+msgid "Feed color"
+msgstr ""
+
+#: index.html:40
+#: index.html:6
+msgid "Home"
+msgstr ""
+
+#: index.html:67
+msgid "Link (http://..)"
+msgstr ""
+
+#: index.html:58
+msgid "Loading"
+msgstr ""
+
+#: index.html:31
+#: index.html:63
+msgid "Name"
+msgstr ""
+
+#: index.html:29
+msgid "Reader"
+msgstr ""
+
+#: index.html:3
+msgid "Reader Settings"
+msgstr ""
+
+#: index.html:17
+msgid "RSS Feed avaible"
+msgstr ""
+
+#: index.html:41
+#: index.html:8
+msgid "Rss Reader"
+msgstr ""
+
+#: index.html:7
+msgid "Settings"
+msgstr ""
+
+#: index.html:48
+msgid "To register an RSS feed, click on \"add feed\"."
+msgstr ""
+
+#: index.html:65
+msgid "Today"
+msgstr ""
+
+#: index.html:32
+msgid "Url"
+msgstr ""
+
+#: index.html:75
+msgid "Website color"
+msgstr ""
+
+#: index.html:47
+msgid "You don't have register RSS feed !"
+msgstr ""

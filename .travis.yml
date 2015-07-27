@@ -1,0 +1,36 @@
+language: node_js
+
+sudo: true
+
+node_js:
+- '0.12'
+
+before_install:
+- git submodule init
+- git submodule update
+- sudo pip install transifex-client
+- |
+  echo -e "[https://www.transifex.com]\nhostname = https://www.transifex.com\nusername = $TX_USER\npassword = $TX_PASSWORD\ntoken = \n" > ~/.transifexrc
+
+install:
+- npm install
+- npm install vinyl
+- npm install -g gulp
+
+script:
+- tx pull -f
+- "./scripts/buildAll.sh"
+
+before_deploy:
+- rm -r node_modules
+- npm install --prod
+- |
+  PACKAGE_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g')
+- PWDBD=$(pwd)
+- cd ..
+- echo "$PWDBD"
+- zip -r DashBoard.zip $(basename $PWDBD) -x $(basename $PWDBD)/.git/**\*
+- cd $(basename $PWDBD)
+
+after_deploy:
+  - echo "Deployed"

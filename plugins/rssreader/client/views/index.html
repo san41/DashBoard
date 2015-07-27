@@ -26,8 +26,8 @@
   <h1>
     <div class="row">
       <div class="col-md-2">
-        <i class="fa fa-rss-square"></i> Reader 
-              <button ng-click="addRSSFeed()" class="btn btn-warning btn-xs">        
+        <i class="fa fa-rss-square"></i> <translate>Reader</translate> 
+              <button ng-click="addRSSFeed()" class="btn btn-warning btn-xs" translate>        
         Add feed
       </button>
       </div>
@@ -37,15 +37,15 @@
   </div>
   </h1>
   <ol class="breadcrumb">
-    <li><a href="#/"><i class="fa fa-dashboard"></i> Home</a></li>
-    <li class="active">Rss Reader</li>
+    <li><a href="#/"><i class="fa fa-dashboard"></i> <translate>Home</translate></a></li>
+    <li class="active" translate>Rss Reader</li>
   </ol>
 </section>
 <section class="content" ng-show="rssfeedCount == 0" >
   <div class="col-md-12">
     <div class="callout callout-danger">
-      <h4>You don't have register RSS feed !</h4>
-      <p>To register an RSS feed, click on "add feed".</p>
+      <h4 translate>You don't have register RSS feed !</h4>
+      <p translate>To register an RSS feed, click on "add feed".</p>
     </div>
   </div>
 </section>
@@ -55,14 +55,14 @@
 <section class="content" ng-show="rssfeedCount > 0">
   <div class="overlay center  text-center" ng-show="rssload == true">
     <h2>
-      <i class="fa fa-refresh fa-spin"></i> Loading
+      <i class="fa fa-refresh fa-spin"></i> <translate>Loading</translate>
     </h2>
   </div>
 <ul class="timeline">
 
   <!-- timeline time label -->
   <li class="time-label">
-    <span class="bg-blue">
+    <span class="bg-blue" translate>
       Today
     </span>
   </li>
@@ -92,7 +92,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" ng-click="modal = null" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">Add RSS feed</h4>
+        <h4 class="modal-title" translate>Add RSS feed</h4>
       </div>
       <div class="modal-body">
         <div class="input-group">
@@ -106,7 +106,7 @@
         </div>
         <br />
         <div class="form-group">
-          <label>Category</label>
+          <label translate>Category</label>
           <select class="form-control select2 select2-hidden-accessible" style="width: 100%;" tabindex="-1" aria-hidden="true" ng-disabled="modal.editable == null || !modal.editable" ng-model="modal.category" >
             <option ng-repeat='category in modal.categorysList'>
               {{category}}
@@ -114,13 +114,13 @@
           </select>
         </div> 
         <div class="form-group">
-          <label for="">Feed color</label>
+          <label for="" translate>Feed color</label>
             <input placeholder="Click to select the feed color" ng-model="modal.color" type="text" ng-disabled="modal.editable == null || !modal.editable" class="form-control colorpicker"/>
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" ng-click="modal = null" class="btn btn-danger pull-left " data-dismiss="modal">Close</button>
-        <button type="button" ng-click="modalNewFeed()" class="btn btn-success" ng-disabled="modal.editable == null || !modal.editable">Add feed</button>
+        <button type="button" ng-click="modal = null" class="btn btn-danger pull-left " data-dismiss="modal" translate>Close</button>
+        <button type="button" ng-click="modalNewFeed()" class="btn btn-success" ng-disabled="modal.editable == null || !modal.editable" translate>Add feed</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
