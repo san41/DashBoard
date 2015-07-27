@@ -1,0 +1,135 @@
+<!-- Imporation  & CSS Style -->
+<!-- Todo : ADD count feed -->
+<link href="static/js/daterangepicker/daterangepicker.css" rel="stylesheet" type="text/css"/>
+
+<style>
+  .modal.modal-open {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .modal.modal-open .modal-dialog {
+    margin: 10% auto;
+  }
+  .pointer{
+    cursor: pointer;
+  }
+</style>
+
+<!-- Start Content -->
+<section class="content-header">
+  <h1>
+    <div class="row">
+      <div class="col-md-2">
+        <i class="fa fa-rss-square"></i> Reader 
+              <button ng-click="addRSSFeed()" class="btn btn-warning btn-xs">        
+        Add feed
+      </button>
+      </div>
+     <div class="col-md-10">
+
+    </div>
+  </div>
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="#/"><i class="fa fa-dashboard"></i> Home</a></li>
+    <li class="active">Rss Reader</li>
+  </ol>
+</section>
+<section class="content" ng-show="rssfeedCount == 0" >
+  <div class="col-md-12">
+    <div class="callout callout-danger">
+      <h4>You don't have register RSS feed !</h4>
+      <p>To register an RSS feed, click on "add feed".</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- Main content -->
+<section class="content" ng-show="rssfeedCount > 0">
+  <div class="overlay center  text-center" ng-show="rssload == true">
+    <h2>
+      <i class="fa fa-refresh fa-spin"></i> Loading
+    </h2>
+  </div>
+<ul class="timeline">
+
+  <!-- timeline time label -->
+  <li class="time-label">
+    <span class="bg-blue">
+      Today
+    </span>
+  </li>
+    <!-- /.timeline-label -->
+
+    <!-- timeline item -->
+    <li ng-repeat="feed in rssfeed | orderBy:'-published'">
+        <!-- timeline icon -->
+        <i class="fa fa-newspaper-o "></i>
+        <div class="timeline-item">
+          <span class="time"><i class="fa fa-clock-o"></i> {{feed.published | date:'dd/MM/yyyy HH:mm'}}</span>
+          <h3 class="timeline-header">{{feed.feed.name}} - <a href="{{feed.link}}" target="_blank">{{feed.title}} </a> </h3>
+        </div>
+    </li>
+  <li class="time-label">
+    <span class="bg-blue">
+      Older
+    </span>
+  </li>
+    <!-- END timeline item -->
+</ul>
+</section>
+
+<!--  Start modal to add RSS link -->
+<div class="modal modal-open" ng-show="modal != null">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" ng-click="modal = null" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Add RSS feed</h4>
+      </div>
+      <div class="modal-body">
+        <div class="input-group">
+          <span class="input-group-addon"><i class="fa fa-bookmark"></i></span>
+            <input placeholder="Enter feed name" type="text" class="form-control" ng-disabled="modal.editable == null || !modal.editable" ng-model="modal.name">
+        </div>
+        <br />
+        <div class="input-group">
+          <span class="input-group-addon"><i class="fa fa-link"></i></span>
+            <input placeholder="Enter feed link" type="url" class="form-control" ng-disabled="modal.editable == null || !modal.editable" ng-model="modal.link" required>
+        </div>
+        <br />
+        <div class="form-group">
+          <label>Category</label>
+          <select class="form-control select2 select2-hidden-accessible" style="width: 100%;" tabindex="-1" aria-hidden="true" ng-disabled="modal.editable == null || !modal.editable" ng-model="modal.category" >
+            <option ng-repeat='category in modal.categorysList'>
+              {{category}}
+            </option>
+          </select>
+        </div> 
+        <div class="form-group">
+          <label for="">Feed color</label>
+            <input placeholder="Click to select the feed color" ng-model="modal.color" type="text" ng-disabled="modal.editable == null || !modal.editable" class="form-control colorpicker"/>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" ng-click="modal = null" class="btn btn-danger pull-left " data-dismiss="modal">Close</button>
+        <button type="button" ng-click="modalNewFeed()" class="btn btn-success" ng-disabled="modal.editable == null || !modal.editable">Add feed</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<script type="text/javascript">
+  $(function (){
+    $(".colorpicker").colorpicker();
+  });
+</script>
+
