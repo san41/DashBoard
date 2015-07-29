@@ -1,0 +1,200 @@
+<!-- CSS Style -->
+<!--
+Add translate
+-->
+
+<style>
+
+</style>
+
+<!-- Start Content -->
+<section class="content-header">
+  <h1>
+    <div class="row">
+      <div class="col-md-5">
+        <i class="fa fa-sun-o"></i> <translate>Weather</translate> |  <span class="text text-info"><i class="fa fa-location-arrow"> {{geolocation}} </i></span>
+      </div>
+      <div class="col-md-7">
+      </div>
+    </div>
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="#/"><i class="fa fa-dashboard"></i> <translate>Home</translate></a></li>
+    <li class="active" translate>Weather</li>
+  </ol>
+</section>
+<section class="content" ng-show="weatherCount == 0" >
+  <div class="col-md-12">
+    <div class="callout callout-danger">  
+      <div class="row">
+<!--         <div class="col-md-0">
+        </div>   -->
+        <div class="col-md-12">      
+          <h4 translate>You have not enabled location or recorded area!</h4>
+          <p translate>To activate the location or save a location, click here.</p>
+        </div>    
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Main content -->
+<section class="content" ng-show="weatherCount > 0">
+  <div class="row">
+    <div class="col-md-3">
+      <div class="box">
+        <div class="box-header with-border">
+          <h3 class="box-title"> <i class="fa fa-location-arrow"></i> | Tours </h3>
+          <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-arrows"></i></button>
+          </div>
+        </div><!-- /.box-header -->
+        <div class="box-body" style="display: block;">
+          <h4 class="text text-info text-center"> Today </h4>    
+          <div class="row">
+            <div class="col-md-6"> 
+              <h2 class="text text-success text-center"> 25 °C</h2>
+              <h1 class="text-center">
+                <i class="fa fa-sun-o"></i>                
+              </h1>              
+              <p class="text-center">Light rain</p>
+            </div>
+            <div class="col-md-6">
+              <p><span class="text text-info">Temperature min </span> 12°C</p>
+              <p><span class="text text-info">Temperature max </span> 22°C</p>
+              <p><span class="text text-info">Wind </span> 18 km/h (SW)</p>
+              <p><span class="text text-info">Humidity </span> 55%</p>
+              <p><span class="text text-info">Pressure </span> 1014 mb</p>
+            </div>
+          </div>
+          <a class="btn btn-default btn-block btn-sm">More …</a>
+
+        </div>
+        <div class="box-body" style="display: block;">
+          <h4 class="text text-info text-center"> Tomorrow </h4>    
+          <div class="row">             
+            <div class="col-md-6"> 
+              <h2 class="text text-success text-center"> 25 °C</h2>
+              <h1 class="text-center">
+                <i class="fa fa-sun-o"></i>                
+              </h1>              
+              <p class="text-center">Light rain</p>
+            </div>
+            <div class="col-md-6">
+
+              <p><span class="text text-info">Temperature min </span> 12°C</p>
+              <p><span class="text text-info">Temperature max </span> 22°C</p>
+              <p><span class="text text-info">Wind </span> 18 km/h (SW)</p>
+              <p><span class="text text-info">Humidity </span> 55%</p>
+              <p><span class="text text-info">Pressure </span> 1014 mb</p>
+            </div>
+          </div>
+          <a class="btn btn-default btn-block btn-sm">More …</a>
+
+        </div><!-- /.box-body -->
+      </div><!-- /.box -->
+    </div>
+    <div class="col-md-3">
+      <div class="box">
+        <div class="box-header with-border">
+          <h3 class="box-title"> Paris </h3>
+          <div class="box-tools pull-right">
+            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-arrows"></i></button>
+          </div>
+        </div><!-- /.box-header -->
+        <div class="box-body" style="display: block;">
+          <h4 class="text text-info text-center"> Today </h4>    
+          <div class="row">
+            <div class="col-md-6"> 
+              <h2 class="text text-success text-center"> 25 °C</h2>
+              <h1 class="text-center">
+                <i class="fa fa-sun-o"></i>                
+              </h1>              
+              <p class="text-center">Light rain</p>
+            </div>
+            <div class="col-md-6">
+              <p><span class="text text-info">Temperature min </span> 12°C</p>
+              <p><span class="text text-info">Temperature max </span> 22°C</p>
+              <p><span class="text text-info">Wind </span> 18 km/h (SW)</p>
+              <p><span class="text text-info">Humidity </span> 55%</p>
+              <p><span class="text text-info">Pressure </span> 1014 mb</p>
+            </div>
+          </div>
+          <a class="btn btn-default btn-block btn-sm">More …</a>
+
+        </div>
+        <div class="box-body" style="display: block;">
+          <h4 class="text text-info text-center"> Tomorrow </h4>    
+          <div class="row">             
+            <div class="col-md-6"> 
+              <h2 class="text text-success text-center"> 25 °C</h2>
+              <h1 class="text-center">
+                <i class="fa fa-sun-o"></i>                
+              </h1>              
+              <p class="text-center">Light rain</p>
+            </div>
+            <div class="col-md-6">
+
+              <p><span class="text text-info">Temperature min </span> 12°C</p>
+              <p><span class="text text-info">Temperature max </span> 22°C</p>
+              <p><span class="text text-info">Wind </span> 18 km/h (SW)</p>
+              <p><span class="text text-info">Humidity </span> 55%</p>
+              <p><span class="text text-info">Pressure </span> 1014 mb</p>
+            </div>
+          </div>
+          <a class="btn btn-default btn-block btn-sm">More …</a>
+
+        </div><!-- /.box-body -->
+      </div><!-- /.box -->
+    </div>
+  </div>
+</section>
+
+<!--  Start modal to add RSS link -->
+<div class="modal modal-open" ng-show="modal != null">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" ng-click="modal = null" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" translate>Add RSS feed</h4>
+      </div>
+      <div class="modal-body">
+        <div class="input-group">
+          <span class="input-group-addon"><i class="fa fa-bookmark"></i></span>
+            <input placeholder="Enter feed name" type="text" class="form-control" ng-disabled="modal.editable == null || !modal.editable" ng-model="modal.name">
+        </div>
+        <br />
+        <div class="input-group">
+          <span class="input-group-addon"><i class="fa fa-link"></i></span>
+            <input placeholder="Enter feed link" type="url" class="form-control" ng-disabled="modal.editable == null || !modal.editable" ng-model="modal.link" required>
+        </div>
+        <br />
+        <div class="form-group">
+          <label translate>Category</label>
+          <select class="form-control select2 select2-hidden-accessible" style="width: 100%;" tabindex="-1" aria-hidden="true" ng-disabled="modal.editable == null || !modal.editable" ng-model="modal.category" >
+            <option ng-repeat='category in modal.categorysList'>
+              {{category}}
+            </option>
+          </select>
+        </div> 
+      </div>
+      <div class="modal-footer">
+        <button type="button" ng-click="modal = null" class="btn btn-danger pull-left " data-dismiss="modal" translate>Close</button>
+        <button type="button" ng-click="modalNewFeed()" class="btn btn-success" ng-disabled="modal.editable == null || !modal.editable" translate>Add feed</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!-- Geolocation -->
+
+
+<script type="text/javascript">
+ 
+</script>
+
+
+
+
+
