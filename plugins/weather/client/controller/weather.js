@@ -1,13 +1,11 @@
-var Forecast = require('forecast');
-
 module.exports = function($scope, $http, socket, toaster){
 
 $scope.weatherCount = 1;
 $scope.geolocation = "Location in progress";
 
 // Var longitude and latitude 
-var lat;
-var lng; 
+var locationLat;
+var locationLng; 
 
 // Get goelocation 
 
@@ -21,46 +19,46 @@ var lng;
 
   function getGeolocationCityName(position){
     var city; 
-    lat = position.latitude; 
-    lng = position.longitude;
-    // Load API Goole Map with Latitude and Longitude
-    var GoogleMap = 'http://maps.google.com/maps/api/geocode/json?latlng='+lat+','+lng+'&sensor=false';
+    locationLat = position.latitude; 
+    locationLng = position.longitude;
+    // Load API Google Map with Latitude and Longitude
+    var GoogleMap = 'http://maps.google.com/maps/api/geocode/json?latlng='+locationLat+','+locationLng+'&sensor=false';
     // Get Datas
     $http.get(GoogleMap).success(function(response){
       if(response.status == "OK"){
         // Put City name in var
         var city = response.results[1].formatted_address;
         $scope.geolocation = city;
+        getWeatherLive(locationLat, locationLng);
         return 
       }
     });
   }
 
-  // Error: Invalid protocol: https: xw
 
-//   // Load the weather on the location
-//   function getWeatherLocation(lat, lng){
-//       console.log(lat, lng);
-//   }
+  // Get live weather 
 
-// // Initialize 
-// var forecast = new Forecast({
-//   service: 'forecast.io',
-//   key: 'd1921039942bac6535c22900a562a602',
-//   units: 'celcius', // Only the first letter is parsed 
-//   cache: true,      // Cache API requests? 
-//   ttl: {            // How long to cache requests. Uses syntax from moment.js: http://momentjs.com/docs/#/durations/creating/ 
-//     minutes: 27,
-//     seconds: 45
-//     }
-// });
- 
-// // Retrieve weather information from coordinates (Sydney, Australia) 
-// forecast.get([-33.8683, 151.2086], function(err, weather) {
-//   if(err) return console.log(err);
-//   console.log(weather);
-// });
+  function getWeatherLive(lat, lng){
+    var weatherLiveToday = [];
 
+    // Load open weather map API to load live weather
+    var OpenWeahterMap = 'http://api.openweathermap.org/data/2.5/weather?lat='+lat+'&lon='+lng+'&mode=json&units=metric';
+    console.log(OpenWeahterMap);
+    $http.get(OpenWeahterMap).success(function(responseWeatherToday){
+      //Load and convert temp data 
+      weatherLiveToday['temp'] = Math.round(responseWeatherToday.main['temp']);
+      weatherLiveToday['temp_min'] = Math.round(responseWeatherToday.main['temp_min']);
+      weatherLiveToday['temp_max'] = Math.round(responseWeatherToday.main['temp_max']);
+      weatherLiveToday['humidity'] = Math.round(responseWeatherToday.main['humidity']);
+      weatherLiveToday['pressure'] = Math.round(responseWeatherToday.main['pressure']); 
+      weatherLiveToday['description'] = responseWeatherToday.weather[0].description);     
+      $scope.weatherGeolocation = weatherLiveToday;
+      console.log($scope.weatherGeolocation);
+      console.log(responseWeatherToday.main['temp'])
+      console.log("--------");
+      console.log(weatherLiveToday); 
+    });
+  }
 
 
   // app.factory('ZipCodeLookupSvc', [

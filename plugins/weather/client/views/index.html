@@ -11,11 +11,10 @@ Add translate
 <section class="content-header">
   <h1>
     <div class="row">
-      <div class="col-md-5">
+      <div class="col-md-12">
         <i class="fa fa-sun-o"></i> <translate>Weather</translate> |  <span class="text text-info"><i class="fa fa-location-arrow"> {{geolocation}} </i></span>
       </div>
-      <div class="col-md-7">
-      </div>
+
     </div>
   </h1>
   <ol class="breadcrumb">
@@ -45,7 +44,7 @@ Add translate
     <div class="col-md-3">
       <div class="box">
         <div class="box-header with-border">
-          <h3 class="box-title"> <i class="fa fa-location-arrow"></i> | Tours </h3>
+          <h3 class="box-title"> <i class="fa fa-location-arrow"></i> | {{geolocation}} </h3>
           <div class="box-tools pull-right">
             <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-arrows"></i></button>
           </div>
@@ -54,21 +53,21 @@ Add translate
           <h4 class="text text-info text-center"> Today </h4>    
           <div class="row">
             <div class="col-md-6"> 
-              <h2 class="text text-success text-center"> 25 °C</h2>
+              <h2 class="text text-success text-center"> {{weatherGeolocation.temp}}°C</h2>
               <h1 class="text-center">
                 <i class="fa fa-sun-o"></i>                
               </h1>              
-              <p class="text-center">Light rain</p>
+              <p class="text-center">{{weatherGeolocation.description}}</p>
             </div>
             <div class="col-md-6">
-              <p><span class="text text-info">Temperature min </span> 12°C</p>
-              <p><span class="text text-info">Temperature max </span> 22°C</p>
+              <p><span class="text text-info">Temp min </span> {{weatherGeolocation.temp_min}}°C</p>
+              <p><span class="text text-info">Temp max </span> {{weatherGeolocation.temp_max}}°C</p>
               <p><span class="text text-info">Wind </span> 18 km/h (SW)</p>
-              <p><span class="text text-info">Humidity </span> 55%</p>
-              <p><span class="text text-info">Pressure </span> 1014 mb</p>
+              <p><span class="text text-info">Humidity </span> {{weatherGeolocation.humidity}}%</p>
+              <p><span class="text text-info">Pressure </span> {{weatherGeolocation.pressure}} mb</p>
             </div>
           </div>
-          <a class="btn btn-default btn-block btn-sm">More …</a>
+          <legend></legend>
 
         </div>
         <div class="box-body" style="display: block;">
@@ -90,7 +89,7 @@ Add translate
               <p><span class="text text-info">Pressure </span> 1014 mb</p>
             </div>
           </div>
-          <a class="btn btn-default btn-block btn-sm">More …</a>
+          <legend></legend>
 
         </div><!-- /.box-body -->
       </div><!-- /.box -->
