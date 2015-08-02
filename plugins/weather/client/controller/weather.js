@@ -1,4 +1,11 @@
+// TODO 
+//  Change metre/s en Km/h
+//  Check the location to adapted translate (fr, en ,)
+
 module.exports = function($scope, $http, socket, toaster){
+
+  $scope.loadData = true;
+  $scope.modal = null;
 
 $scope.weatherCount = 1;
 $scope.geolocation = "Location in progress";
@@ -6,6 +13,7 @@ $scope.geolocation = "Location in progress";
 // Var longitude and latitude 
 var locationLat;
 var locationLng; 
+var lang = "en";
 
 // Get goelocation 
 
@@ -29,7 +37,8 @@ var locationLng;
         // Put City name in var
         var city = response.results[1].formatted_address;
         $scope.geolocation = city;
-        getWeatherLive(locationLat, locationLng);
+        getWeatherLocation(locationLat, locationLng);
+        getWeatherPrediction(locationLat, locationLng);
         return 
       }
     });
@@ -38,103 +47,69 @@ var locationLng;
 
   // Get live weather 
 
-  function getWeatherLive(lat, lng){
-    var weatherLiveToday = [];
+  function getWeatherLocation(lat, lng){
+    var weatherLive = [];
 
     // Load open weather map API to load live weather
-    var OpenWeahterMap = 'http://api.openweathermap.org/data/2.5/weather?lat='+lat+'&lon='+lng+'&mode=json&units=metric';
+    var OpenWeahterMap = 'http://api.openweathermap.org/data/2.5/weather?lat='+lat+'&lon='+lng+'&mode=json&units=metric&cnt=8&lang='+lang+'';
     console.log(OpenWeahterMap);
+    // Load prediction weather 
+    var OpenWeahterMapPrediction = 'http://api.openweathermap.org/data/2.5/forecast/daily?lat='+lat+'&lon='+lng+'&mode=json&units=metric&cnt=8&lang='+lang+'';
     $http.get(OpenWeahterMap).success(function(responseWeatherToday){
       //Load and convert temp data 
-      weatherLiveToday['temp'] = Math.round(responseWeatherToday.main['temp']);
-      weatherLiveToday['temp_min'] = Math.round(responseWeatherToday.main['temp_min']);
-      weatherLiveToday['temp_max'] = Math.round(responseWeatherToday.main['temp_max']);
-      weatherLiveToday['humidity'] = Math.round(responseWeatherToday.main['humidity']);
-      weatherLiveToday['pressure'] = Math.round(responseWeatherToday.main['pressure']); 
-      weatherLiveToday['description'] = responseWeatherToday.weather[0].description);     
-      $scope.weatherGeolocation = weatherLiveToday;
+      weatherLive['tempT'] = Math.round(responseWeatherToday.main['temp']);
+      weatherLive['temp_minT'] = Math.round(responseWeatherToday.main['temp_min']);
+      weatherLive['temp_maxT'] = Math.round(responseWeatherToday.main['temp_max']);
+      weatherLive['humidityT'] = Math.round(responseWeatherToday.main['humidity']);
+      weatherLive['pressureT'] = Math.round(responseWeatherToday.main['pressure']); 
+      weatherLive['descriptionT'] = responseWeatherToday.weather[0].description; 
+      weatherLive['icon'] = responseWeatherToday.weather[0].icon;
+      weatherLive['speedWindT'] = responseWeatherToday.wind['speed']*3.6;  
+      $scope.weatherGeolocation = weatherLive;
       console.log($scope.weatherGeolocation);
-      console.log(responseWeatherToday.main['temp'])
       console.log("--------");
-      console.log(weatherLiveToday); 
+      console.log(weatherLive); 
+      $scope.loadData = false;
     });
   }
 
 
-  // app.factory('ZipCodeLookupSvc', [
-  //   '$q', '$http', 'GeolocationSvc',
-  //   function($q, $http, GeolocationSvc) {
-  //     var MAPS_ENDPOINT = 'http://maps.google.com/maps/api/geocode/json?latlng={POSITION}&sensor=false';
+  function getWeatherPrediction(lat, lng){
+    var WeatherPrediction = [];
+    var responseList = [];
+    // Load open weather map API to load prediction weather
+    var OpenWeahterMap = 'http://api.openweathermap.org/data/2.5/forecast/daily?lat='+lat+'&lon='+lng+'&mode=json&units=metric&cnt=8';
+      console.log(OpenWeahterMap);
+    $http.get(OpenWeahterMap).success(function(responseWeatherPrediction){
+      responseList = responseWeatherPrediction.list;
+      console.log(responseList);
+      for(var i = 0;  i < responseList.length   ; i++){
+        responseList[i].pressure = Math.round(responseList[i].pressure);
+        responseList[i].temp['day'] = Math.round(responseList[i].temp['day']);
+        responseList[i].temp['min'] = Math.round(responseList[i].temp['min']);
+        responseList[i].temp['max'] = Math.round(responseList[i].temp['max']);
+        responseList[i].speed = Math.round(responseList[i].speed *3.6);
+        console.log(responseList[i]);
+      }
+      $scope.weatherGeolocationT = responseList;
+      console.log($scope.weatherGeolocationT);
+    });
+  }
 
-  //     return {
-  //       urlForLatLng: function(lat, lng) {
-  //         return MAPS_ENDPOINT.replace('{POSITION}', lat + ',' + lng);
-  //       },
+  $scope.addWeatherLocation = function (){
+    var newLocation = {
+      editable : true
+    }
+    console.log("add ok");
+    $scope.modal = newLocation;
+  }
 
-  //       lookupByLatLng: function(lat, lng) {
-  //         var deferred = $q.defer();
-  //         var url = this.urlForLatLng(lat, lng);
+  $scope.modalNewWeatherLocation = function(){  
 
-  //         $http.get(url).success(function(response) {
-  //           // hacky
-  //           var zipCode;
-  //           angular.forEach(response.results, function(result) {
-  //             if(result.types[0] === 'postal_code') {
-  //               zipCode = result.address_components[0].short_name;
-  //               console.log(zipCode);
-  //             }
-  //           });
-  //           deferred.resolve(zipCode);
-  //         }).error(deferred.reject);
-
-  //         return deferred.promise;
-  //       },
-
-  //       lookup: function() {
-  //         var deferred = $q.defer();
-  //         var self = this;
-
-  //         GeolocationSvc().then(function(position) {
-  //           deferred.resolve(self.lookupByLatLng(position.lat, position.lng));
-  //         }, deferred.reject);
-
-  //         return deferred.promise;
-  //       }
-  //     };
-  //   }
-  // ]);
-
-  // app.controller('MainCtrl', ['$scope', 'ZipCodeLookupSvc',
-  //   function($scope, ZipCodeLookupSvc) {
-  //     $scope.zipCode = null;
-  //     $scope.message = 'Finding zip code...';
-
-  //     ZipCodeLookupSvc.lookup().then(function(zipCode) {
-  //       $scope.zipCode = zipCode;
-  //     }, function(err) {
-  //       $scope.message = err;
-  //     });
-  // }]);
-
-// })(angular);
-// get localtion 
+  }
 
 
-  // function getCityName(lat, lng){
-  //   var latlng = new google.maps.LatLng(lat,lng);
 
-  //   geocoder.geocode({'latLng': latlng}, function(results, status) {
-  //     if(status == google.maps.GeocoderStatus.OK){
-  //       console.log(results);
-  //     }
-  //   });
-
-  // }
-
-
-//   $scope.rssfeed = null;
-//   $scope.modal = null;
-//   $scope.rssload = true;
 
 // // Start form to added the feed link
 //   $scope.addRSSFeed = function(){

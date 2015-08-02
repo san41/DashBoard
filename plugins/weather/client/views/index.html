@@ -7,14 +7,14 @@ Add translate
 
 </style>
 
+
 <!-- Start Content -->
 <section class="content-header">
   <h1>
     <div class="row">
       <div class="col-md-12">
-        <i class="fa fa-sun-o"></i> <translate>Weather</translate> |  <span class="text text-info"><i class="fa fa-location-arrow"> {{geolocation}} </i></span>
+        <i class="fa fa-sun-o"></i> <translate>Weather</translate> | <button ng-click="addWeatherLocation()" class="btn btn-success btn-xs" translate> Add weather</button>
       </div>
-
     </div>
   </h1>
   <ol class="breadcrumb">
@@ -37,126 +37,121 @@ Add translate
   </div>
 </section>
 
-
-<!-- Main content -->
 <section class="content" ng-show="weatherCount > 0">
   <div class="row">
-    <div class="col-md-3">
+    <div class="col-md-6">
       <div class="box">
         <div class="box-header with-border">
           <h3 class="box-title"> <i class="fa fa-location-arrow"></i> | {{geolocation}} </h3>
           <div class="box-tools pull-right">
-            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-arrows"></i></button>
+            <p class="text-muted" translate> Location Weather</p>
           </div>
-        </div><!-- /.box-header -->
-        <div class="box-body" style="display: block;">
-          <h4 class="text text-info text-center"> Today </h4>    
-          <div class="row">
-            <div class="col-md-6"> 
-              <h2 class="text text-success text-center"> {{weatherGeolocation.temp}}°C</h2>
-              <h1 class="text-center">
-                <i class="fa fa-sun-o"></i>                
-              </h1>              
-              <p class="text-center">{{weatherGeolocation.description}}</p>
-            </div>
-            <div class="col-md-6">
-              <p><span class="text text-info">Temp min </span> {{weatherGeolocation.temp_min}}°C</p>
-              <p><span class="text text-info">Temp max </span> {{weatherGeolocation.temp_max}}°C</p>
-              <p><span class="text text-info">Wind </span> 18 km/h (SW)</p>
-              <p><span class="text text-info">Humidity </span> {{weatherGeolocation.humidity}}%</p>
-              <p><span class="text text-info">Pressure </span> {{weatherGeolocation.pressure}} mb</p>
-            </div>
-          </div>
-          <legend></legend>
-
         </div>
-        <div class="box-body" style="display: block;">
-          <h4 class="text text-info text-center"> Tomorrow </h4>    
-          <div class="row">             
-            <div class="col-md-6"> 
-              <h2 class="text text-success text-center"> 25 °C</h2>
-              <h1 class="text-center">
-                <i class="fa fa-sun-o"></i>                
-              </h1>              
-              <p class="text-center">Light rain</p>
+        <h2 class="text text-center" ng-show="loadData == true">
+          <i class="fa fa-refresh fa-spin"></i> <translate>Loading</translate>
+        </h2>
+        <div class="box-body" style="display: block;"ng-show="loadData == false">
+          <div class="row" >
+            <div class="col-md-6">                   
+              <h4 class="text text-info text-center" translate> Now </h4>   
+              <div class="row">
+                <div class="col-md-6 text-center"> 
+                  <p class="text-center">
+                      <img src="http://openweathermap.org/img/w/{{weatherGeolocation.icon}}.png" title="{{weatherGeolocation.descriptionT}}" alt="" />              
+                  </p> 
+                  <p class="text-center">{{weatherGeolocation.descriptionT}}</p> 
+                  <h3 class="text text-success text-center"> {{weatherGeolocation.tempT}}°C</h3>
+                </div>
+                <div class="col-md-6 text-center">
+                  <p><span class="text text-info">Temp :</span> {{weatherGeolocation.temp_minT}} - {{weatherGeolocation.temp_maxT}} °C</p>
+                  <p><span class="text text-info">Wind: </span> {{weatherGeolocation.speedWindT}} km/h</p>
+                  <p><span class="text text-info">Humidity: </span> {{weatherGeolocation.humidityT}}%</p>
+                  <p><span class="text text-info">Pressure: </span> {{weatherGeolocation.pressureT}} hpa</p>
+                </div>
+              </div>
             </div>
-            <div class="col-md-6">
-
-              <p><span class="text text-info">Temperature min </span> 12°C</p>
-              <p><span class="text text-info">Temperature max </span> 22°C</p>
-              <p><span class="text text-info">Wind </span> 18 km/h (SW)</p>
-              <p><span class="text text-info">Humidity </span> 55%</p>
-              <p><span class="text text-info">Pressure </span> 1014 mb</p>
+            <div class="col-md-6">                   
+              <h4 class="text text-info text-center"> Tomorrow </h4>   
+              <div class="row">
+                <div class="col-md-6 text-center"> 
+                  <p class="text-center">
+                      <img src="http://openweathermap.org/img/w/{{weatherGeolocationT[1].weather[0].icon}}.png" title="{{weatherGeolocationT[1].weather[0].description}}" alt="" />                 
+                  </p> 
+                  <p class="text-center">{{weatherGeolocationT[1].weather[0].description}}</p> 
+                  <h3 class="text text-success text-center"> {{weatherGeolocationT[1].temp.day}}°C</h3>
+                </div>
+                <div class="col-md-6 text-center">
+                  <p><span class="text text-info">Temp :</span> {{weatherGeolocationT[1].temp.min}} - {{weatherGeolocationT[1].temp.max}}°C</p>
+                  <p><span class="text text-info">Wind: </span> {{weatherGeolocationT[1].speed}} km/h</p>
+                  <p><span class="text text-info">Humidity: </span> {{weatherGeolocationT[1].humidity}}%</p>
+                  <p><span class="text text-info">Pressure: </span> {{weatherGeolocationT[1].pressure}} hpa</p>
+                </div>
+              </div>
             </div>
           </div>
-          <legend></legend>
-
-        </div><!-- /.box-body -->
-      </div><!-- /.box -->
-    </div>
-    <div class="col-md-3">
-      <div class="box">
-        <div class="box-header with-border">
-          <h3 class="box-title"> Paris </h3>
-          <div class="box-tools pull-right">
-            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-arrows"></i></button>
-          </div>
-        </div><!-- /.box-header -->
-        <div class="box-body" style="display: block;">
-          <h4 class="text text-info text-center"> Today </h4>    
           <div class="row">
-            <div class="col-md-6"> 
-              <h2 class="text text-success text-center"> 25 °C</h2>
-              <h1 class="text-center">
-                <i class="fa fa-sun-o"></i>                
-              </h1>              
-              <p class="text-center">Light rain</p>
-            </div>
-            <div class="col-md-6">
-              <p><span class="text text-info">Temperature min </span> 12°C</p>
-              <p><span class="text text-info">Temperature max </span> 22°C</p>
-              <p><span class="text text-info">Wind </span> 18 km/h (SW)</p>
-              <p><span class="text text-info">Humidity </span> 55%</p>
-              <p><span class="text text-info">Pressure </span> 1014 mb</p>
-            </div>
+            <div class="col-md-12 text-center">  
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="col-md-2 ">
+                    <h4 class="text text-info">{{weatherGeolocationT[2].dt * 1000| date:'dd/MM'  }}</h4>
+                  <p class="text-center">
+                      <img src="http://openweathermap.org/img/w/{{weatherGeolocationT[2].weather[0].icon}}.png" title="{{weatherGeolocationT[2].weather[0].description}}" alt="" />                 
+                  </p> 
+                    <p><span class="text text-info"> {{weatherGeolocationT[2].temp.day}}°C </p>
+                  </div>
+                  <div class="col-md-2 ">
+                    <h4 class="text text-info">{{weatherGeolocationT[3].dt * 1000| date:'dd/MM'  }}</h4>
+                  <p class="text-center">
+                      <img src="http://openweathermap.org/img/w/{{weatherGeolocationT[3].weather[0].icon}}.png" title="{{weatherGeolocationT[3].weather[0].description}}" alt="" />                 
+                  </p> 
+                    <p><span class="text text-info"> {{weatherGeolocationT[3].temp.day}}°C </p>
+                  </div>
+                  <div class="col-md-2 ">
+                    <h4 class="text text-info">{{weatherGeolocationT[4].dt * 1000| date:'dd/MM'  }}</h4>
+                  <p class="text-center">
+                      <img src="http://openweathermap.org/img/w/{{weatherGeolocationT[4].weather[0].icon}}.png" title="{{weatherGeolocationT[4].weather[0].description}}" alt="" />                 
+                  </p> 
+                    <p><span class="text text-info"> {{weatherGeolocationT[4].temp.day}}°C </p>
+                  </div>
+                    <div class="col-md-2 ">
+                    <h4 class="text text-info">{{weatherGeolocationT[5].dt * 1000| date:'dd/MM'  }}</h4>
+                  <p class="text-center">
+                      <img src="http://openweathermap.org/img/w/{{weatherGeolocationT[5].weather[0].icon}}.png" title="{{weatherGeolocationT[5].weather[0].description}}" alt="" />                 
+                  </p> 
+                    <p><span class="text text-info"> {{weatherGeolocationT[5].temp.day}}°C </p>
+                  </div>
+                  <div class="col-md-2 ">
+                    <h4 class="text text-info">{{weatherGeolocationT[6].dt * 1000| date:'dd/MM'  }}</h4>
+                  <p class="text-center">
+                      <img src="http://openweathermap.org/img/w/{{weatherGeolocationT[6].weather[0].icon}}.png" title="{{weatherGeolocationT[6].weather[0].description}}" alt="" />                 
+                  </p> 
+                    <p><span class="text text-info"> {{weatherGeolocationT[6].temp.day}}°C </p>
+                  </div>
+                  <div class="col-md-2 ">
+                    <h4 class="text text-info">{{weatherGeolocationT[7].dt * 1000| date:'dd/MM'  }}</h4>
+                  <p class="text-center">
+                      <img src="http://openweathermap.org/img/w/{{weatherGeolocationT[7].weather[0].icon}}.png" title="{{weatherGeolocationT[7].weather[0].description}}" alt="" />                 
+                  </p> 
+                    <p><span class="text text-info"> {{weatherGeolocationT[7].temp.day}}°C </p>
+                  </div>
+                </div>
+              </div>
+            </div>            
           </div>
-          <a class="btn btn-default btn-block btn-sm">More …</a>
-
         </div>
-        <div class="box-body" style="display: block;">
-          <h4 class="text text-info text-center"> Tomorrow </h4>    
-          <div class="row">             
-            <div class="col-md-6"> 
-              <h2 class="text text-success text-center"> 25 °C</h2>
-              <h1 class="text-center">
-                <i class="fa fa-sun-o"></i>                
-              </h1>              
-              <p class="text-center">Light rain</p>
-            </div>
-            <div class="col-md-6">
-
-              <p><span class="text text-info">Temperature min </span> 12°C</p>
-              <p><span class="text text-info">Temperature max </span> 22°C</p>
-              <p><span class="text text-info">Wind </span> 18 km/h (SW)</p>
-              <p><span class="text text-info">Humidity </span> 55%</p>
-              <p><span class="text text-info">Pressure </span> 1014 mb</p>
-            </div>
-          </div>
-          <a class="btn btn-default btn-block btn-sm">More …</a>
-
-        </div><!-- /.box-body -->
       </div><!-- /.box -->
     </div>
   </div>
 </section>
 
-<!--  Start modal to add RSS link -->
+<!--  Start modal to add location -->
 <div class="modal modal-open" ng-show="modal != null">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" ng-click="modal = null" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" translate>Add RSS feed</h4>
+        <h4 class="modal-title" translate>Add weather location</h4>
       </div>
       <div class="modal-body">
         <div class="input-group">
