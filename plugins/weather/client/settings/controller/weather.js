@@ -1,6 +1,6 @@
 module.exports = function($scope, socket, $location, $routeParams, toaster){
 
-  $scope.rssfeeds = [];
+  /*$scope.rssfeeds = [];
   $scope.editmodal = null;
 
   socket.emit('rssreader/list', function(err, list){
@@ -35,5 +35,5 @@ module.exports = function($scope, socket, $location, $routeParams, toaster){
     console.log(feed);
     $scope.editmodal = true;
     toaster.pop('error', 'Error', 'Edit is not avaible');
-  }
+  }*/
 }
