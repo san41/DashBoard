@@ -2,13 +2,17 @@
 //  Change metre/s en Km/h
 //  Check the location to adapted translate (fr, en ,)
 
-module.exports = function($scope, $http, socket, toaster){
+module.exports = function($scope, $http,socket, toaster){
 
   $scope.loadData = true;
   $scope.modal = null;
 
 $scope.weatherCount = 1;
 $scope.geolocation = "Location in progress";
+
+
+  // Var to modal 
+  $scope.cityList = null;
 
 // Var longitude and latitude 
 var locationLat;
@@ -22,10 +26,30 @@ var lang = "en";
       $scope.geolocation = "Loading";
       console.log("Get city Name ");
       getGeolocationCityName(position.coords);
+      lat = position.coords.latitude; 
+      lng = position.coords.longitude;
     });
-  }// faire else pour navig non compatible
+  }
+
+  // prov 
+
+  function update(){
+    console.log("update");
+      if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(function(position){
+      $scope.geolocation = "Loading";
+      console.log("Get city Name ");
+      getGeolocationCityName(position.coords);
+      lat = position.coords.latitude; 
+      lng = position.coords.longitude;
+    });
+  }
+  }
+
 
   function getGeolocationCityName(position){
+    console.log("exc");
+    $scope.loadData = true;
     var city; 
     locationLat = position.latitude; 
     locationLng = position.longitude;
@@ -64,7 +88,7 @@ var lang = "en";
       weatherLive['pressureT'] = Math.round(responseWeatherToday.main['pressure']); 
       weatherLive['descriptionT'] = responseWeatherToday.weather[0].description; 
       weatherLive['icon'] = responseWeatherToday.weather[0].icon;
-      weatherLive['speedWindT'] = responseWeatherToday.wind['speed']*3.6;  
+      weatherLive['speedWindT'] = Math.round(responseWeatherToday.wind['speed']*3.6);  
       $scope.weatherGeolocation = weatherLive;
       console.log($scope.weatherGeolocation);
       console.log("--------");
@@ -89,36 +113,53 @@ var lang = "en";
         responseList[i].temp['min'] = Math.round(responseList[i].temp['min']);
         responseList[i].temp['max'] = Math.round(responseList[i].temp['max']);
         responseList[i].speed = Math.round(responseList[i].speed *3.6);
-        console.log(responseList[i]);
       }
       $scope.weatherGeolocationT = responseList;
-      console.log($scope.weatherGeolocationT);
     });
   }
 
-  $scope.addWeatherLocation = function (){
+  $scope.addWeatherLocation = function(){
     var newLocation = {
-      editable : true
+      editable : true,
     }
-    console.log("add ok");
     $scope.modal = newLocation;
   }
 
-  $scope.modalNewWeatherLocation = function(){  
+setInterval(update, 500000);
+//  Auto update
 
+// Passer a select2
+
+// Check and send city data with OpenWeatherMap API. (Name, Country, id, lat, lng)
+// When there are ten result returned by the API, the user views a table with the data to add a city.
+  $scope.cityName = function(){
+    var cityName = $scope.modal.cityName;
+    var OpenWeahterMapCityID = 'http://api.openweathermap.org/data/2.5/find?q='+cityName+'&type=like&sort=population&cnt=30&lang=en'
+    // To request API, The city name field must be minimum 3 characters.
+    if(cityName.length > 2){
+    // Get city List to send
+      $http.get(OpenWeahterMapCityID).success(function(cityList){
+        if(cityList.cod == 200){
+          // Show a maximum of five cities
+          if(cityList.count <= 10){
+            $scope.cityList = cityList.list;
+            console.log($scope.cityList)
+          }else{
+            $scope.cityList = null;
+          }
+        }else{
+          toaster.pop('error','Error',"The database is not avaible, OWM is down ?");
+        }
+      });
+    // reset tab with the reset input
+    }else{
+      $scope.cityList = null;
+    }
   }
 
 
 
-
-// // Start form to added the feed link
-//   $scope.addRSSFeed = function(){
-//     var newFeed = {
-//       editable : true, 
-//       categorysList : ["World", "Actuality", "Politics", "Business", "Techology","Science","Health","Sports","Arts","Style","Food","Traval","People","Work","Development" ],
-//     }
-//     $scope.modal = newFeed;
-//   }
+  // link to search city data http://api.openweathermap.org/data/2.5/find?callback=?&q=yvoy&type=like&sort=population&cnt=30&lang=en
 
 //   $scope.modalNewFeed = function (){
 //     var newFeed = $scope.modal;

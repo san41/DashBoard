@@ -2,11 +2,27 @@
 <!--
 Add translate
 -->
-
 <style>
-
+  .modal.modal-open {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .modal.modal-open .modal-dialog {
+    margin: 10% auto;
+  }
+  .pointer{
+    cursor: pointer;
+  }
+  .table{
+    max-height: 10px;
+  }
 </style>
-
 
 <!-- Start Content -->
 <section class="content-header">
@@ -151,44 +167,30 @@ Add translate
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" ng-click="modal = null" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" translate>Add weather location</h4>
+        <h4 class="modal-title" translate>Add location</h4>
       </div>
       <div class="modal-body">
         <div class="input-group">
-          <span class="input-group-addon"><i class="fa fa-bookmark"></i></span>
-            <input placeholder="Enter feed name" type="text" class="form-control" ng-disabled="modal.editable == null || !modal.editable" ng-model="modal.name">
+          <span class="input-group-addon"><i class="fa fa-globe"></i></span>
+          <input placeholder="Enter city name" type="text" class="form-control" ng-disabled="modal.editable == null || !modal.editable" ng-model="modal.cityName" ng-change="cityName()">  
         </div>
-        <br />
-        <div class="input-group">
-          <span class="input-group-addon"><i class="fa fa-link"></i></span>
-            <input placeholder="Enter feed link" type="url" class="form-control" ng-disabled="modal.editable == null || !modal.editable" ng-model="modal.link" required>
-        </div>
-        <br />
-        <div class="form-group">
-          <label translate>Category</label>
-          <select class="form-control select2 select2-hidden-accessible" style="width: 100%;" tabindex="-1" aria-hidden="true" ng-disabled="modal.editable == null || !modal.editable" ng-model="modal.category" >
-            <option ng-repeat='category in modal.categorysList'>
-              {{category}}
-            </option>
-          </select>
-        </div> 
+        <table class="table table-bordered" ng-show="cityList != null">
+          <tbody>
+            <tr>
+              <th style="width: 80%">Name</th>
+              <th style="width: 20%"></th>
+            </tr>
+            <tr ng-repeat="city in cityList">
+              <td>{{city.name}} - {{city.sys.country}}</td>
+              <td><button class="btn btn-success">Add weather</button></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
       <div class="modal-footer">
-        <button type="button" ng-click="modal = null" class="btn btn-danger pull-left " data-dismiss="modal" translate>Close</button>
-        <button type="button" ng-click="modalNewFeed()" class="btn btn-success" ng-disabled="modal.editable == null || !modal.editable" translate>Add feed</button>
+        <button type="button" ng-click="modal = null" class="btn btn-danger" data-dismiss="modal" translate>Close</button>
       </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-
-<!-- Geolocation -->
-
-
-<script type="text/javascript">
- 
-</script>
-
-
-
-
+    </div>
+  </div>
+</div>
 
