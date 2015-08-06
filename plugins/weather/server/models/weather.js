@@ -3,8 +3,9 @@ var Schema = mongoose.Schema;
 
 var weatherSchema = mongoose.Schema({
   name: String,
-  url: String,
-  category: String,
+  lat: String,
+  lng: String,
+  cityId : String,
   user: { type: Schema.Types.ObjectId, ref: 'User' }
 });
 
