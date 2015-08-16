@@ -1,3 +1,23 @@
+
+<style>
+  .modal.modal-open {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .modal.modal-open .modal-dialog {
+    margin: 10% auto;
+  }
+  .pointer{
+    cursor: pointer;
+  }
+</style>
+
 <section class="content-header">
   <h1>
     <i class="fa fa-rss-square"></i> <translate>Reader Settings</translate>
@@ -14,7 +34,7 @@
     <div class="col-md-12">
       <div class="box">
         <div class="box-header">
-          <h3 class="box-title" translate>RSS Feed avaible</h3>
+          <h3 class="box-title" translate>RSS Feed </h3>
           <div class="box-tools">
             <div class="input-group" style="width: 150px;">
               <input type="text" name="table_search" class="form-control input-sm pull-right" ng-model="searchName" placeholder="Search feed">

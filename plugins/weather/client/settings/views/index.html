@@ -1,6 +1,6 @@
 <section class="content-header">
   <h1>
-    <i class="fa fa-rss-square"></i> <translate>Weather Settings</translate>
+    <i class="fa fa-sun-o"></i> <translate>Weather Settings</translate>
   </h1>
   <ol class="breadcrumb">
     <li><a href="#"><i class="fa fa-dashboard"></i> <translate>Home</translate></a></li>
@@ -17,7 +17,7 @@
           <h3 class="box-title" translate>Weather location</h3>
           <div class="box-tools">
             <div class="input-group" style="width: 150px;">
-              <input type="text" name="table_search" class="form-control input-sm pull-right" ng-model="searchName" placeholder="Search feed">
+              <input type="text" name="table_search" class="form-control input-sm pull-right" ng-model="searchName" placeholder="Search city">
               <div class="input-group-btn">
                 <button class="btn btn-sm btn-default"><i class="fa fa-search"></i></button>
               </div>
@@ -29,12 +29,12 @@
             <tbody>
               <tr>
                 <th translate>Name</th>
-                <!-- <th translate>Position</th> -->
+                <th translate>Position</th>
                 <th translate>Actions</th>
               </tr>
               <tr ng-repeat="weather in weatherList | filter:searchName">
-                <td>{{weather.name}}</td>
-<!--                 <td>{{feed.position}}</td> -->
+                <td>{{weather.name}}</td> 
+                <td>{{weather.position}}</td>
                 <td style="cursor:pointer;" ng-click="delete(weather)"><i class="fa fa-trash-o"></i> <translate>Delete</translate></td>
               </tr>
             </tbody>
