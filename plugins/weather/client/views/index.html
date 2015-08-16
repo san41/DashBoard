@@ -2,6 +2,10 @@
 <!--
 Add translate
 -->
+
+<link href="./static/weather/css/owfont-regular.css" rel="stylesheet"/>
+<link href="./static/weather/css/owfont-regular.min.css" rel="stylesheet"/>
+
 <style>
   .modal.modal-open {
     position: fixed;
@@ -22,6 +26,9 @@ Add translate
   .table{
     max-height: 10px;
   }
+  .description{
+    text-transform: capitalize;
+  }
 </style>
 
 <!-- Start Content -->
@@ -38,51 +45,47 @@ Add translate
     <li class="active" translate>Weather</li>
   </ol>
 </section>
-<section class="content" ng-show="weatherCount == 0" >
+<section class="content" ng-show="weatherCount == null" >
   <div class="col-md-12">
     <div class="callout callout-danger">  
       <div class="row">
-<!--         <div class="col-md-0">
-        </div>   -->
         <div class="col-md-12">      
-          <h4 translate>You have not enabled location or recorded area!</h4>
-          <p translate>To activate the location or save a location, click here.</p>
+          <h4 translate>You have not enabled location or recorded city!</h4>
+          <p translate>To add city, <span ng-click="addWeatherLocation()"> click here.</span></p>
         </div>    
       </div>
     </div>
   </div>
 </section>
 
-<section class="content" ng-show="weatherCount > 0">
+<section class="content" ng-show="weatherCount >= 0">
   <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-6" ng-show="geolocation == true">
       <div class="box">
         <div class="box-header with-border">
-          <h3 class="box-title"> <i class="fa fa-location-arrow"></i> | {{geolocation}} </h3>
+          <h3 class="box-title"> <i class="fa fa-location-arrow"></i> | {{weatherGeolocation.live.name}} - {{weatherGeolocation.live.sys['country']}} </h3>
           <div class="box-tools pull-right">
             <p class="text-muted" translate> Location Weather</p>
           </div>
         </div>
-        <h2 class="text text-center" ng-show="loadData == true">
-          <i class="fa fa-refresh fa-spin"></i> <translate>Loading</translate>
-        </h2>
-        <div class="box-body" style="display: block;"ng-show="loadData == false">
+
+        <div class="box-body" style="display: block;">
           <div class="row" >
             <div class="col-md-6">                   
-              <h4 class="text text-info text-center" translate> Now </h4>   
+              <h4 class="text text-info text-center" translate> Now</h4>   
               <div class="row">
                 <div class="col-md-6 text-center"> 
                   <p class="text-center">
-                      <img src="http://openweathermap.org/img/w/{{weatherGeolocation.icon}}.png" title="{{weatherGeolocation.descriptionT}}" alt="" />              
+                  <i class="owf owf-{{weatherGeolocation.live.weather[0].id}} owf-4x"></i>          
                   </p> 
-                  <p class="text-center">{{weatherGeolocation.descriptionT}}</p> 
-                  <h3 class="text text-success text-center"> {{weatherGeolocation.tempT}}°C</h3>
+                  <p class="text-center description">{{weatherGeolocation.live.weather[0].description}}</p> 
+                  <h3 class="text text-success text-center"> {{weatherGeolocation.live.main.temp}}°C</h3>
                 </div>
                 <div class="col-md-6 text-center">
-                  <p><span class="text text-info">Temp :</span> {{weatherGeolocation.temp_minT}} - {{weatherGeolocation.temp_maxT}} °C</p>
-                  <p><span class="text text-info">Wind: </span> {{weatherGeolocation.speedWindT}} km/h</p>
-                  <p><span class="text text-info">Humidity: </span> {{weatherGeolocation.humidityT}}%</p>
-                  <p><span class="text text-info">Pressure: </span> {{weatherGeolocation.pressureT}} hpa</p>
+                  <p><span class="text text-info">Temp :</span> {{weatherGeolocation.live.main.temp_min}} - {{weatherGeolocation.live.main.temp_max}} °C</p>
+                  <p><span class="text text-info">Wind: </span> {{weatherGeolocation.live.wind.speed}} km/h</p>
+                  <p><span class="text text-info">Humidity: </span> {{weatherGeolocation.live.main.humidity}}%</p>
+                  <p><span class="text text-info">Pressure: </span> {{weatherGeolocation.live.main.pressure}} hpa</p>
                 </div>
               </div>
             </div>
@@ -91,16 +94,16 @@ Add translate
               <div class="row">
                 <div class="col-md-6 text-center"> 
                   <p class="text-center">
-                      <img src="http://openweathermap.org/img/w/{{weatherGeolocationT[1].weather[0].icon}}.png" title="{{weatherGeolocationT[1].weather[0].description}}" alt="" />                 
+                    <i class="owf owf-{{weatherGeolocation.later[1].weather[0].id}} owf-4x"></i>                
                   </p> 
-                  <p class="text-center">{{weatherGeolocationT[1].weather[0].description}}</p> 
-                  <h3 class="text text-success text-center"> {{weatherGeolocationT[1].temp.day}}°C</h3>
+                  <p class="text-center description" >{{weatherGeolocation.later[1].weather[0].description}}</p> 
+                  <h3 class="text text-success text-center"> {{weatherGeolocation.later[1].temp.day}}°C</h3>
                 </div>
                 <div class="col-md-6 text-center">
-                  <p><span class="text text-info">Temp :</span> {{weatherGeolocationT[1].temp.min}} - {{weatherGeolocationT[1].temp.max}}°C</p>
-                  <p><span class="text text-info">Wind: </span> {{weatherGeolocationT[1].speed}} km/h</p>
-                  <p><span class="text text-info">Humidity: </span> {{weatherGeolocationT[1].humidity}}%</p>
-                  <p><span class="text text-info">Pressure: </span> {{weatherGeolocationT[1].pressure}} hpa</p>
+                  <p><span class="text text-info">Temp :</span> {{weatherGeolocation.later[1].temp.min}} - {{weatherGeolocation.later[1].temp.max}}°C</p>
+                  <p><span class="text text-info">Wind: </span> {{weatherGeolocation.later[1].speed}} km/h</p>
+                  <p><span class="text text-info">Humidity: </span> {{weatherGeolocation.later[1].humidity}}%</p>
+                  <p><span class="text text-info">Pressure: </span> {{weatherGeolocation.later[1].pressure}} hpa</p>
                 </div>
               </div>
             </div>
@@ -110,46 +113,147 @@ Add translate
               <div class="row">
                 <div class="col-md-12">
                   <div class="col-md-2 ">
-                    <h4 class="text text-info">{{weatherGeolocationT[2].dt * 1000| date:'dd/MM'  }}</h4>
+                    <h4 class="text text-info">{{weatherGeolocation.later[2].dt * 1000| date:'dd/MM'  }}</h4>
                   <p class="text-center">
-                      <img src="http://openweathermap.org/img/w/{{weatherGeolocationT[2].weather[0].icon}}.png" title="{{weatherGeolocationT[2].weather[0].description}}" alt="" />                 
+                    <i class="owf owf-{{weatherGeolocation.later[2].weather[0].id}} owf-2x"></i>                 
                   </p> 
-                    <p><span class="text text-info"> {{weatherGeolocationT[2].temp.day}}°C </p>
+                    <p><span class="text text-info"> {{weatherGeolocation.later[2].temp.day}}°C </p>
                   </div>
                   <div class="col-md-2 ">
-                    <h4 class="text text-info">{{weatherGeolocationT[3].dt * 1000| date:'dd/MM'  }}</h4>
+                    <h4 class="text text-info">{{weatherGeolocation.later[3].dt * 1000| date:'dd/MM'  }}</h4>
                   <p class="text-center">
-                      <img src="http://openweathermap.org/img/w/{{weatherGeolocationT[3].weather[0].icon}}.png" title="{{weatherGeolocationT[3].weather[0].description}}" alt="" />                 
+                    <i class="owf owf-{{weatherGeolocation.later[3].weather[0].id}} owf-2x"></i>              
                   </p> 
-                    <p><span class="text text-info"> {{weatherGeolocationT[3].temp.day}}°C </p>
+                    <p><span class="text text-info"> {{weatherGeolocation.later[3].temp.day}}°C </p>
                   </div>
                   <div class="col-md-2 ">
-                    <h4 class="text text-info">{{weatherGeolocationT[4].dt * 1000| date:'dd/MM'  }}</h4>
+                    <h4 class="text text-info">{{weatherGeolocation.later[4].dt * 1000| date:'dd/MM'  }}</h4>
                   <p class="text-center">
-                      <img src="http://openweathermap.org/img/w/{{weatherGeolocationT[4].weather[0].icon}}.png" title="{{weatherGeolocationT[4].weather[0].description}}" alt="" />                 
+                    <i class="owf owf-{{weatherGeolocation.later[4].weather[0].id}} owf-2x"></i>                 
                   </p> 
-                    <p><span class="text text-info"> {{weatherGeolocationT[4].temp.day}}°C </p>
+                    <p><span class="text text-info"> {{weatherGeolocation.later[4].temp.day}}°C </p>
                   </div>
                     <div class="col-md-2 ">
-                    <h4 class="text text-info">{{weatherGeolocationT[5].dt * 1000| date:'dd/MM'  }}</h4>
+                    <h4 class="text text-info">{{weatherGeolocation.later[5].dt * 1000| date:'dd/MM'  }}</h4>
                   <p class="text-center">
-                      <img src="http://openweathermap.org/img/w/{{weatherGeolocationT[5].weather[0].icon}}.png" title="{{weatherGeolocationT[5].weather[0].description}}" alt="" />                 
+                    <i class="owf owf-{{weatherGeolocation.later[5].weather[0].id}} owf-2x"></i>                 
                   </p> 
-                    <p><span class="text text-info"> {{weatherGeolocationT[5].temp.day}}°C </p>
+                    <p><span class="text text-info"> {{weatherGeolocation.later[5].temp.day}}°C </p>
                   </div>
                   <div class="col-md-2 ">
-                    <h4 class="text text-info">{{weatherGeolocationT[6].dt * 1000| date:'dd/MM'  }}</h4>
+                    <h4 class="text text-info">{{weatherGeolocation.later[6].dt * 1000| date:'dd/MM'  }}</h4>
                   <p class="text-center">
-                      <img src="http://openweathermap.org/img/w/{{weatherGeolocationT[6].weather[0].icon}}.png" title="{{weatherGeolocationT[6].weather[0].description}}" alt="" />                 
+                    <i class="owf owf-{{weatherGeolocation.later[6].weather[0].id}} owf-2x"></i>                 
                   </p> 
-                    <p><span class="text text-info"> {{weatherGeolocationT[6].temp.day}}°C </p>
+                    <p><span class="text text-info"> {{weatherGeolocation.later[6].temp.day}}°C </p>
                   </div>
                   <div class="col-md-2 ">
-                    <h4 class="text text-info">{{weatherGeolocationT[7].dt * 1000| date:'dd/MM'  }}</h4>
+                    <h4 class="text text-info">{{weatherGeolocation.later[7].dt * 1000| date:'dd/MM'  }}</h4>
                   <p class="text-center">
-                      <img src="http://openweathermap.org/img/w/{{weatherGeolocationT[7].weather[0].icon}}.png" title="{{weatherGeolocationT[7].weather[0].description}}" alt="" />                 
+                    <i class="owf owf-{{weatherGeolocation.later[7].weather[0].id}} owf-2x"></i>                 
                   </p> 
-                    <p><span class="text text-info"> {{weatherGeolocationT[7].temp.day}}°C </p>
+                    <p><span class="text text-info"> {{weatherGeolocation.later[7].temp.day}}°C </p>
+                  </div>
+                </div>
+              </div>
+            </div>            
+          </div>
+        </div>
+      </div><!-- /.box -->
+    </div>
+    <div class="col-md-6" ng-repeat="weather in weatherList | orderBy:'position'">
+      <div class="box">
+        <div class="box-header with-border">
+          <h3 class="box-title"></i>{{weather.name}} - {{weather.weatherLive.sys['country']}}</h3>
+          <div class="box-tools pull-right">
+            <p> <i class="text-green fa fa-arrows"></i> | <i ng-click='removeWeather()' class="text-red  fa fa-trash-o"></i></p>
+         </div>
+        </div>
+
+        <div class="box-body" style="display: block;">
+          <div class="row" >
+            <div class="col-md-6">                   
+              <h4 class="text text-info text-center" translate> Now </h4>   
+              <div class="row">
+                <div class="col-md-6 text-center"> 
+                  <p class="text-center">
+                    <i class="owf owf-{{weather.weatherLive.weather[0].id}} owf-4x"></i>                 
+                  </p> 
+                  <p class="text-center description">{{weather.weatherLive.weather[0].description}}</p> 
+                  <h3 class="text text-success text-center"> {{weather.weatherLive.main.temp}}°C</h3>
+                </div>
+                <div class="col-md-6 text-center">
+                  <p><span class="text text-info">Temp :</span> {{weather.weatherLive.main.temp_min}} - {{weather.weatherLive.main.temp_max}} °C</p>
+                  <p><span class="text text-info">Wind: </span> {{weather.weatherLive.wind.speed}} km/h</p>
+                  <p><span class="text text-info">Humidity: </span> {{weather.weatherLive.main.humidity}}%</p>
+                  <p><span class="text text-info">Pressure: </span> {{weather.weatherLive.main.pressure}} hpa</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">                   
+              <h4 class="text text-info text-center"> Tomorrow </h4>   
+              <div class="row">
+                <div class="col-md-6 text-center"> 
+                  <p class="text-center">
+                    <i class="owf owf-{{weather.weatherLater.list[1].weather[0].id}} owf-4x"></i>              
+                  </p> 
+                  <p class="text-center description">{{weather.weatherLater.list[1].weather[0].description}}</p> 
+                  <h3 class="text text-success text-center"> {{weather.weatherLater.list[1].temp.day}}°C</h3>
+                </div>
+                <div class="col-md-6 text-center">
+                  <p><span class="text text-info">Temp :</span> {{weather.weatherLater.list[1].temp.min}} - {{weather.weatherLater.list[1].temp.max}}°C</p>
+                  <p><span class="text text-info">Wind: </span> {{weather.weatherLater.list[1].speed}} km/h</p>
+                  <p><span class="text text-info">Humidity: </span> {{weather.weatherLater.list[1].humidity}}%</p>
+                  <p><span class="text text-info">Pressure: </span> {{weather.weatherLater.list[1].pressure}} hpa</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 text-center">  
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="col-md-2 ">
+                    <h4 class="text text-info">{{weather.weatherLater.list[2].dt * 1000| date:'dd/MM'  }}</h4>
+                  <p class="text-center">
+                    <i class="owf owf-{{weather.weatherLater.list[2].weather[0].id}} owf-2x"></i>                 
+                  </p> 
+                    <p><span class="text text-info"> {{weather.weatherLater.list[2].temp.day}}°C </p>
+                  </div>
+                  <div class="col-md-2 ">
+                    <h4 class="text text-info">{{weather.weatherLater.list[3].dt * 1000| date:'dd/MM'  }}</h4>
+                  <p class="text-center">
+                    <i class="owf owf-{{weather.weatherLater.list[3].weather[0].id}} owf-2x"></i>                 
+                  </p> 
+                    <p><span class="text text-info"> {{weather.weatherLater.list[3].temp.day}}°C </p>
+                  </div>
+                  <div class="col-md-2 ">
+                    <h4 class="text text-info">{{weather.weatherLater.list[4].dt * 1000| date:'dd/MM'  }}</h4>
+                  <p class="text-center">
+                    <i class="owf owf-{{weather.weatherLater.list[4].weather[0].id}} owf-2x"></i>                 
+                  </p> 
+                    <p><span class="text text-info"> {{weather.weatherLater.list[4].temp.day}}°C </p>
+                  </div>
+                    <div class="col-md-2 ">
+                    <h4 class="text text-info">{{weather.weatherLater.list[5].dt * 1000| date:'dd/MM'  }}</h4>
+                  <p class="text-center">
+                    <i class="owf owf-{{weather.weatherLater.list[5].weather[0].id}} owf-2x"></i>                 
+                  </p> 
+                    <p><span class="text text-info"> {{weather.weatherLater.list[5].temp.day}}°C </p>
+                  </div>
+                  <div class="col-md-2 ">
+                    <h4 class="text text-info">{{weather.weatherLater.list[6].dt * 1000| date:'dd/MM'  }}</h4>
+                  <p class="text-center">
+                    <i class="owf owf-{{weather.weatherLater.list[6].weather[0].id}} owf-2x"></i>                
+                  </p> 
+                    <p><span class="text text-info"> {{weather.weatherLater.list[6].temp.day}}°C </p>
+                  </div>
+                  <div class="col-md-2 ">
+                    <h4 class="text text-info">{{weather.weatherLater.list[7].dt * 1000| date:'dd/MM'  }}</h4>
+                  <p class="text-center">
+                    <i class="owf owf-{{weather.weatherLater.list[7].weather[0].id}} owf-2x"></i>                 
+                  </p> 
+                    <p><span class="text text-info"> {{weather.weatherLater.list[7].temp.day}}°C </p>
                   </div>
                 </div>
               </div>
@@ -182,7 +286,7 @@ Add translate
             </tr>
             <tr ng-repeat="city in cityList">
               <td>{{city.name}} - {{city.sys.country}}</td>
-              <td><button class="btn btn-success">Add weather</button></td>
+              <td><button class="btn btn-success"ng-click="addCity(city)">Add weather</button></td>
             </tr>
           </tbody>
         </table>
@@ -194,3 +298,6 @@ Add translate
   </div>
 </div>
 
+<script type="text/javascript">
+  
+</script>
