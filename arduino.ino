@@ -85,6 +85,10 @@ void loop (){
     }else{
       screenLCD(2,0);
       firstStart = 1;
+      digitalWrite(pinbuzzer, HIGH);
+  delay(1000);
+  digitalWrite(pinbuzzer, LOW);
+  delay(1000); 
     }
   }else{
     if(readValue >= 500 && readValue <= 600){
@@ -270,14 +274,23 @@ void speedMotor(int speed, int rotation){
   if(speed > speedon){
     while(speedon >= speed){
       analogWrite(enablePin, speedon);
+        digitalWrite(pinbuzzer, HIGH);
+  delay(speedon);
+  digitalWrite(pinbuzzer, LOW);
+  delay(speedon); 
       speedon++;
       delay(10);
     }
   }else if (speed < speedon){
     while(speedon <= speed){
       analogWrite(enablePin, speedon); 
+              digitalWrite(pinbuzzer, HIGH);
+  delay(speedon);
+  digitalWrite(pinbuzzer, LOW);
+  delay(speedon); 
       speedon--;
       delay(10);
+      
     }
   }
 }
