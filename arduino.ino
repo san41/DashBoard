@@ -271,11 +271,11 @@ void speedMotor(int speed, int rotation){
   }
   
   if(speed > speedon){
-    while(speedon >= speed){
-          digitalWrite(pinbuzzer, HIGH);
+               digitalWrite(pinbuzzer, HIGH);
     delay(speed);
     digitalWrite(pinbuzzer, LOW);
     delay(speed);
+    while(speedon >= speed){
       analogWrite(enablePin, speedon);
       speedon++;
       delay(10);
