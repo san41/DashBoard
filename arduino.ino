@@ -80,10 +80,7 @@ void loop (){
   restart = digitalRead(resetbutton);
 
 
-      digitalWrite(pinbuzzer, HIGH);
-  delay(readValue);
-  digitalWrite(pinbuzzer, LOW);
-  delay(readValue); 
+
   
   if (firstStart == 0){
     if(readValue < 500 || readValue >600){
@@ -272,8 +269,14 @@ void speedMotor(int speed, int rotation){
       }
     break;
   }
+
   
   if(speed > speedon){
+    digitalWrite(pinbuzzer, HIGH);
+    delay(1000);
+    digitalWrite(pinbuzzer, LOW);
+    delay(2000);
+     
     while(speedon >= speed){
       analogWrite(enablePin, speedon);
       speedon++;
