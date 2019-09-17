@@ -96,67 +96,67 @@ void loop (){
     }else if(readValue < 500){
       if(readValue < 500 && readValue >= 451){
         screenLCD(3,10);
-        speedMotor(30, 1);
+        speedMotor(15, 1);
       }else if(readValue < 451 && readValue >= 401){
         screenLCD(3,20);
-        speedMotor(50, 1);
+        speedMotor(25, 1);
       }else if(readValue < 401 && readValue >= 351){
         screenLCD(3,30);
-        speedMotor(75, 1);
+        speedMotor(37, 1);
       }else if(readValue < 351 && readValue >= 301){
         screenLCD(3,40);
-        speedMotor(100, 1);
+        speedMotor(50, 1);
       }else if(readValue <  301 && readValue >= 251){
         screenLCD(3,50);
-        speedMotor(125, 1);
+        speedMotor(62, 1);
       }else if(readValue < 251 && readValue >= 201){
         screenLCD(3,60);
-        speedMotor(150, 1);
+        speedMotor(75, 1);
       }else if(readValue < 201 && readValue >= 151){
         screenLCD(3,70);
-        speedMotor(175, 1);
+        speedMotor(87, 1);
       }else if(readValue < 151 && readValue >= 121){
         screenLCD(3,80);
-        speedMotor(200, 1);
+        speedMotor(100, 1);
       }else if(readValue < 121 && readValue >= 90){
         screenLCD(3,90);
-        speedMotor(225, 1);
+        speedMotor(112, 1);
       }else if(readValue < 90 && readValue >= 0){
         screenLCD(3,100);
-        speedMotor(255, 1);
+        speedMotor(127, 1);
       }
     }else if (readValue > 600){
         screenLCD(4,0);  
         if(readValue >= 600 && readValue < 650){
         screenLCD(4,10);
-        speedMotor(25, 0);
+        speedMotor(15, 0);
       }else if(readValue >= 650 && readValue < 700){
         screenLCD(4,20);
-        speedMotor(50, 0);
+        speedMotor(25, 0);
       }else if(readValue >= 700 && readValue < 750){
         screenLCD(4,30);
-        speedMotor(75, 0);
+        speedMotor(37, 0);
       }else if(readValue >= 750 && readValue < 800){
-        screenLCD(4,40);
-        speedMotor(100,0);
+        screenLCD(50,40);
+        speedMotor(50,0);
       }else if(readValue >= 800 && readValue < 850){
         screenLCD(4,50);
-        speedMotor(125, 0);
+        speedMotor(62, 0);
       }else if(readValue >= 850 && readValue < 900){
         screenLCD(4,60);
-        speedMotor(150, 0);
+        speedMotor(75, 0);
       }else if(readValue >= 900 && readValue < 950){
         screenLCD(4,70);
-        speedMotor(175, 0);
+        speedMotor(87, 0);
       }else if(readValue >= 950 && readValue < 980){
         screenLCD(4,80);
-        speedMotor(200, 0);
+        speedMotor(100, 0);
       }else if(readValue >= 980 && readValue < 1000){
         screenLCD(4,90);
-        speedMotor(225, 0);
+        speedMotor(112, 0);
       }else if(readValue >= 1000 && readValue <= 1024){
         screenLCD(4,100);
-        speedMotor(250, 0);
+        speedMotor(127, 0);
       }
     }
   }
@@ -274,14 +274,14 @@ void speedMotor(int speed, int rotation){
       do{
         analogWrite(enablePin, speedon); 
         speedon--;
-        delay(500);
+        delay(10);
       }while (speedon < speed);
       
   }else if (speed < speedon){
       do{
         analogWrite(enablePin, speedon); 
         speedon--;
-        delay(500);
+        delay(10);
       }while (speedon > speed);
   }
 }
