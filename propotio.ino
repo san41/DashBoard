@@ -95,10 +95,12 @@ void loop (){
       screenLCD(5,0);
       speedMotor(0,0);
     }else if(readValue < 500){
-      speedmap = map(readValue, 0, 499, 45, 170);
-      speedMotor(speedmap, 1);
+       // map (variable lue, valeur max du potar pour avancer, valeur min potar pour avancer, valeur min du moteur, valeur max du moteur)
+      // En gros, tu changes 35 et 170 qui fait que 35 c'est la vitesse du début et 170 la vitesse max
+       speedmap = map(readValue, 499, 0, 35, 170);
+       speedMotor(speedmap, 1);
     }else if (readValue > 600){
-      speedmap = map(readValue, 601, 1024, 45, 170);
+      speedmap = map(readValue, 601, 1024, 35, 170);
       speedMotor(speedmap, 0);
     }
   }
